@@ -1,0 +1,69 @@
+{
+  "variants": {
+    "display_state=unopened": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_unopened"
+    },
+    "display_state=flagged": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_flagged"
+    },
+    "display_state=open_empty": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_open_empty"
+    },
+    "display_state=bomb": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_bomb"
+    },
+    "display_state=death_bomb": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_death_bomb"
+    },
+
+    "display_state=number_1": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_number_1"
+    },
+    "display_state=number_2": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_number_2"
+    },
+    "display_state=number_3": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_number_3"
+    },
+    "display_state=number_4": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_number_4"
+    },
+    "display_state=number_5": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_number_5"
+    },
+    "display_state=number_6": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_number_6"
+    },
+    "display_state=number_7": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_number_7"
+    },
+    "display_state=number_8": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_number_8"
+    },
+
+    "display_state=wrong_flag_1": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_wrong_flag_1"
+    },
+    "display_state=wrong_flag_2": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_wrong_flag_2"
+    },
+    "display_state=wrong_flag_3": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_wrong_flag_3"
+    },
+    "display_state=wrong_flag_4": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_wrong_flag_4"
+    },
+    "display_state=wrong_flag_5": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_wrong_flag_5"
+    },
+    "display_state=wrong_flag_6": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_wrong_flag_6"
+    },
+    "display_state=wrong_flag_7": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_wrong_flag_7"
+    },
+    "display_state=wrong_flag_8": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_display_wrong_flag_8"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "simple_block_game:block/rotated_base",
+  "textures": {
+    "front": "simple_block_game:block/base_back",
+    "overlay": "simple_block_game:block/simple2048/2048_core_open"
+  }
+}

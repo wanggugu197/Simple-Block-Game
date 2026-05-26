@@ -1,0 +1,24 @@
+tasks.register('slimJar', Jar) {
+    dependsOn("classes")
+    archiveClassifier = "slim"
+    from sourceSets.main.output
+}
+
+base {
+    archivesName = "${mod_name}-${minecraft_version}"
+}
+
+afterEvaluate {
+    tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
+        destinationDirectory = file('build/libs/')
+        manifest.attributes([
+                'MixinConfigs': mod_id + '.mixins.json',
+                'Specification-Title': project.name,
+                'Specification-Version': mod_version,
+                'Specification-Vendor': mod_authors,
+                'Implementation-Title': base.archivesName,
+                'Implementation-Version': version,
+                'Implementation-Vendor': mod_authors,
+        ])
+    }
+}

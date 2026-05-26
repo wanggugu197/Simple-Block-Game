@@ -1,0 +1,6 @@
+{
+  "parent": "simple_block_game:block/vertical_base",
+  "textures": {
+    "top": "simple_block_game:block/base_back"
+  }
+}

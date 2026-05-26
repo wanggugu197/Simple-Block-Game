@@ -1,0 +1,6 @@
+{
+  "parent": "simple_block_game:block/vertical_base",
+  "textures": {
+    "overlay_top": "simple_block_game:block/simple_minesweeper/minesweeper_display_wrong_flag_2"
+  }
+}

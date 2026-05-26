@@ -1,0 +1,35 @@
+{
+  "variants": {
+    "game_started=false,difficulty=easy": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_core_easy_idle"
+    },
+    "game_started=false,difficulty=normal": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_core_normal_idle"
+    },
+    "game_started=false,difficulty=hard": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_core_hard_idle"
+    },
+    "game_started=false,difficulty=expert": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_core_expert_idle"
+    },
+    "game_started=false,difficulty=custom": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_core_custom_idle"
+    },
+
+    "game_started=true,difficulty=easy": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_core_easy_active"
+    },
+    "game_started=true,difficulty=normal": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_core_normal_active"
+    },
+    "game_started=true,difficulty=hard": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_core_hard_active"
+    },
+    "game_started=true,difficulty=expert": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_core_expert_active"
+    },
+    "game_started=true,difficulty=custom": {
+      "model": "simple_block_game:block/simple_minesweeper/minesweeper_core_custom_active"
+    }
+  }
+}

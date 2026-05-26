@@ -1,0 +1,13 @@
+[versions]
+minecraft = "26.1.2"
+neoForge = "26.1.2.65-beta"
+loader = "4"
+spotless = "8.1.0"
+modDevGradle = "2.0.140"
+lombok = "9.2.0"
+
+
+[plugins]
+modDevGradle            = { id = "net.neoforged.moddev", version.ref = "modDevGradle" }
+spotless                = { id = "com.diffplug.spotless", version.ref = "spotless" }
+lombok                  = { id = "io.freefair.lombok", version.ref = "lombok" }

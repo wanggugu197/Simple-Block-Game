@@ -1,0 +1,11 @@
+// 26.1.2	2026-05-26T16:48:02.3614335	RegistryCore Provider for simple_block_game [, Loot Tables, Advancements, Datapack Registries, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Model Definitions - simple_block_game, Lang (Languages: en_us for mod: simple_block_game), simple_block_game, Lang (Languages: zh_cn for mod: simple_block_game)]
+3ca089c781989f854d9dda5115139fcfe2e15bc8 assets/simple_block_game/items/2048_core.json
+93f91b6d24a267aa4ab1ad94d344a728980a3b86 assets/simple_block_game/items/2048_display.json
+0885ede91ba580605a596dd9f7b6ff5d8d43e09a assets/simple_block_game/items/minesweeper_core.json
+b29936da03fa072d7a63eb0800705cd27e245177 assets/simple_block_game/items/minesweeper_display.json
+55317c6e0d9d8c66eaea261381207528078259bb assets/simple_block_game/lang/en_us.json
+04cce7e16f43dc84792cfb92fa8e5c073b7dc9d1 assets/simple_block_game/lang/zh_cn.json
+e8281b5edad1d8e31c24c70d057f8e9e59edb570 data/minecraft/advancement/recipes/combat/make_2048_core.json
+5563905c19be6ae0758c270f78b8103257fafd7f data/minecraft/advancement/recipes/combat/make_minesweeper_core.json
+54f85d09590b2d47ded97ddaa772d4fd485fc21b data/minecraft/recipe/make_2048_core.json
+df15bfb974c68e7313099e49d4a399a3707e12ff data/minecraft/recipe/make_minesweeper_core.json

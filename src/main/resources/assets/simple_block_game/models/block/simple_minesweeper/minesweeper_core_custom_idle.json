@@ -1,0 +1,40 @@
+{
+  "parent": "simple_block_game:block/vertical_base",
+  "textures": {
+    "top": "simple_block_game:block/base_back",
+    "bottom": "simple_block_game:block/base_back",
+    "side": "simple_block_game:block/base_side",
+    "overlay_top": "simple_block_game:block/simple_minesweeper/minesweeper_core_custom_idle",
+    "overlay_north": "simple_block_game:block/simple_minesweeper/minesweeper_core_z_axis_decreases",
+    "overlay_south": "simple_block_game:block/simple_minesweeper/minesweeper_core_z_axis_increases",
+    "overlay_east": "simple_block_game:block/simple_minesweeper/minesweeper_core_x_axis_increases",
+    "overlay_west": "simple_block_game:block/simple_minesweeper/minesweeper_core_x_axis_decreases"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "shade": false,
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "north"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "south"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "east"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "west"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#bottom", "cullface": "down"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#top", "cullface": "up"}
+      }
+    },
+    {
+      "from": [-0.1, 0, -0.1],
+      "to": [16.1, 16.1, 16.1],
+      "shade": false,
+      "faces": {
+        "up": {"uv": [0, 0, 16, 16], "rotation": 90, "texture": "#overlay_top"},
+        "north": {"uv": [0, 0, 16, 16], "texture": "#overlay_north"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#overlay_south"},
+        "east": {"uv": [0, 0, 16, 16], "texture": "#overlay_east"},
+        "west": {"uv": [0, 0, 16, 16], "texture": "#overlay_west"}
+      }
+    }
+  ]
+}
