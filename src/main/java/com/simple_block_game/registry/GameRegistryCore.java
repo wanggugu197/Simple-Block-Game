@@ -1,5 +1,10 @@
 package com.simple_block_game.registry;
 
+import com.simple_block_game.registry.builder.ModBlockBuilder;
+import com.simple_block_game.registry.builder.ModEntityBuilder;
+import com.simple_block_game.registry.builder.ModFluidBuilder;
+import com.simple_block_game.registry.builder.ModItemBuilder;
+
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -15,10 +20,6 @@ import com.gto.registrylib.composite.ComponentItem;
 import com.gto.registrylib.composite.IComponentItem;
 import com.gto.registrylib.datagen.ProviderType;
 import com.gto.registrylib.datagen.provider.RegistryLibLangProvider;
-import com.simple_block_game.registry.builder.ModBlockBuilder;
-import com.simple_block_game.registry.builder.ModEntityBuilder;
-import com.simple_block_game.registry.builder.ModFluidBuilder;
-import com.simple_block_game.registry.builder.ModItemBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;

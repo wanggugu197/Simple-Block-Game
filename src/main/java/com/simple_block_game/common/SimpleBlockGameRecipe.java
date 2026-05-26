@@ -11,6 +11,7 @@ import java.util.Optional;
 
 import static com.simple_block_game.SimpleBlockGame.REGISTRYLIB;
 import static com.simple_block_game.common.SimpleBlockGameRegistration.BLOCK_2048_CORE;
+import static com.simple_block_game.common.SimpleBlockGameRegistration.BLOCK_MEMORY_KEY_CORE;
 import static com.simple_block_game.common.SimpleBlockGameRegistration.BLOCK_MINESWEEPER_CORE;
 
 public class SimpleBlockGameRecipe {
@@ -43,6 +44,14 @@ public class SimpleBlockGameRecipe {
                     .define('I', Items.TNT)
                     .unlockedBy("unlocked", UNCONDITIONAL_CRITERION)
                     .save(prov, "make_minesweeper_core");
+            prov.shaped(RecipeCategory.COMBAT, BLOCK_MEMORY_KEY_CORE)
+                    .pattern("QQQ")
+                    .pattern("QIQ")
+                    .pattern("QQQ")
+                    .define('Q', Items.QUARTZ_PILLAR)
+                    .define('I', Items.REDSTONE_BLOCK)
+                    .unlockedBy("unlocked", UNCONDITIONAL_CRITERION)
+                    .save(prov, "make_memory_key_core");
         });
     }
 }

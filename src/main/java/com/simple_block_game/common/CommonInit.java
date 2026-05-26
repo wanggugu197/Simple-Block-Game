@@ -1,11 +1,12 @@
 package com.simple_block_game.common;
 
+import com.simple_block_game.data.lang.LangHandler;
+
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
 
-import com.simple_block_game.data.lang.LangHandler;
-
+/** 通用初始化类 */
 public class CommonInit {
 
     private static IEventBus modBus;

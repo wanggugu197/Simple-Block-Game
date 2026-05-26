@@ -1,5 +1,11 @@
 package com.simple_block_game.common.simpleMinesweeper.block;
 
+import com.simple_block_game.common.base.block.BaseVerticalBlock;
+import com.simple_block_game.common.simpleMinesweeper.data.MinesweeperState;
+import com.simple_block_game.common.simpleMinesweeper.logic.GameMinesweeperHelper;
+import com.simple_block_game.common.simpleMinesweeper.logic.GameMinesweeperLogic;
+import com.simple_block_game.common.simpleMinesweeper.logic.GameMinesweeperReward;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -16,163 +22,157 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 import com.mojang.serialization.MapCodec;
-import com.simple_block_game.common.base.block.BaseVerticalBlock;
-import com.simple_block_game.common.simpleMinesweeper.data.MinesweeperState;
-import com.simple_block_game.common.simpleMinesweeper.logic.GameMinesweeperHelper;
-import com.simple_block_game.common.simpleMinesweeper.logic.GameMinesweeperLogic;
-import com.simple_block_game.common.simpleMinesweeper.logic.GameMinesweeperReward;
-import lombok.NonNull;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
-import javax.annotation.Nullable;
-
+/** 扫雷游戏显示方块 */
 public class BlockMinesweeperDisplay extends BaseVerticalBlock {
 
-    public static final EnumProperty<@NonNull MinesweeperState> DISPLAY_STATE = EnumProperty.create("display_state", MinesweeperState.class);
-
-    public BlockMinesweeperDisplay(BlockBehaviour.Properties properties) {
-        super(properties);
-        this.registerDefaultState(this.stateDefinition.any()
-                .setValue(DISPLAY_STATE, MinesweeperState.UNOPENED));
-    }
+    public static final EnumProperty<MinesweeperState> DISPLAY_STATE = EnumProperty.create("display_state", MinesweeperState.class);
 
     private static final MapCodec<BlockMinesweeperDisplay> CODEC = simpleCodec(BlockMinesweeperDisplay::new);
 
+    public BlockMinesweeperDisplay(BlockBehaviour.Properties properties) {
+        super(properties);
+        registerDefaultState(stateDefinition.any().setValue(DISPLAY_STATE, MinesweeperState.UNOPENED));
+    }
+
     @Override
-    protected @NotNull MapCodec<? extends BaseVerticalBlock> codec() {
+    protected @NonNull MapCodec<? extends BaseVerticalBlock> codec() {
         return CODEC;
     }
 
     @Override
-    protected void createBlockStateDefinition(@NonNull StateDefinition.Builder<Block, @NonNull BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.@NonNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(DISPLAY_STATE);
     }
 
-    @Nullable
     @Override
     public BlockEntity newBlockEntity(@NonNull BlockPos pos, @NonNull BlockState state) {
         return new BlockMinesweeperDisplayEntity(pos, state);
     }
 
     @Override
-    public @NonNull InteractionResult useWithoutItem(@NonNull BlockState state, @NonNull Level level, @NonNull BlockPos pos, @NonNull Player player, @NonNull BlockHitResult hit) {
-        if (level.isClientSide()) {
-            return InteractionResult.SUCCESS;
-        }
+    public @NonNull InteractionResult useWithoutItem(@NonNull BlockState state, Level level, @NonNull BlockPos pos, @NonNull Player player, @NonNull BlockHitResult hit) {
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+
         ServerLevel serverLevel = (ServerLevel) level;
-        BlockEntity be = serverLevel.getBlockEntity(pos);
-        if (!(be instanceof BlockMinesweeperDisplayEntity displayEntity)) {
-            return InteractionResult.FAIL;
-        }
-        BlockPos corePos = displayEntity.getCorePos();
+        BlockMinesweeperDisplayEntity display = getDisplayEntity(serverLevel, pos);
+        if (display == null) return InteractionResult.FAIL;
+
+        BlockPos corePos = display.getCorePos();
         if (corePos == null) {
             player.sendOverlayMessage(Component.translatable("msg.minesweeper.position_error"));
             return InteractionResult.FAIL;
         }
-        int[] relativePos = calculateRelativeGridPos(corePos, pos);
-        int gridX = relativePos[0];
-        int gridZ = relativePos[1];
-        BlockEntity coreBe = serverLevel.getBlockEntity(corePos);
-        if (!(coreBe instanceof BlockMinesweeperCoreEntity coreEntity)) {
+
+        BlockMinesweeperCoreEntity core = getCoreEntity(serverLevel, corePos);
+        if (core == null) {
             player.sendOverlayMessage(Component.translatable("msg.minesweeper.core_not_found"));
             return InteractionResult.FAIL;
         }
-        if (gridX < 0 || gridX >= coreEntity.getGridWidth() || gridZ < 0 || gridZ >= coreEntity.getGridHeight()) {
+
+        int[] rel = getRelativePos(corePos, pos);
+        if (!isValidPos(core, rel[0], rel[1])) {
             player.sendOverlayMessage(Component.translatable("msg.minesweeper.invalid_position"));
             return InteractionResult.FAIL;
         }
-        MinesweeperState currentState = displayEntity.getDisplayState();
-        if (coreEntity.isGameOver()) {
+
+        if (core.isGameOver()) {
             player.sendOverlayMessage(Component.translatable("msg.minesweeper.game_is_over"));
             return InteractionResult.FAIL;
         }
-        if (player.isSecondaryUseActive()) {
-            handleShiftClick(serverLevel, coreEntity, currentState, player, gridX, gridZ);
-        } else {
-            handleClick(serverLevel, coreEntity, currentState, player, gridX, gridZ);
-        }
 
+        MinesweeperState currentState = display.getDisplayState();
+        if (player.isSecondaryUseActive()) {
+            flag(serverLevel, core, currentState, player, rel[0], rel[1]);
+        } else {
+            flip(serverLevel, core, currentState, player, rel[0], rel[1]);
+        }
         return InteractionResult.SUCCESS;
     }
 
-    private int[] calculateRelativeGridPos(BlockPos corePos, BlockPos displayPos) {
-        int gridX = displayPos.getX() - (corePos.getX() + 1);
-        int gridZ = displayPos.getZ() - (corePos.getZ() + 1);
-        return new int[] { gridX, gridZ };
+    private BlockMinesweeperDisplayEntity getDisplayEntity(ServerLevel level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
+        return be instanceof BlockMinesweeperDisplayEntity display ? display : null;
     }
 
-    private void handleShiftClick(ServerLevel level, BlockMinesweeperCoreEntity coreEntity, MinesweeperState currentState, Player player, int gridX, int gridZ) {
-        if (!currentState.isUnopened() && !currentState.isFlagged()) {
+    private BlockMinesweeperCoreEntity getCoreEntity(ServerLevel level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
+        return be instanceof BlockMinesweeperCoreEntity core ? core : null;
+    }
+
+    private int[] getRelativePos(BlockPos corePos, BlockPos displayPos) {
+        return new int[] { displayPos.getX() - corePos.getX() - 1, displayPos.getZ() - corePos.getZ() - 1 };
+    }
+
+    private boolean isValidPos(BlockMinesweeperCoreEntity core, int x, int z) {
+        return x >= 0 && x < core.getGridWidth() && z >= 0 && z < core.getGridHeight();
+    }
+
+    private void flag(ServerLevel level, BlockMinesweeperCoreEntity core, MinesweeperState state, Player player, int x, int z) {
+        if (!state.isUnopened() && !state.isFlagged()) return;
+
+        BlockPos corePos = core.getBlockPos();
+        MinesweeperState[][] grid = GameMinesweeperHelper.readDisplayGrid(level, corePos, core.getGridWidth(), core.getGridHeight());
+        if (GameMinesweeperHelper.isFirstOpen(grid)) return;
+
+        GameMinesweeperLogic.FlagResult result = GameMinesweeperLogic.processFlag(
+                core.getMineGrid(), grid, x, z, core.getCurrentFlagCount(), core.getTotalMineCount());
+
+        if (result.success()) {
+            GameMinesweeperHelper.writeDisplayGrid(level, corePos, result.displayGrid());
+            core.setCurrentFlagCount(result.flagCount());
+            core.setChanged();
+        }
+        if (result.gameWin()) win(level, core, player);
+    }
+
+    private void flip(ServerLevel level, BlockMinesweeperCoreEntity core, MinesweeperState state, Player player, int x, int z) {
+        BlockPos corePos = core.getBlockPos();
+        int w = core.getGridWidth(), h = core.getGridHeight();
+
+        if (state.isNumberState()) {
+            if (GameMinesweeperHelper.isFlagCountMatched(level, corePos, x, z, state.getValue(), w, h)) {
+                boolean[] over = GameMinesweeperHelper.openSurrounding(level, core, x, z);
+                if (over[0]) lose(level, corePos, core, player);
+                else if (over[1]) win(level, core, player);
+            }
             return;
         }
-        boolean[][] mineGrid = coreEntity.getMineGrid();
-        int totalMineCount = coreEntity.getTotalMineCount();
-        int currentFlagCount = coreEntity.getCurrentFlagCount();
-        BlockPos corePos = coreEntity.getBlockPos();
-        MinesweeperState[][] displayGrid = GameMinesweeperHelper.readDisplayGrid(level, corePos, coreEntity.getGridWidth(), coreEntity.getGridHeight());
-        if (GameMinesweeperHelper.isFirstOpen(displayGrid)) {
-            return;
-        }
-        GameMinesweeperLogic.FlagResult flagResult = GameMinesweeperLogic.processFlag(mineGrid, displayGrid, gridX, gridZ, currentFlagCount, totalMineCount);
-        if (flagResult.success()) {
-            GameMinesweeperHelper.writeDisplayGrid(level, corePos, flagResult.displayGrid());
-            coreEntity.setCurrentFlagCount(flagResult.flagCount());
-            coreEntity.setChanged();
-        }
-        if (flagResult.gameWin()) {
-            handleWin(level, coreEntity, player);
+
+        if (state.isUnopened()) {
+            MinesweeperState[][] grid = GameMinesweeperHelper.readDisplayGrid(level, corePos, w, h);
+            if (GameMinesweeperHelper.isFirstOpen(grid)) core.setMineGrid(x, z);
+
+            GameMinesweeperLogic.FlipResult result = GameMinesweeperLogic.processFlip(
+                    core.getMineGrid(), grid, x, z, core.getCurrentFlagCount());
+
+            GameMinesweeperHelper.writeDisplayGrid(level, corePos, result.displayGrid());
+            if (result.gameOver()) lose(level, corePos, core, player);
+            else if (result.gameWin()) win(level, core, player);
         }
     }
 
-    private void handleClick(ServerLevel level, BlockMinesweeperCoreEntity coreEntity, MinesweeperState currentState, Player player, int gridX, int gridZ) {
-        BlockPos corePos = coreEntity.getBlockPos();
-        int width = coreEntity.getGridWidth();
-        int height = coreEntity.getGridHeight();
-        if (currentState.isNumberState()) {
-            boolean isMatched = GameMinesweeperHelper.isFlagCountMatched(level, corePos, gridX, gridZ, currentState.getValue(), width, height);
-            if (isMatched) {
-                boolean[] over = GameMinesweeperHelper.openSurroundingBlocks(level, coreEntity, gridX, gridZ);
-                if (over[0]) {
-                    coreEntity.setGameOver(true);
-                    GameMinesweeperHelper.generateAllMineExplosions(level, corePos, coreEntity);
-                    player.sendOverlayMessage(Component.translatable("msg.minesweeper.game_over"));
-                } else if (over[1]) {
-                    handleWin(level, coreEntity, player);
-                }
-                return;
-            }
-        }
-        if (currentState.isUnopened()) {
-            MinesweeperState[][] displayGrid = GameMinesweeperHelper.readDisplayGrid(level, corePos, width, height);
-            if (GameMinesweeperHelper.isFirstOpen(displayGrid)) {
-                coreEntity.setMineGrid(gridX, gridZ);
-            }
-            boolean[][] mineGrid = coreEntity.getMineGrid();
-            GameMinesweeperLogic.FlipResult flipResult = GameMinesweeperLogic.processFlip(
-                    mineGrid, displayGrid, gridX, gridZ, coreEntity.getCurrentFlagCount());
-            GameMinesweeperHelper.writeDisplayGrid(level, corePos, flipResult.displayGrid());
-            if (flipResult.gameOver()) {
-                coreEntity.setGameOver(true);
-                GameMinesweeperHelper.generateAllMineExplosions(level, corePos, coreEntity);
-                player.sendOverlayMessage(Component.translatable("msg.minesweeper.game_over"));
-            } else if (flipResult.gameWin()) {
-                handleWin(level, coreEntity, player);
-            }
-        }
+    private void lose(ServerLevel level, BlockPos corePos, BlockMinesweeperCoreEntity core, Player player) {
+        core.setGameOver(true);
+        GameMinesweeperHelper.generateExplosions(level, corePos, core);
+        player.sendOverlayMessage(Component.translatable("msg.minesweeper.game_over"));
     }
 
-    private static void handleWin(ServerLevel level, BlockMinesweeperCoreEntity coreEntity, Player player) {
-        coreEntity.setGameOver(true);
-        GameMinesweeperReward.handleReward(level, player, coreEntity.getMineContent());
+    private static void win(ServerLevel level, BlockMinesweeperCoreEntity core, Player player) {
+        core.setGameOver(true);
+        GameMinesweeperReward.handleReward(level, player, core.getMineContent());
         player.sendOverlayMessage(Component.translatable("msg.minesweeper.game_win"));
     }
 
     public static void setDisplayState(BlockGetter level, BlockPos pos, MinesweeperState newState) {
         if (level == null || pos == null || newState == null) return;
+
         if (level.getBlockEntity(pos) instanceof BlockMinesweeperDisplayEntity entity) {
             entity.setDisplayState(newState);
         }
+
         if (level instanceof Level realLevel && !realLevel.isClientSide()) {
             BlockState state = realLevel.getBlockState(pos);
             if (state.hasProperty(DISPLAY_STATE)) {
@@ -183,9 +183,11 @@ public class BlockMinesweeperDisplay extends BaseVerticalBlock {
 
     public static MinesweeperState getDisplayState(BlockGetter level, BlockPos pos) {
         if (level == null || pos == null) return MinesweeperState.UNOPENED;
+
         if (level.getBlockEntity(pos) instanceof BlockMinesweeperDisplayEntity entity) {
             return entity.getDisplayState();
         }
+
         BlockState state = level.getBlockState(pos);
         return state.hasProperty(DISPLAY_STATE) ? state.getValue(DISPLAY_STATE) : MinesweeperState.UNOPENED;
     }

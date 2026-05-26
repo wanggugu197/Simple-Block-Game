@@ -3,8 +3,12 @@ package com.simple_block_game.common.simple2048.data;
 import net.minecraft.util.StringRepresentable;
 
 import lombok.Getter;
-import lombok.NonNull;
+import org.jspecify.annotations.NonNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
+/** 2048游戏数值枚举 */
 public enum Value2048 implements StringRepresentable {
 
     ZERO(0, "0"),
@@ -25,6 +29,13 @@ public enum Value2048 implements StringRepresentable {
     THIRTY_TWO_K(32768, "32768"),
     SIXTY_FOUR_K(65536, "65536");
 
+    private static final Map<Integer, Value2048> VALUE_MAP = new HashMap<>();
+    static {
+        for (Value2048 val : values()) {
+            VALUE_MAP.put(val.value, val);
+        }
+    }
+
     @Getter
     private final int value;
     private final String serializedName;
@@ -36,15 +47,10 @@ public enum Value2048 implements StringRepresentable {
 
     @Override
     public @NonNull String getSerializedName() {
-        return this.serializedName;
+        return serializedName;
     }
 
     public static Value2048 fromInt(int value) {
-        for (Value2048 val : values()) {
-            if (val.value == value) {
-                return val;
-            }
-        }
-        return ZERO;
+        return VALUE_MAP.getOrDefault(value, ZERO);
     }
 }

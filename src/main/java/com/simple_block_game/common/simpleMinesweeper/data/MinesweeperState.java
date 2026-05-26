@@ -3,8 +3,12 @@ package com.simple_block_game.common.simpleMinesweeper.data;
 import net.minecraft.util.StringRepresentable;
 
 import lombok.Getter;
-import lombok.NonNull;
+import org.jspecify.annotations.NonNull;
 
+import java.util.HashMap;
+import java.util.Map;
+
+/** 扫雷方块状态枚举 */
 public enum MinesweeperState implements StringRepresentable {
 
     UNOPENED(0, "unopened"),
@@ -31,6 +35,13 @@ public enum MinesweeperState implements StringRepresentable {
     WRONG_FLAG_7(-17, "wrong_flag_7"),
     WRONG_FLAG_8(-18, "wrong_flag_8");
 
+    private static final Map<String, MinesweeperState> NAME_MAP = new HashMap<>();
+    static {
+        for (MinesweeperState state : values()) {
+            NAME_MAP.put(state.serializedName, state);
+        }
+    }
+
     @Getter
     private final int value;
     private final String serializedName;
@@ -42,7 +53,7 @@ public enum MinesweeperState implements StringRepresentable {
 
     @Override
     public @NonNull String getSerializedName() {
-        return this.serializedName;
+        return serializedName;
     }
 
     public static MinesweeperState fromInt(int value) {
@@ -52,7 +63,6 @@ public enum MinesweeperState implements StringRepresentable {
             case -5 -> OPEN_EMPTY;
             case -1 -> FLAGGED;
             case 0 -> UNOPENED;
-
             case 1 -> NUMBER_1;
             case 2 -> NUMBER_2;
             case 3 -> NUMBER_3;
@@ -61,7 +71,6 @@ public enum MinesweeperState implements StringRepresentable {
             case 6 -> NUMBER_6;
             case 7 -> NUMBER_7;
             case 8 -> NUMBER_8;
-
             case -11 -> WRONG_FLAG_1;
             case -12 -> WRONG_FLAG_2;
             case -13 -> WRONG_FLAG_3;
@@ -70,30 +79,23 @@ public enum MinesweeperState implements StringRepresentable {
             case -16 -> WRONG_FLAG_6;
             case -17 -> WRONG_FLAG_7;
             case -18 -> WRONG_FLAG_8;
-
             default -> UNOPENED;
         };
+    }
+
+    public static MinesweeperState fromSerializedName(String name) {
+        return NAME_MAP.getOrDefault(name, UNOPENED);
     }
 
     public static MinesweeperState getWrongFlagByNumber(int number) {
         if (number < 1 || number > 8) {
             throw new IllegalArgumentException("错误标记数字必须为1-8（当前：" + number + "）");
         }
-        return switch (number) {
-            case 1 -> WRONG_FLAG_1;
-            case 2 -> WRONG_FLAG_2;
-            case 3 -> WRONG_FLAG_3;
-            case 4 -> WRONG_FLAG_4;
-            case 5 -> WRONG_FLAG_5;
-            case 6 -> WRONG_FLAG_6;
-            case 7 -> WRONG_FLAG_7;
-            case 8 -> WRONG_FLAG_8;
-            default -> OPEN_EMPTY;
-        };
+        return fromInt(-10 - number);
     }
 
     public boolean isNumberState() {
-        return this.value >= 1 && this.value <= 8;
+        return value >= 1 && value <= 8;
     }
 
     public boolean isUnopened() {
@@ -105,9 +107,6 @@ public enum MinesweeperState implements StringRepresentable {
     }
 
     public boolean isWrongFlag() {
-        return switch (this) {
-            case WRONG_FLAG_1, WRONG_FLAG_2, WRONG_FLAG_3, WRONG_FLAG_4, WRONG_FLAG_5, WRONG_FLAG_6, WRONG_FLAG_7, WRONG_FLAG_8 -> true;
-            default -> false;
-        };
+        return value >= -18 && value <= -11;
     }
 }

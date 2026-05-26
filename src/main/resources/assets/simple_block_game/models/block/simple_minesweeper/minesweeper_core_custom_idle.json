@@ -3,7 +3,6 @@
   "textures": {
     "top": "simple_block_game:block/base_back",
     "bottom": "simple_block_game:block/base_back",
-    "side": "simple_block_game:block/base_side",
     "overlay_top": "simple_block_game:block/simple_minesweeper/minesweeper_core_custom_idle",
     "overlay_north": "simple_block_game:block/simple_minesweeper/minesweeper_core_z_axis_decreases",
     "overlay_south": "simple_block_game:block/simple_minesweeper/minesweeper_core_z_axis_increases",

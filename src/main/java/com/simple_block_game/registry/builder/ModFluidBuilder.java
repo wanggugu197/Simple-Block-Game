@@ -1,11 +1,12 @@
 package com.simple_block_game.registry.builder;
 
+import com.simple_block_game.registry.GameRegistryCore;
+
 import net.neoforged.neoforge.fluids.BaseFlowingFluid;
 import net.neoforged.neoforge.fluids.FluidType;
 
 import com.gto.registrylib.RegistryCore;
 import com.gto.registrylib.builders.FluidBuilder;
-import com.simple_block_game.registry.GameRegistryCore;
 import org.jetbrains.annotations.NotNull;
 
 public class ModFluidBuilder<T extends BaseFlowingFluid, P> extends FluidBuilder<T, P> {

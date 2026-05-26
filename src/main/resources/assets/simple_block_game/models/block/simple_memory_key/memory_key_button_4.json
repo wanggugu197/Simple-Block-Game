@@ -1,0 +1,6 @@
+{
+  "parent": "simple_block_game:block/vertical_base",
+  "textures": {
+    "overlay_top": "simple_block_game:block/simple_memory_key/memory_key_button_4"
+  }
+}

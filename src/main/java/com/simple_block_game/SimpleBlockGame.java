@@ -1,5 +1,8 @@
 package com.simple_block_game;
 
+import com.simple_block_game.common.CommonInit;
+import com.simple_block_game.registry.GameRegistryCore;
+
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -7,10 +10,9 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 
 import com.mojang.logging.LogUtils;
-import com.simple_block_game.common.CommonInit;
-import com.simple_block_game.registry.GameRegistryCore;
 import org.slf4j.Logger;
 
+/** 简单方块游戏主类 */
 @Mod(SimpleBlockGame.MODID)
 public class SimpleBlockGame {
 

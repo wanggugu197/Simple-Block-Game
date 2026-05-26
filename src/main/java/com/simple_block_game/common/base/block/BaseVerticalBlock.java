@@ -17,6 +17,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+/** 垂直固定方块基类，无方向属性 */
 public abstract class BaseVerticalBlock extends BaseEntityBlock {
 
     protected BaseVerticalBlock(Properties properties) {
@@ -24,7 +25,6 @@ public abstract class BaseVerticalBlock extends BaseEntityBlock {
                 .strength(100000.0F, 640000.0F)
                 .sound(SoundType.METAL)
                 .pushReaction(PushReaction.BLOCK)
-                .lightLevel(_ -> 6)
                 .noLootTable());
     }
 

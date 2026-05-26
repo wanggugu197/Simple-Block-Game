@@ -12,7 +12,12 @@ public class LangHandler {
     public static void init() {
         if (!REGISTRYLIB.doDatagen()) return;
 
-        // Game 2048
+        // ========== 公共翻译键 ==========
+        addLang("msg.common.refresh_entity_error", "刷新方块实体错误！", "Refresh block entity error!");
+        addLang("msg.common.entity_error", "方块实体错误！", "Block entity error!");
+        addLang("msg.common.obstructed", "布局区域被阻挡！请先清空区域。", "Layout area is obstructed! Please clear the area first.");
+
+        // ========== Game 2048 ==========
         addLang("msg.simple2048.game_started", "2048 游戏已开始！", "2048 Game Started!");
         addLang("msg.simple2048.obstructed", "无法生成 2048 布局，区域被方块遮挡！", "Cannot place 2048 layout - area is obstructed!");
         addLang("msg.simple2048.move_score", "得分+%d | 总分：%d", "Score +%d | Total: %d");
@@ -22,10 +27,8 @@ public class LangHandler {
         addLang("msg.simple2048.closed", "2048 游戏已关闭", "2048 Game Closed");
         addLang("msg.simple2048.reset", "2048 游戏已重置", "2048 Game Reset");
 
-        // Game Minesweeper
+        // ========== Game Minesweeper ==========
         addLang("msg.minesweeper.game_already_started", "游戏已经开始！", "Game already started!");
-        addLang("msg.minesweeper.entity_error", "方块实体错误！", "Block entity error!");
-        addLang("msg.minesweeper.layout_obstructed", "布局区域被阻挡！请先清空区域。", "Layout area is obstructed! Please clear the area first.");
         addLang("msg.minesweeper.layout_placed", "场地布置完毕！难度：%s | 尺寸：%dx%d | 再次点击以开始游戏", "The field layout is complete! Difficulty: %s | Size: %dx%d | Click again to start the game");
         addLang("msg.minesweeper.game_started", "游戏开始！难度：%s | 地雷数：%d | 尺寸：%dx%d", "Game started! Difficulty: %s | Mines: %d | Size: %dx%d");
         addLang("msg.minesweeper.difficulty_switched", "难度已切换为%s！尺寸：%dx%d | 地雷数：%d", "Difficulty switched to %s! Size: %dx%d | Mines: %d");
@@ -37,15 +40,27 @@ public class LangHandler {
         addLang("msg.minesweeper.game_is_over", "游戏已结束！请重新开始！", "Game over! Please start again! ");
         addLang("msg.minesweeper.game_over", "游戏结束！你踩到了地雷！", "Game over! You stepped on a mine!");
         addLang("msg.minesweeper.game_win", "恭喜！你赢得了游戏！", "Congratulations! You won the game!");
-        addLang("msg.minesweeper.refresh_entity_error", "刷新方块实体错误！", "Refresh block entity error!");
         addLang("msg.minesweeper.core_invalid", "无效的扫雷核心方块！", "Invalid minesweeper core block!");
         addLang("msg.minesweeper.minimized", "扫雷布局已最小化！", "Minesweeper layout minimized!");
         addLang("msg.minesweeper.closed", "扫雷布局已关闭！", "Minesweeper layout closed!");
         addLang("msg.minesweeper.reset", "扫雷游戏已重置！", "Minesweeper game reset!");
-        addLang("preset.minesweeper.difficulty.easy", "简单", "Easy");
-        addLang("preset.minesweeper.difficulty.normal", "普通", "Normal");
-        addLang("preset.minesweeper.difficulty.hard", "困难", "Hard");
-        addLang("preset.minesweeper.difficulty.expert", "专家", "Expert");
-        addLang("preset.minesweeper.difficulty.custom", "自定义", "Custom");
+        addLang("msg.minesweeper.difficulty.easy", "简单", "Easy");
+        addLang("msg.minesweeper.difficulty.normal", "普通", "Normal");
+        addLang("msg.minesweeper.difficulty.hard", "困难", "Hard");
+        addLang("msg.minesweeper.difficulty.expert", "专家", "Expert");
+        addLang("msg.minesweeper.difficulty.custom", "自定义", "Custom");
+
+        // ========== Game Memory Key ==========
+        addLang("msg.memory_key.game_ready", "场地布置完毕！点击开始游戏", "Layout complete! Click to start the game");
+        addLang("msg.memory_key.watch_sequence", "观看演示序列...", "Watch the sequence...");
+        addLang("msg.memory_key.core_not_found", "未找到记忆键核心方块！", "Memory Key Core block not found!");
+        addLang("msg.memory_key.core_invalid", "无效的记忆键核心方块！", "Invalid Memory Key Core block!");
+        addLang("msg.memory_key.minimized", "记忆键布局已最小化！", "Memory Key layout minimized!");
+        addLang("msg.memory_key.closed", "记忆键布局已关闭！", "Memory Key layout closed!");
+        addLang("msg.memory_key.reset", "记忆键游戏已重置！", "Memory Key game reset!");
+        addLang("msg.memory_key.all_levels_complete", "恭喜通关！", "Congratulations! You completed all levels!");
+        addLang("msg.memory_key.level_complete", "关卡 %d 完成！", "Level %d complete!");
+        addLang("msg.memory_key.game_over", "游戏结束！当前关卡：%d", "Game over! Current level: %d");
+        addLang("msg.memory_key.wrong_input", "输入错误！剩余 %d 次机会", "Wrong input! %d chances remaining");
     }
 }

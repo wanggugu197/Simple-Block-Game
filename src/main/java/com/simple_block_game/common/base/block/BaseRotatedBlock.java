@@ -12,17 +12,21 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.NonNull;
+
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+/** 水平旋转方块基类，支持水平方向朝向 */
 public abstract class BaseRotatedBlock extends BaseEntityBlock {
 
     public static final EnumProperty<@NonNull Direction> FACING = HorizontalDirectionalBlock.FACING;
 
     protected BaseRotatedBlock(BlockBehaviour.Properties properties) {
-        super(properties
-                .mapColor(MapColor.TERRACOTTA_WHITE)
+        super(properties.mapColor(MapColor.TERRACOTTA_WHITE)
                 .strength(100000.0F, 640000.0F)
                 .sound(SoundType.METAL)
                 .pushReaction(PushReaction.BLOCK)
@@ -38,6 +42,10 @@ public abstract class BaseRotatedBlock extends BaseEntityBlock {
     @Override
     public @NonNull BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+    }
+
+    protected static <B extends BaseRotatedBlock> MapCodec<B> simpleCodec(Supplier<B> factory) {
+        return RecordCodecBuilder.mapCodec(instance -> instance.group(propertiesCodec()).apply(instance, (_) -> factory.get()));
     }
 
     @Nullable

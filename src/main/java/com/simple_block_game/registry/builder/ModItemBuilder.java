@@ -1,10 +1,11 @@
 package com.simple_block_game.registry.builder;
 
+import com.simple_block_game.registry.GameRegistryCore;
+
 import net.minecraft.world.item.Item;
 
 import com.gto.registrylib.RegistryCore;
 import com.gto.registrylib.builders.ItemBuilder;
-import com.simple_block_game.registry.GameRegistryCore;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;

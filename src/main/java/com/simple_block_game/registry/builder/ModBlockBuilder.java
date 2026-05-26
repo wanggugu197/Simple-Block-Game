@@ -1,11 +1,12 @@
 package com.simple_block_game.registry.builder;
 
+import com.simple_block_game.registry.GameRegistryCore;
+
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import com.gto.registrylib.RegistryCore;
 import com.gto.registrylib.builders.BlockBuilder;
-import com.simple_block_game.registry.GameRegistryCore;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;

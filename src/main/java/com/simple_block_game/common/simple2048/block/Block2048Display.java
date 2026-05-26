@@ -1,5 +1,8 @@
 package com.simple_block_game.common.simple2048.block;
 
+import com.simple_block_game.common.base.block.BaseRotatedBlock;
+import com.simple_block_game.common.simple2048.data.Value2048;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
@@ -14,12 +17,9 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
 import com.mojang.serialization.MapCodec;
-import com.simple_block_game.common.base.block.BaseRotatedBlock;
-import com.simple_block_game.common.simple2048.data.Value2048;
 import lombok.NonNull;
 
-import javax.annotation.Nullable;
-
+/** 2048游戏显示方块 */
 public class Block2048Display extends BaseRotatedBlock {
 
     public static final EnumProperty<@NonNull Value2048> DISPLAY_VALUE = EnumProperty.create("display_value", Value2048.class);
@@ -44,7 +44,6 @@ public class Block2048Display extends BaseRotatedBlock {
         builder.add(DISPLAY_VALUE);
     }
 
-    @Nullable
     @Override
     public BlockEntity newBlockEntity(@NonNull BlockPos pos, @NonNull BlockState state) {
         return new Block2048DisplayEntity(pos, state);
@@ -53,16 +52,16 @@ public class Block2048Display extends BaseRotatedBlock {
     public static void setDisplayValue(BlockGetter level, BlockPos pos, int newValue) {
         if (level == null || pos == null) return;
 
-        Value2048 validEnum = Value2048.fromInt(newValue);
+        Value2048 value = Value2048.fromInt(newValue);
 
         if (level.getBlockEntity(pos) instanceof Block2048DisplayEntity entity) {
-            entity.setDisplayValue(validEnum);
+            entity.setDisplayValue(value);
         }
 
         if (level instanceof Level realLevel && !realLevel.isClientSide()) {
             BlockState state = realLevel.getBlockState(pos);
             if (state.hasProperty(DISPLAY_VALUE)) {
-                realLevel.setBlock(pos, state.setValue(DISPLAY_VALUE, validEnum), 3);
+                realLevel.setBlock(pos, state.setValue(DISPLAY_VALUE, value), 3);
             }
         }
     }
@@ -73,12 +72,14 @@ public class Block2048Display extends BaseRotatedBlock {
         if (level.getBlockEntity(pos) instanceof Block2048DisplayEntity entity) {
             return entity.getDisplayValue();
         }
+
         return 0;
     }
 
-    @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NonNull Level level, @NonNull BlockState state, @NonNull BlockEntityType<T> type) {
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NonNull Level level,
+                                                                  @NonNull BlockState state,
+                                                                  @NonNull BlockEntityType<T> type) {
         return null;
     }
 }

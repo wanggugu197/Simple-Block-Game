@@ -1,4 +1,6 @@
-package com.simple_block_game.common.simpleMinesweeper.block;
+package com.simple_block_game.common.base.block;
+
+import com.simple_block_game.common.SimpleBlockGameRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -8,28 +10,33 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import lombok.NonNull;
 
 import java.util.Objects;
 
 import javax.annotation.Nullable;
 
-public class BlockMinesweeperRefreshEntity extends BlockEntity {
+/** 刷新方块实体，存储关联的核心方块位置 */
+public class BlockRefreshEntity extends BlockEntity {
 
     private BlockPos corePos;
 
-    private static final String KEY_MINESWEEPER_REFRESH_DATA = "MinesweeperRefreshData";
+    private static final String KEY_REFRESH_DATA = "RefreshData";
     private static final String NBT_KEY_CORE_POS_X = "CorePosX";
     private static final String NBT_KEY_CORE_POS_Y = "CorePosY";
     private static final String NBT_KEY_CORE_POS_Z = "CorePosZ";
 
-    public BlockMinesweeperRefreshEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_MINESWEEPER_REFRESH_ENTITY.get(), pos, state);
+    public BlockRefreshEntity(BlockEntityType block, BlockPos pos, BlockState state) {
+        super(block, pos, state);
+    }
+
+    public BlockRefreshEntity(BlockPos pos, BlockState state) {
+        super(SimpleBlockGameRegistration.BLOCK_REFRESH_ENTITY.get(), pos, state);
     }
 
     @Nullable
@@ -57,13 +64,13 @@ public class BlockMinesweeperRefreshEntity extends BlockEntity {
             customTag.putInt(NBT_KEY_CORE_POS_Y, corePos.getY());
             customTag.putInt(NBT_KEY_CORE_POS_Z, corePos.getZ());
         }
-        output.store(KEY_MINESWEEPER_REFRESH_DATA, CompoundTag.CODEC, customTag);
+        output.store(KEY_REFRESH_DATA, CompoundTag.CODEC, customTag);
     }
 
     @Override
     protected void loadAdditional(@NonNull ValueInput input) {
         super.loadAdditional(input);
-        CompoundTag customTag = input.read(KEY_MINESWEEPER_REFRESH_DATA, CompoundTag.CODEC).orElse(new CompoundTag());
+        CompoundTag customTag = input.read(KEY_REFRESH_DATA, CompoundTag.CODEC).orElse(new CompoundTag());
         if (customTag.contains(NBT_KEY_CORE_POS_X) && customTag.contains(NBT_KEY_CORE_POS_Y) && customTag.contains(NBT_KEY_CORE_POS_Z)) {
             this.corePos = new BlockPos(
                     customTag.getIntOr(NBT_KEY_CORE_POS_X, 0),

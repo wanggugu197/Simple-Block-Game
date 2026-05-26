@@ -3,9 +3,9 @@ package com.simple_block_game.common.simpleMinesweeper.data;
 import net.minecraft.util.StringRepresentable;
 
 import lombok.Getter;
-import lombok.NonNull;
+import org.jspecify.annotations.NonNull;
 
-@Getter
+/** 扫雷预设难度枚举 */
 public enum PresetDifficulty implements StringRepresentable {
 
     EASY(9, 9, 10, "easy"),
@@ -14,8 +14,13 @@ public enum PresetDifficulty implements StringRepresentable {
     EXPERT(30, 64, 450, "expert"),
     CUSTOM(64, 64, 1000, "custom");
 
+    private static final PresetDifficulty[] VALUES = values();
+
+    @Getter
     private final int width;
+    @Getter
     private final int height;
+    @Getter
     private final int mineCount;
     private final String serializedName;
 
@@ -28,22 +33,18 @@ public enum PresetDifficulty implements StringRepresentable {
 
     @Override
     public @NonNull String getSerializedName() {
-        return this.serializedName;
+        return serializedName;
     }
 
     public PresetDifficulty next() {
-        PresetDifficulty[] values = PresetDifficulty.values();
-        int nextIndex = (this.ordinal() + 1) % values.length;
-        return values[nextIndex];
+        return VALUES[(ordinal() + 1) % VALUES.length];
     }
 
     public PresetDifficulty prev() {
-        PresetDifficulty[] values = PresetDifficulty.values();
-        int prevIndex = (this.ordinal() - 1 + values.length) % values.length;
-        return values[prevIndex];
+        return VALUES[(ordinal() - 1 + VALUES.length) % VALUES.length];
     }
 
     public String getDisplayName() {
-        return "preset.minesweeper.difficulty." + this.name().toLowerCase();
+        return "msg.minesweeper.difficulty." + name().toLowerCase();
     }
 }

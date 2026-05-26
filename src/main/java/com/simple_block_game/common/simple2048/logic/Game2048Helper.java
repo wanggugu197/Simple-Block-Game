@@ -1,5 +1,12 @@
 package com.simple_block_game.common.simple2048.logic;
 
+import com.simple_block_game.common.SimpleBlockGameRegistration;
+import com.simple_block_game.common.base.block.BaseRotatedBlock;
+import com.simple_block_game.common.base.block.BlockRefreshEntity;
+import com.simple_block_game.common.base.block.IGameCoreBlock;
+import com.simple_block_game.common.simple2048.block.Block2048Core;
+import com.simple_block_game.common.simple2048.block.Block2048Display;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -9,219 +16,166 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
-import com.simple_block_game.common.base.block.BaseRotatedBlock;
-import com.simple_block_game.common.simple2048.block.Block2048Core;
-import com.simple_block_game.common.simple2048.block.Block2048Display;
-
 import static com.simple_block_game.common.simple2048.logic.Game2048Logic.GRID_SIZE;
 
-public class Game2048Helper {
+/** 2048游戏布局辅助工具 */
+public final class Game2048Helper {
+
+    private static final int LAYOUT_SIZE = GRID_SIZE + 2;
+    private static final int REFRESH_OFFSET = GRID_SIZE + 1;
 
     private Game2048Helper() {}
 
-    /**
-     * 检查2048布局区域是否全为空气
-     */
     public static boolean checkLayoutAreaIsEmpty(ServerLevel level, BlockPos corePos, Direction coreFacing) {
-        Direction.Axis mainAxis = getMainExtendAxis(coreFacing);
-        int extendDirection = getExtendDirection(coreFacing);
-        for (int mainOffset = 0; mainOffset < GRID_SIZE + 2; mainOffset++) {
-            for (int yOffset = 0; yOffset < GRID_SIZE + 2; yOffset++) {
-                BlockPos targetPos = calculateTargetPos(corePos, mainAxis, extendDirection, mainOffset, yOffset);
-                if (targetPos.equals(corePos)) continue;
-                if (!level.isEmptyBlock(targetPos)) return false;
+        Direction.Axis axis = getAxis(coreFacing);
+        int dir = getDirection(coreFacing);
+
+        for (int i = 0; i < LAYOUT_SIZE; i++) {
+            for (int j = 0; j < LAYOUT_SIZE; j++) {
+                BlockPos pos = calcPos(corePos, axis, dir, i, j);
+                if (!pos.equals(corePos) && !level.isEmptyBlock(pos)) return false;
             }
         }
         return true;
     }
 
-    /**
-     * 生成2048的布局
-     */
     public static void generate2048Layout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
-        Direction.Axis mainAxis = getMainExtendAxis(coreFacing);
-        int extendDirection = getExtendDirection(coreFacing);
-        for (int mainOffset = 0; mainOffset < GRID_SIZE + 2; mainOffset++) {
-            for (int yOffset = 0; yOffset < GRID_SIZE + 2; yOffset++) {
-                BlockPos targetPos = calculateTargetPos(corePos, mainAxis, extendDirection, mainOffset, yOffset);
-                if (targetPos.equals(corePos)) continue;
-                BlockState placeState = getBlockStateByOffset(mainOffset, yOffset, coreFacing);
-                if (level.isEmptyBlock(targetPos)) {
-                    level.setBlock(targetPos, placeState, 3);
+        Direction.Axis axis = getAxis(coreFacing);
+        int dir = getDirection(coreFacing);
+
+        BlockState displayState = SimpleBlockGameRegistration.BLOCK_2048_DISPLAY.get()
+                .defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
+        BlockState refreshState = SimpleBlockGameRegistration.BLOCK_2048_REFRESH.get()
+                .defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
+        BlockState frameState = SimpleBlockGameRegistration.BLOCK_ROTATED_FRAME.get()
+                .defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
+
+        BlockPos refreshPos = null;
+
+        for (int i = 0; i < LAYOUT_SIZE; i++) {
+            for (int j = 0; j < LAYOUT_SIZE; j++) {
+                BlockPos pos = calcPos(corePos, axis, dir, i, j);
+                if (pos.equals(corePos)) continue;
+
+                BlockState state = getBlockState(i, j, displayState, refreshState, frameState);
+
+                if (level.isEmptyBlock(pos)) {
+                    level.setBlock(pos, state, 3);
+                    if (i == REFRESH_OFFSET && j == REFRESH_OFFSET) refreshPos = pos;
                 }
+            }
+        }
+
+        if (refreshPos != null && level.getBlockEntity(refreshPos) instanceof BlockRefreshEntity refreshEntity) {
+            refreshEntity.setCorePos(corePos);
+        }
+    }
+
+    public static void minimize2048Layout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
+        if (corePos == null || !level.isLoaded(corePos)) return;
+
+        Direction.Axis axis = getAxis(coreFacing);
+        int dir = getDirection(coreFacing);
+
+        for (int i = 0; i < LAYOUT_SIZE; i++) {
+            for (int j = 0; j < LAYOUT_SIZE; j++) {
+                BlockPos pos = calcPos(corePos, axis, dir, i, j);
+                if (pos.equals(corePos)) continue;
+
+                Block block = level.getBlockState(pos).getBlock();
+                if (is2048Block(block)) level.removeBlock(pos, false);
+            }
+        }
+
+        BlockState coreState = level.getBlockState(corePos);
+        if (coreState.getBlock() instanceof Block2048Core) {
+            level.setBlock(corePos, coreState.setValue(IGameCoreBlock.UNFOLDED, false), 3);
+            Block2048Core.reset(level, corePos);
+        }
+    }
+
+    public static void close2048Layout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
+        minimize2048Layout(level, corePos, coreFacing);
+        if (corePos == null || !level.isLoaded(corePos)) return;
+
+        BlockState coreState = level.getBlockState(corePos);
+        if (coreState.getBlock() instanceof Block2048Core) {
+            Vec3 dropPos = Vec3.atCenterOf(corePos);
+            level.addFreshEntity(new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z,
+                    new ItemStack(SimpleBlockGameRegistration.BLOCK_2048_CORE.get())));
+            level.removeBlock(corePos, false);
+        }
+    }
+
+    public static void reset2048Layout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
+        if (corePos == null || !level.isLoaded(corePos)) return;
+        writeDisplayGrid(level, corePos, coreFacing, Game2048Logic.initGrid());
+
+        if (level.getBlockState(corePos).getBlock() instanceof Block2048Core) {
+            Block2048Core.reset(level, corePos);
+        }
+    }
+
+    public static int[][] readDisplayGrid(ServerLevel level, BlockPos corePos, Direction facing) {
+        int[][] grid = new int[GRID_SIZE][GRID_SIZE];
+        Direction.Axis axis = getAxis(facing);
+        int dir = getDirection(facing);
+
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                BlockPos pos = calcPos(corePos, axis, dir, col + 1, GRID_SIZE - row);
+                grid[row][col] = Block2048Display.getDisplayValue(level, pos);
+            }
+        }
+        return grid;
+    }
+
+    public static void writeDisplayGrid(ServerLevel level, BlockPos corePos, Direction facing, int[][] grid) {
+        Direction.Axis axis = getAxis(facing);
+        int dir = getDirection(facing);
+
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                BlockPos pos = calcPos(corePos, axis, dir, col + 1, GRID_SIZE - row);
+                Block2048Display.setDisplayValue(level, pos, grid[row][col]);
             }
         }
     }
 
-    /**
-     * 根据FACING获取布局的主延伸轴
-     */
-    private static Direction.Axis getMainExtendAxis(Direction coreFacing) {
-        return switch (coreFacing) {
+    private static Direction.Axis getAxis(Direction facing) {
+        return switch (facing) {
             case NORTH, SOUTH -> Direction.Axis.X;
             case EAST, WEST -> Direction.Axis.Z;
             default -> Direction.Axis.Y;
         };
     }
 
-    /**
-     * 获取布局的延伸方向
-     */
-    private static int getExtendDirection(Direction coreFacing) {
-        return switch (coreFacing) {
+    private static int getDirection(Direction facing) {
+        return switch (facing) {
             case NORTH, EAST -> -1;
             case SOUTH, WEST -> +1;
             default -> 1;
         };
     }
 
-    /**
-     * 根据主轴/偏移量计算目标坐标
-     */
-    private static BlockPos calculateTargetPos(BlockPos corePos, Direction.Axis mainAxis, int extendDirection, int mainOffset, int yOffset) {
-        int coreX = corePos.getX();
-        int coreY = corePos.getY();
-        int coreZ = corePos.getZ();
-        int offset = mainOffset * extendDirection;
-        return switch (mainAxis) {
-            case X -> new BlockPos(coreX + offset, coreY + yOffset, coreZ);
-            case Z -> new BlockPos(coreX, coreY + yOffset, coreZ + offset);
+    private static BlockPos calcPos(BlockPos corePos, Direction.Axis axis, int dir, int i, int j) {
+        int offset = i * dir;
+        return switch (axis) {
+            case X -> new BlockPos(corePos.getX() + offset, corePos.getY() + j, corePos.getZ());
+            case Z -> new BlockPos(corePos.getX(), corePos.getY() + j, corePos.getZ() + offset);
             default -> corePos;
         };
     }
 
-    /**
-     * 根据偏移量确定要放置的方块类型
-     */
-    private static BlockState getBlockStateByOffset(int mainOffset, int yOffset, Direction coreFacing) {
-        String offsetKey = mainOffset + "," + yOffset;
-        return switch (offsetKey) {
-            case "1,1", "1,2", "1,3", "1,4", "2,1", "2,2", "2,3", "2,4", "3,1", "3,2", "3,3", "3,4", "4,1", "4,2", "4,3", "4,4" -> SimpleBlockGameRegistration.BLOCK_2048_DISPLAY
-                    .get().defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
-            case "5,5" -> SimpleBlockGameRegistration.BLOCK_2048_REFRESH.get().defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
-            default -> SimpleBlockGameRegistration.BLOCK_ROTATED_FRAME.get().defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
-        };
+    private static BlockState getBlockState(int i, int j, BlockState display, BlockState refresh, BlockState frame) {
+        if (i >= 1 && i <= GRID_SIZE && j >= 1 && j <= GRID_SIZE) return display;
+        if (i == REFRESH_OFFSET && j == REFRESH_OFFSET) return refresh;
+        return frame;
     }
 
-    /**
-     * 从Refresh方块位置反推核心方块位置
-     */
-    public static BlockPos findCorePosFromRefreshPos(ServerLevel level, BlockPos refreshPos, Direction refreshFacing) {
-        Direction.Axis mainAxis = getMainExtendAxis(refreshFacing);
-        int extendDirection = getExtendDirection(refreshFacing);
-        int offset = (GRID_SIZE + 1) * extendDirection;
-        int coreX = refreshPos.getX();
-        int coreY = refreshPos.getY() - (GRID_SIZE + 1);
-        int coreZ = refreshPos.getZ();
-        switch (mainAxis) {
-            case X -> coreX -= offset;
-            case Z -> coreZ -= offset;
-        }
-        BlockPos corePos = new BlockPos(coreX, coreY, coreZ);
-        BlockState coreState = level.getBlockState(corePos);
-        if (coreState.getBlock() instanceof Block2048Core) {
-            return corePos;
-        }
-        return null;
-    }
-
-    /**
-     * 最小化操作
-     */
-    public static void minimize2048Layout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
-        if (corePos == null || !level.isLoaded(corePos)) {
-            return;
-        }
-        Direction.Axis mainAxis = getMainExtendAxis(coreFacing);
-        int extendDirection = getExtendDirection(coreFacing);
-        for (int mainOffset = 0; mainOffset < GRID_SIZE + 2; mainOffset++) {
-            for (int yOffset = 0; yOffset < GRID_SIZE + 2; yOffset++) {
-                BlockPos targetPos = calculateTargetPos(corePos, mainAxis, extendDirection, mainOffset, yOffset);
-                if (targetPos.equals(corePos)) continue;
-                BlockState targetState = level.getBlockState(targetPos);
-                Block targetBlock = targetState.getBlock();
-                if (targetBlock == SimpleBlockGameRegistration.BLOCK_ROTATED_FRAME.get() ||
-                        targetBlock == SimpleBlockGameRegistration.BLOCK_2048_DISPLAY.get() ||
-                        targetBlock == SimpleBlockGameRegistration.BLOCK_2048_REFRESH.get()) {
-                    level.removeBlock(targetPos, false);
-                }
-            }
-        }
-        BlockState coreState = level.getBlockState(corePos);
-        if (coreState.getBlock() instanceof Block2048Core) {
-            level.setBlock(corePos, coreState.setValue(Block2048Core.UNFOLDED, false), 3);
-            Block2048Core.reset(level, corePos);
-        }
-    }
-
-    /**
-     * 关闭操作
-     */
-    public static void close2048Layout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
-        minimize2048Layout(level, corePos, coreFacing);
-        if (corePos == null || !level.isLoaded(corePos)) {
-            return;
-        }
-        BlockState coreState = level.getBlockState(corePos);
-        if (coreState.getBlock() instanceof Block2048Core) {
-            ItemStack coreItemStack = new ItemStack(SimpleBlockGameRegistration.BLOCK_2048_CORE.get());
-            Vec3 dropPos = Vec3.atCenterOf(corePos);
-            ItemEntity itemEntity = new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z, coreItemStack);
-            itemEntity.setDefaultPickUpDelay();
-            level.addFreshEntity(itemEntity);
-            level.removeBlock(corePos, false);
-        }
-    }
-
-    /**
-     * 重置操作
-     */
-    public static void reset2048Layout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
-        if (corePos == null || !level.isLoaded(corePos)) {
-            return;
-        }
-        int[][] initGrid = Game2048Logic.initGrid();
-        writeDisplayGrid(level, corePos, coreFacing, initGrid);
-        BlockState coreState = level.getBlockState(corePos);
-        if (coreState.getBlock() instanceof Block2048Core) {
-            Block2048Core.reset(level, corePos);
-        }
-    }
-
-    /**
-     * 读取Display方块的数组
-     */
-    public static int[][] readDisplayGrid(ServerLevel level, BlockPos corePos, Direction facing) {
-        int[][] grid = new int[GRID_SIZE][GRID_SIZE];
-        Direction.Axis mainAxis = Game2048Helper.getMainExtendAxis(facing);
-        int extendDirection = Game2048Helper.getExtendDirection(facing);
-        for (int row = 0; row < GRID_SIZE; row++) {
-            int yOffset = GRID_SIZE - row;
-            for (int col = 0; col < GRID_SIZE; col++) {
-                int mainOffset = col + 1;
-                BlockPos targetPos = Game2048Helper.calculateTargetPos(
-                        corePos, mainAxis, extendDirection, mainOffset, yOffset);
-                grid[row][col] = Block2048Display.getDisplayValue(level, targetPos);
-            }
-        }
-        return grid;
-    }
-
-    /**
-     * 将数组写入Display方块
-     */
-    public static void writeDisplayGrid(ServerLevel level, BlockPos corePos, Direction facing, int[][] grid) {
-        Direction.Axis mainAxis = Game2048Helper.getMainExtendAxis(facing);
-        int extendDirection = Game2048Helper.getExtendDirection(facing);
-        for (int row = 0; row < GRID_SIZE; row++) {
-            int yOffset = GRID_SIZE - row;
-            for (int col = 0; col < GRID_SIZE; col++) {
-                int mainOffset = col + 1;
-                BlockPos targetPos = Game2048Helper.calculateTargetPos(
-                        corePos, mainAxis, extendDirection, mainOffset, yOffset);
-                Block2048Display.setDisplayValue(level, targetPos, grid[row][col]);
-            }
-        }
+    private static boolean is2048Block(Block block) {
+        return block == SimpleBlockGameRegistration.BLOCK_ROTATED_FRAME.get() ||
+                block == SimpleBlockGameRegistration.BLOCK_2048_DISPLAY.get() ||
+                block == SimpleBlockGameRegistration.BLOCK_2048_REFRESH.get();
     }
 }

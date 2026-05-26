@@ -1,12 +1,13 @@
 package com.simple_block_game.registry.builder;
 
+import com.simple_block_game.registry.GameRegistryCore;
+
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 
 import com.gto.registrylib.RegistryCore;
 import com.gto.registrylib.builders.EntityBuilder;
-import com.simple_block_game.registry.GameRegistryCore;
 import org.jetbrains.annotations.NotNull;
 
 public class ModEntityBuilder<T extends Entity, P> extends EntityBuilder<T, P> {
