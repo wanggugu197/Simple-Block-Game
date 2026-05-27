@@ -22,12 +22,10 @@ public enum MemoryKeyPosition implements StringRepresentable {
     SOUTH_WEST(7, "south_west", -1, 0, 1);
 
     private static final Map<Integer, MemoryKeyPosition> ID_MAP = new HashMap<>();
-    private static final Map<String, MemoryKeyPosition> NAME_MAP = new HashMap<>();
 
     static {
         for (MemoryKeyPosition pos : values()) {
             ID_MAP.put(pos.id, pos);
-            NAME_MAP.put(pos.serializedName, pos);
         }
     }
 
@@ -61,6 +59,7 @@ public enum MemoryKeyPosition implements StringRepresentable {
 
     /** 计算相对于中心的绝对坐标 */
     public BlockPos getRelativePos(BlockPos center) {
+        if (center == null) return BlockPos.ZERO;
         return center.offset(offsetX, offsetY, offsetZ);
     }
 

@@ -1,7 +1,0 @@
-{
-  "parent": "simple_block_game:block/vertical_base",
-  "textures": {
-    "top": "simple_block_game:block/base_back",
-    "overlay_top": "simple_block_game:block/simple_minesweeper/minesweeper_core_expert_idle"
-  }
-}

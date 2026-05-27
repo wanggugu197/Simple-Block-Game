@@ -22,7 +22,9 @@ public class LangHandler {
         addLang("msg.simple2048.obstructed", "无法生成 2048 布局，区域被方块遮挡！", "Cannot place 2048 layout - area is obstructed!");
         addLang("msg.simple2048.move_score", "得分+%d | 总分：%d", "Score +%d | Total: %d");
         addLang("msg.simple2048.unmoveable", "已经无法再移动了 | 最大值：%d | 总分: %d", "It can no longer be moved | Maximum value：%d | Total: %d");
+
         addLang("msg.simple2048.core_not_found", "未找到 2048 核心方块！", "2048 Core Block not found!");
+        addLang("msg.simple2048.core_invalid", "无效的 2048 核心方块！", "Invalid 2048 core block!");
         addLang("msg.simple2048.minimized", "2048 游戏已最小化", "2048 Game Minimized");
         addLang("msg.simple2048.closed", "2048 游戏已关闭", "2048 Game Closed");
         addLang("msg.simple2048.reset", "2048 游戏已重置", "2048 Game Reset");
@@ -35,15 +37,17 @@ public class LangHandler {
         addLang("msg.minesweeper.custom_mine", "地雷数量已修改！尺寸：%dx%d | 地雷数：%d", "Number of mines modified! Size: %dx%d | Number of mines: %d");
         addLang("msg.minesweeper.custom_size", "尺寸已修改！尺寸：%dx%d | 地雷数：%d", "Size modified! Size: %dx%d | Number of mines: %d");
         addLang("msg.minesweeper.position_error", "位置数据无效！", "Invalid position data!");
-        addLang("msg.minesweeper.core_not_found", "未找到扫雷核心方块！", "Minesweeper core block not found!");
         addLang("msg.minesweeper.invalid_position", "位置超出有效网格范围！", "Position is out of valid grid range!");
         addLang("msg.minesweeper.game_is_over", "游戏已结束！请重新开始！", "Game over! Please start again! ");
         addLang("msg.minesweeper.game_over", "游戏结束！你踩到了地雷！", "Game over! You stepped on a mine!");
         addLang("msg.minesweeper.game_win", "恭喜！你赢得了游戏！", "Congratulations! You won the game!");
+
+        addLang("msg.minesweeper.core_not_found", "未找到扫雷核心方块！", "Minesweeper core block not found!");
         addLang("msg.minesweeper.core_invalid", "无效的扫雷核心方块！", "Invalid minesweeper core block!");
         addLang("msg.minesweeper.minimized", "扫雷布局已最小化！", "Minesweeper layout minimized!");
         addLang("msg.minesweeper.closed", "扫雷布局已关闭！", "Minesweeper layout closed!");
         addLang("msg.minesweeper.reset", "扫雷游戏已重置！", "Minesweeper game reset!");
+
         addLang("msg.minesweeper.difficulty.easy", "简单", "Easy");
         addLang("msg.minesweeper.difficulty.normal", "普通", "Normal");
         addLang("msg.minesweeper.difficulty.hard", "困难", "Hard");
@@ -53,14 +57,15 @@ public class LangHandler {
         // ========== Game Memory Key ==========
         addLang("msg.memory_key.game_ready", "场地布置完毕！点击开始游戏", "Layout complete! Click to start the game");
         addLang("msg.memory_key.watch_sequence", "观看演示序列...", "Watch the sequence...");
+        addLang("msg.memory_key.all_levels_complete", "恭喜通关！", "Congratulations! You completed all levels!");
+        addLang("msg.memory_key.level_complete", "关卡 %d 完成！", "Level %d complete!");
+        addLang("msg.memory_key.game_over", "游戏结束！当前关卡：%d", "Game over! Current level: %d");
+        addLang("msg.memory_key.wrong_input", "输入错误！剩余 %d 次机会", "Wrong input! %d chances remaining");
+
         addLang("msg.memory_key.core_not_found", "未找到记忆键核心方块！", "Memory Key Core block not found!");
         addLang("msg.memory_key.core_invalid", "无效的记忆键核心方块！", "Invalid Memory Key Core block!");
         addLang("msg.memory_key.minimized", "记忆键布局已最小化！", "Memory Key layout minimized!");
         addLang("msg.memory_key.closed", "记忆键布局已关闭！", "Memory Key layout closed!");
         addLang("msg.memory_key.reset", "记忆键游戏已重置！", "Memory Key game reset!");
-        addLang("msg.memory_key.all_levels_complete", "恭喜通关！", "Congratulations! You completed all levels!");
-        addLang("msg.memory_key.level_complete", "关卡 %d 完成！", "Level %d complete!");
-        addLang("msg.memory_key.game_over", "游戏结束！当前关卡：%d", "Game over! Current level: %d");
-        addLang("msg.memory_key.wrong_input", "输入错误！剩余 %d 次机会", "Wrong input! %d chances remaining");
     }
 }

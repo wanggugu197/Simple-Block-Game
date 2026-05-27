@@ -1,0 +1,6 @@
+{
+  "parent": "simple_block_game:block/base/rotated_center",
+  "textures": {
+    "front": "simple_block_game:block/base_back"
+  }
+}

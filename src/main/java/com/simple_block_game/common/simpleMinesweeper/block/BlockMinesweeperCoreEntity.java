@@ -1,39 +1,23 @@
 package com.simple_block_game.common.simpleMinesweeper.block;
 
 import com.simple_block_game.common.SimpleBlockGameRegistration;
+import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simpleMinesweeper.data.PresetDifficulty;
 import com.simple_block_game.common.simpleMinesweeper.logic.GameMinesweeperLogic;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
-import org.jspecify.annotations.NonNull;
 
 /** 扫雷游戏核心方块实体，存储雷区布局和游戏状态 */
-public class BlockMinesweeperCoreEntity extends BlockEntity {
-
-    private int flagCount;
-    @Getter
-    private boolean[][] mineGrid;
-    private PresetDifficulty preset = PresetDifficulty.EASY;
-    private int width = 9;
-    private int height = 9;
-    private int mineCount = 10;
-    @Setter
-    @Getter
-    private boolean gameOver;
+public class BlockMinesweeperCoreEntity extends BaseGameBlockEntity {
 
     private static final String KEY_DATA = "MinesweeperCoreData";
     private static final String KEY_MINE_COUNT = "TotalMineCount";
@@ -46,6 +30,17 @@ public class BlockMinesweeperCoreEntity extends BlockEntity {
     private static final String KEY_GRID_WIDTH = "Width";
     private static final String KEY_GRID_HEIGHT = "Height";
     private static final String KEY_GRID_DATA = "Data";
+
+    private int flagCount;
+    @Getter
+    private boolean[][] mineGrid;
+    private PresetDifficulty preset = PresetDifficulty.EASY;
+    private int width = 9;
+    private int height = 9;
+    private int mineCount = 10;
+    @Setter
+    @Getter
+    private boolean gameOver;
 
     public BlockMinesweeperCoreEntity(BlockPos pos, BlockState state) {
         super(SimpleBlockGameRegistration.BLOCK_MINESWEEPER_CORE_ENTITY.get(), pos, state);
@@ -83,20 +78,17 @@ public class BlockMinesweeperCoreEntity extends BlockEntity {
     }
 
     public void setPresetDifficulty(PresetDifficulty preset) {
+        if (preset == null) return;
         this.preset = preset;
-        width = preset.getWidth();
-        height = preset.getHeight();
-        mineCount = preset.getMineCount();
+        width = Math.max(1, preset.getWidth());
+        height = Math.max(1, preset.getHeight());
+        mineCount = Math.max(1, preset.getMineCount());
         setChanged();
-        if (level != null && !level.isClientSide()) {
-            BlockState state = level.getBlockState(worldPosition);
-            if (state.getValue(BlockMinesweeperCore.DIFFICULTY) != preset) {
-                level.setBlock(worldPosition, state.setValue(BlockMinesweeperCore.DIFFICULTY, preset), 3);
-            }
-        }
     }
 
     public void adjustSize(boolean isXAxis, boolean increase) {
+        if (width <= 0 || height <= 0) return;
+
         float content = getMineContent();
         if (isXAxis) {
             width = Mth.clamp(increase ? width + 1 : width - 1, 9, 256);
@@ -104,12 +96,17 @@ public class BlockMinesweeperCoreEntity extends BlockEntity {
             height = Mth.clamp(increase ? height + 1 : height - 1, 9, 256);
         }
         mineCount = (int) Mth.clamp(width * height * content, width * height * 0.1f, width * height * 0.4f);
+        setChanged();
     }
 
     public void adjustMineCount(boolean add) {
-        int increment = (int) (width * height * 0.005f);
+        if (width <= 0 || height <= 0) return;
+
+        int increment = Math.max(1, (int) (width * height * 0.005f));
         mineCount = Mth.clamp(add ? mineCount + increment : mineCount - increment,
-                (int) (width * height * 0.1f), (int) (width * height * 0.4f));
+                Math.max(1, (int) (width * height * 0.1f)),
+                Math.min(width * height - 1, (int) (width * height * 0.4f)));
+        setChanged();
     }
 
     public float getMineContent() {
@@ -181,23 +178,5 @@ public class BlockMinesweeperCoreEntity extends BlockEntity {
                 mineGrid = new boolean[height][width];
             }
         }
-    }
-
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        HolderLookup.Provider registries = level != null ? level.registryAccess() : RegistryAccess.EMPTY;
-        return ClientboundBlockEntityDataPacket.create(this, (be, _) -> be.getUpdateTag(registries));
-    }
-
-    @Override
-    public @NonNull CompoundTag getUpdateTag(HolderLookup.@NonNull Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-        tag.putInt(KEY_MINE_COUNT, mineCount);
-        tag.putInt(KEY_FLAG_COUNT, flagCount);
-        tag.putString(KEY_PRESET, preset.name());
-        tag.putInt(KEY_WIDTH, width);
-        tag.putInt(KEY_HEIGHT, height);
-        tag.putBoolean(KEY_GAME_OVER, gameOver);
-        return tag;
     }
 }

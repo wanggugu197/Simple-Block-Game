@@ -1,38 +1,50 @@
 package com.simple_block_game.common.base.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.NonNull;
 
-import java.util.function.Supplier;
-
-import javax.annotation.Nullable;
-
-/** 垂直固定方块基类，无方向属性 */
 public abstract class BaseVerticalBlock extends BaseEntityBlock {
+
+    public static final EnumProperty<@NonNull Direction> FACING = BlockStateProperties.VERTICAL_DIRECTION;
 
     protected BaseVerticalBlock(Properties properties) {
         super(properties.mapColor(MapColor.TERRACOTTA_WHITE)
-                .strength(100000.0F, 640000.0F)
+                .strength(100000.0F, 7200000.0F)
                 .sound(SoundType.METAL)
                 .pushReaction(PushReaction.BLOCK)
                 .noLootTable());
+        registerDefaultState(stateDefinition.any().setValue(FACING, Direction.UP));
     }
 
-    protected static <B extends BaseVerticalBlock> MapCodec<B> simpleCodec(Supplier<B> factory) {
-        return RecordCodecBuilder.mapCodec(instance -> instance.group(propertiesCodec()).apply(instance, (_) -> factory.get()));
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, @NonNull BlockState> builder) {
+        builder.add(FACING);
     }
 
-    @Nullable
+    @Override
+    public @NonNull BlockState getStateForPlacement(@NonNull BlockPlaceContext context) {
+        Direction face = context.getClickedFace();
+        return defaultBlockState().setValue(FACING, face == Direction.DOWN ? Direction.DOWN : Direction.UP);
+    }
+
     @Override
     public BlockEntity newBlockEntity(@NonNull BlockPos blockPos, @NonNull BlockState blockState) {
         return null;
@@ -41,5 +53,18 @@ public abstract class BaseVerticalBlock extends BaseEntityBlock {
     @Override
     public @NonNull RenderShape getRenderShape(@NonNull BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    public boolean canEntityDestroy(@NonNull BlockState state, @NonNull BlockGetter level, @NonNull BlockPos pos, @NonNull Entity entity) {
+        return false;
+    }
+
+    @Override
+    public void onBlockExploded(@NonNull BlockState state, @NonNull ServerLevel level, @NonNull BlockPos blockPos, @NonNull Explosion explosion) {}
+
+    @Override
+    public boolean canBeReplaced(@NonNull BlockState state, @NonNull BlockPlaceContext context) {
+        return false;
     }
 }

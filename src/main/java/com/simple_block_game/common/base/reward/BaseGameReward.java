@@ -17,7 +17,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 import java.util.Objects;
 
-/** 游戏奖励基类，提供战利品掉落功能 */
 public abstract class BaseGameReward {
 
     protected static Identifier id(String path) {
@@ -25,6 +24,7 @@ public abstract class BaseGameReward {
     }
 
     protected static void dropLoot(ServerLevel level, Player player, Identifier tableId) {
+        if (level == null || player == null || tableId == null) return;
         if (player.isDeadOrDying()) return;
 
         LootTable table = level.getServer().reloadableRegistries()

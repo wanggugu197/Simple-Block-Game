@@ -5,7 +5,6 @@ import com.simple_block_game.common.simple2048.data.Quadrant;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-/** 2048游戏核心逻辑 */
 public final class Game2048Logic {
 
     public static final int GRID_SIZE = 4;
@@ -15,7 +14,6 @@ public final class Game2048Logic {
 
     private Game2048Logic() {}
 
-    /** 初始化棋盘，添加两个随机数字 */
     public static int[][] initGrid() {
         int[][] grid = new int[GRID_SIZE][GRID_SIZE];
         addRandomNumber(grid);
@@ -23,8 +21,21 @@ public final class Game2048Logic {
         return grid;
     }
 
-    /** 处理玩家移动 */
+    public static boolean isValidGrid(int[][] grid) {
+        if (grid == null) return false;
+        if (grid.length != GRID_SIZE) return false;
+        for (int[] row : grid) {
+            if (row == null || row.length != GRID_SIZE) return false;
+        }
+        return true;
+    }
+
     public static MoveResult processMove(int[][] originalGrid, Quadrant direction) {
+        if (!isValidGrid(originalGrid) || direction == null || direction == Quadrant.NULL) {
+            int[][] empty = initGrid();
+            return new MoveResult(empty, 0, 0, false, true);
+        }
+
         int[][] grid = copy(originalGrid);
         boolean moved = false;
         int score = 0;
@@ -33,12 +44,11 @@ public final class Game2048Logic {
         int[][] working = rotateToLeft(grid, direction);
 
         for (int row = 0; row < GRID_SIZE; row++) {
-            int[] result = mergeLine(working[row]);
-            int lineScore = calculateLineScore(working[row], result);
-            if (!arraysEqual(working[row], result)) moved = true;
-            working[row] = result;
-            score += lineScore;
-            maxNumber = Math.max(maxNumber, findMaxInLine(result));
+            MergeResult mergeResult = mergeLineWithScore(working[row]);
+            if (!arraysEqual(working[row], mergeResult.line)) moved = true;
+            working[row] = mergeResult.line;
+            score += mergeResult.score;
+            maxNumber = Math.max(maxNumber, findMaxInLine(working[row]));
         }
 
         int[][] finalGrid = rotateBack(working, direction);
@@ -49,9 +59,18 @@ public final class Game2048Logic {
         }
 
         boolean gameOver = !canMove(finalGrid);
-
         return new MoveResult(finalGrid, score, maxNumber, moved, gameOver);
     }
+
+    public static int[][] copy(int[][] original) {
+        int[][] copy = new int[original.length][];
+        for (int i = 0; i < original.length; i++) {
+            copy[i] = original[i].clone();
+        }
+        return copy;
+    }
+
+    private record MergeResult(int[] line, int score) {}
 
     private static int[][] rotateToLeft(int[][] grid, Quadrant direction) {
         int[][] result = copy(grid);
@@ -79,20 +98,23 @@ public final class Game2048Logic {
         return result;
     }
 
-    private static int[] mergeLine(int[] line) {
+    private static MergeResult mergeLineWithScore(int[] line) {
         int[] filtered = filterZero(line);
         int[] merged = new int[GRID_SIZE];
         int index = 0;
+        int score = 0;
 
         for (int i = 0; i < filtered.length; i++) {
             if (i + 1 < filtered.length && filtered[i] == filtered[i + 1]) {
-                merged[index++] = filtered[i] * 2;
+                int newValue = filtered[i] * 2;
+                merged[index++] = newValue;
+                score += newValue;
                 i++;
             } else {
                 merged[index++] = filtered[i];
             }
         }
-        return merged;
+        return new MergeResult(merged, score);
     }
 
     private static int[] filterZero(int[] line) {
@@ -102,14 +124,6 @@ public final class Game2048Logic {
         int index = 0;
         for (int num : line) if (num != 0) result[index++] = num;
         return result;
-    }
-
-    private static int calculateLineScore(int[] original, int[] merged) {
-        int score = 0;
-        for (int num : merged) {
-            if (num > 4) score += num;
-        }
-        return score;
     }
 
     private static void addRandomNumber(int[][] grid) {
@@ -159,13 +173,5 @@ public final class Game2048Logic {
         if (a.length != b.length) return false;
         for (int i = 0; i < a.length; i++) if (a[i] != b[i]) return false;
         return true;
-    }
-
-    public static int[][] copy(int[][] original) {
-        int[][] copy = new int[original.length][];
-        for (int i = 0; i < original.length; i++) {
-            copy[i] = original[i].clone();
-        }
-        return copy;
     }
 }

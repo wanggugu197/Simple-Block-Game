@@ -18,7 +18,6 @@ import net.minecraft.world.phys.Vec3;
 
 import static com.simple_block_game.common.simple2048.logic.Game2048Logic.GRID_SIZE;
 
-/** 2048游戏布局辅助工具 */
 public final class Game2048Helper {
 
     private static final int LAYOUT_SIZE = GRID_SIZE + 2;
@@ -39,7 +38,7 @@ public final class Game2048Helper {
         return true;
     }
 
-    public static void generate2048Layout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
+    public static void generateLayout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
         Direction.Axis axis = getAxis(coreFacing);
         int dir = getDirection(coreFacing);
 
@@ -60,7 +59,7 @@ public final class Game2048Helper {
                 BlockState state = getBlockState(i, j, displayState, refreshState, frameState);
 
                 if (level.isEmptyBlock(pos)) {
-                    level.setBlock(pos, state, 3);
+                    level.setBlock(pos, state, Block.UPDATE_ALL);
                     if (i == REFRESH_OFFSET && j == REFRESH_OFFSET) refreshPos = pos;
                 }
             }
@@ -71,7 +70,7 @@ public final class Game2048Helper {
         }
     }
 
-    public static void minimize2048Layout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
+    public static void minimizeLayout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
         if (corePos == null || !level.isLoaded(corePos)) return;
 
         Direction.Axis axis = getAxis(coreFacing);
@@ -89,13 +88,13 @@ public final class Game2048Helper {
 
         BlockState coreState = level.getBlockState(corePos);
         if (coreState.getBlock() instanceof Block2048Core) {
-            level.setBlock(corePos, coreState.setValue(IGameCoreBlock.UNFOLDED, false), 3);
+            level.setBlock(corePos, coreState.setValue(IGameCoreBlock.UNFOLDED, false), Block.UPDATE_ALL);
             Block2048Core.reset(level, corePos);
         }
     }
 
-    public static void close2048Layout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
-        minimize2048Layout(level, corePos, coreFacing);
+    public static void closeLayout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
+        minimizeLayout(level, corePos, coreFacing);
         if (corePos == null || !level.isLoaded(corePos)) return;
 
         BlockState coreState = level.getBlockState(corePos);
@@ -107,7 +106,7 @@ public final class Game2048Helper {
         }
     }
 
-    public static void reset2048Layout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
+    public static void resetLayout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
         if (corePos == null || !level.isLoaded(corePos)) return;
         writeDisplayGrid(level, corePos, coreFacing, Game2048Logic.initGrid());
 

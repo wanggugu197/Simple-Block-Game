@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "simple_block_game:block/base/rotated_side",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "simple_block_game:block/base/rotated_side"
+    },
+    "facing=south": {
+      "model": "simple_block_game:block/base/rotated_side",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "simple_block_game:block/base/rotated_side",
+      "y": 270
+    }
+  }
+}

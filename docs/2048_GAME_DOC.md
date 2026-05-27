@@ -15,10 +15,13 @@ src/main/java/com/simple_block_game/common/simple2048/
 ├── data/                     # 数据类
 │   ├── Quadrant.java               # 四象限方向枚举（上下左右）
 │   └── Value2048.java              # 数字值枚举
-└── logic/                    # 逻辑类
-    ├── Game2048Logic.java          # 游戏核心逻辑
-    ├── Game2048Helper.java         # Minecraft交互辅助方法
-    └── Game2048Reward.java         # 奖励系统
+├── logic/                    # 逻辑类
+│   ├── Game2048Logic.java          # 游戏核心逻辑
+│   ├── Game2048Helper.java         # Minecraft交互辅助方法
+│   └── Game2048Reward.java         # 奖励系统
+└── renderer/                 # 渲染器
+    ├── Block2048CoreEntityRenderer.java      # 核心实体渲染器
+    └── Block2048DisplayEntityRenderer.java   # 显示实体渲染器
 ```
 
 ---
@@ -57,6 +60,13 @@ src/main/java/com/simple_block_game/common/simple2048/
 | `Game2048Logic` | 纯游戏逻辑（无Minecraft依赖） | `processMove()`, `initGrid()`, `isGameOver()` |
 | `Game2048Helper` | Minecraft世界交互方法 | `generate2048Layout()`, `readDisplayGrid()`, `writeDisplayGrid()` |
 | `Game2048Reward` | 分数和数字奖励系统 | `handleScoreReward()`, `handleMaxNumberReward()` |
+
+### 2.4 渲染器类
+
+| 类名 | 职责 | 关键方法 |
+|------|------|---------|
+| `Block2048CoreEntityRenderer` | 核心实体渲染器，显示分数和最大值 | `getTextureForState()` |
+| `Block2048DisplayEntityRenderer` | 显示实体渲染器，显示2048数字纹理 | `getTexturesForState()` |
 
 ---
 
@@ -168,85 +178,23 @@ Block2048Display.setDisplayValue(level, pos, grid[row][col]);
 
 ---
 
-## 五、添加新游戏的模板
+## 五、设计模式
 
-参考项目中已有的三个游戏实现模式：
-
-### 5.1 核心方块实体模板
-
-```java
-public class BlockNewGameCoreEntity extends BlockEntity {
-    private int score = 0;
-    
-    public void tick() { /* 游戏逻辑更新 */ }
-    public void resetScore() { score = 0; }
-    public int getScore() { return score; }
-}
-```
-
-### 5.2 核心方块模板
-
-```java
-public class BlockNewGameCore extends BaseRotatedBlock implements IGameCoreBlock {
-    @Override
-    public boolean unfoldGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
-        // 生成布局
-        GameNewGameHelper.generateLayout(level, pos, state.getValue(FACING));
-        level.setBlock(pos, state.setValue(UNFOLDED, true), 3);
-        return true;
-    }
-    
-    @Override
-    public void startGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
-        // 初始化游戏数据
-    }
-    
-    @Override
-    public void resetGame(ServerLevel level, BlockPos pos, BlockState state) {
-        // 重置游戏
-    }
-    
-    @Override
-    public void minimizeGame(ServerLevel level, BlockPos pos, BlockState state) {
-        // 最小化游戏
-    }
-    
-    @Override
-    public void closeGame(ServerLevel level, BlockPos pos, BlockState state) {
-        // 关闭游戏
-    }
-}
-```
-
-### 5.3 纯逻辑类模板
-
-```java
-public final class GameNewGameLogic {
-    public static MoveResult processMove(int[][] grid, Direction dir) {
-        // 纯逻辑处理，无Minecraft依赖
-    }
-}
-```
-
----
-
-## 六、设计模式
-
-### 6.1 纯逻辑与交互分离
+### 5.1 纯逻辑与交互分离
 
 游戏核心逻辑(`Game2048Logic`)不依赖Minecraft，可以独立测试。
 
-### 6.2 实体存储状态
+### 5.2 实体存储状态
 
 游戏状态通过`BlockEntity`持久化，支持保存/加载。
 
-### 6.3 方向适配
+### 5.3 方向适配
 
 支持四个朝向(NORTH/EAST/SOUTH/WEST)，通过坐标变换适配不同方向。
 
 ---
 
-## 七、文件清单
+## 六、文件清单
 
 | 文件 | 路径 | 说明 |
 |------|------|------|
@@ -260,15 +208,18 @@ public final class GameNewGameLogic {
 | 游戏逻辑 | `logic/Game2048Logic.java` | 纯2048算法 |
 | 辅助方法 | `logic/Game2048Helper.java` | Minecraft交互 |
 | 奖励系统 | `logic/Game2048Reward.java` | 分数奖励 |
+| 核心渲染器 | `renderer/Block2048CoreEntityRenderer.java` | 核心实体渲染 |
+| 显示渲染器 | `renderer/Block2048DisplayEntityRenderer.java` | 显示实体渲染 |
 
 ---
 
-## 八、版本历史
+## 七、版本历史
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
 | v1.0 | 2026-05 | 初始版本，完成核心玩法 |
 | v1.1 | 2026-05 | 添加奖励系统 |
+| v1.2 | 2026-05 | 添加自定义渲染器 |
 
-*文档版本: 1.1*  
-*最后更新: 2026-05-27*
+*文档版本: 1.2*  
+*最后更新: 2026-05-29*

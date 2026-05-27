@@ -61,9 +61,4 @@ public enum MemoryKeyLevel implements StringRepresentable {
     public boolean isLastLevel() {
         return this == LEVEL_6;
     }
-
-    /** 获取总关卡数 */
-    public static int getTotalLevels() {
-        return VALUES.length;
-    }
 }

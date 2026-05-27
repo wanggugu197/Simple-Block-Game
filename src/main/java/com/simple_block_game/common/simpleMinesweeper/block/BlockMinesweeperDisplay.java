@@ -1,5 +1,6 @@
 package com.simple_block_game.common.simpleMinesweeper.block;
 
+import com.simple_block_game.SimpleBlockGameConfig;
 import com.simple_block_game.common.base.block.BaseVerticalBlock;
 import com.simple_block_game.common.simpleMinesweeper.data.MinesweeperState;
 import com.simple_block_game.common.simpleMinesweeper.logic.GameMinesweeperHelper;
@@ -18,23 +19,19 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 
 import com.mojang.serialization.MapCodec;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 
 /** 扫雷游戏显示方块 */
 public class BlockMinesweeperDisplay extends BaseVerticalBlock {
 
-    public static final EnumProperty<MinesweeperState> DISPLAY_STATE = EnumProperty.create("display_state", MinesweeperState.class);
-
-    private static final MapCodec<BlockMinesweeperDisplay> CODEC = simpleCodec(BlockMinesweeperDisplay::new);
-
     public BlockMinesweeperDisplay(BlockBehaviour.Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(DISPLAY_STATE, MinesweeperState.UNOPENED));
     }
+
+    private static final MapCodec<BlockMinesweeperDisplay> CODEC = simpleCodec(BlockMinesweeperDisplay::new);
 
     @Override
     protected @NonNull MapCodec<? extends BaseVerticalBlock> codec() {
@@ -44,7 +41,6 @@ public class BlockMinesweeperDisplay extends BaseVerticalBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NonNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(DISPLAY_STATE);
     }
 
     @Override
@@ -53,8 +49,10 @@ public class BlockMinesweeperDisplay extends BaseVerticalBlock {
     }
 
     @Override
-    public @NonNull InteractionResult useWithoutItem(@NonNull BlockState state, Level level, @NonNull BlockPos pos, @NonNull Player player, @NonNull BlockHitResult hit) {
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
+    public @NonNull InteractionResult useWithoutItem(@NonNull BlockState state, @NonNull Level level, @NonNull BlockPos pos, @NonNull Player player, @NonNull BlockHitResult hit) {
+        if (!SimpleBlockGameConfig.enableMinesweeperGame.get() || level.isClientSide()) {
+            return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.PASS;
+        }
 
         ServerLevel serverLevel = (ServerLevel) level;
         BlockMinesweeperDisplayEntity display = getDisplayEntity(serverLevel, pos);
@@ -83,11 +81,10 @@ public class BlockMinesweeperDisplay extends BaseVerticalBlock {
             return InteractionResult.FAIL;
         }
 
-        MinesweeperState currentState = display.getDisplayState();
         if (player.isSecondaryUseActive()) {
-            flag(serverLevel, core, currentState, player, rel[0], rel[1]);
+            flag(serverLevel, core, display.getState(), player, rel[0], rel[1]);
         } else {
-            flip(serverLevel, core, currentState, player, rel[0], rel[1]);
+            flip(serverLevel, core, display.getState(), player, rel[0], rel[1]);
         }
         return InteractionResult.SUCCESS;
     }
@@ -172,23 +169,15 @@ public class BlockMinesweeperDisplay extends BaseVerticalBlock {
         if (level.getBlockEntity(pos) instanceof BlockMinesweeperDisplayEntity entity) {
             entity.setDisplayState(newState);
         }
-
-        if (level instanceof Level realLevel && !realLevel.isClientSide()) {
-            BlockState state = realLevel.getBlockState(pos);
-            if (state.hasProperty(DISPLAY_STATE)) {
-                realLevel.setBlock(pos, state.setValue(DISPLAY_STATE, newState), 3);
-            }
-        }
     }
 
     public static MinesweeperState getDisplayState(BlockGetter level, BlockPos pos) {
         if (level == null || pos == null) return MinesweeperState.UNOPENED;
 
         if (level.getBlockEntity(pos) instanceof BlockMinesweeperDisplayEntity entity) {
-            return entity.getDisplayState();
+            return entity.getState();
         }
 
-        BlockState state = level.getBlockState(pos);
-        return state.hasProperty(DISPLAY_STATE) ? state.getValue(DISPLAY_STATE) : MinesweeperState.UNOPENED;
+        return MinesweeperState.UNOPENED;
     }
 }

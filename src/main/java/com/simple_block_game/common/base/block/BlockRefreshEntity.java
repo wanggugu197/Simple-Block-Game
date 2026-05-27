@@ -3,26 +3,19 @@ package com.simple_block_game.common.base.block;
 import com.simple_block_game.common.SimpleBlockGameRegistration;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.NonNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-import javax.annotation.Nullable;
-
-/** 刷新方块实体，存储关联的核心方块位置 */
-public class BlockRefreshEntity extends BlockEntity {
+public class BlockRefreshEntity extends BaseGameBlockEntity {
 
     private BlockPos corePos;
 
@@ -31,7 +24,7 @@ public class BlockRefreshEntity extends BlockEntity {
     private static final String NBT_KEY_CORE_POS_Y = "CorePosY";
     private static final String NBT_KEY_CORE_POS_Z = "CorePosZ";
 
-    public BlockRefreshEntity(BlockEntityType block, BlockPos pos, BlockState state) {
+    public BlockRefreshEntity(BlockEntityType<?> block, BlockPos pos, BlockState state) {
         super(block, pos, state);
     }
 
@@ -45,13 +38,11 @@ public class BlockRefreshEntity extends BlockEntity {
     }
 
     public void setCorePos(BlockPos corePos) {
-        if (Objects.equals(corePos, this.corePos)) {
-            return;
-        }
+        if (Objects.equals(corePos, this.corePos)) return;
         this.corePos = corePos;
-        this.setChanged();
-        if (this.level != null && !this.level.isClientSide()) {
-            this.level.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), 3);
+        setChanged();
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
     }
 
@@ -72,30 +63,12 @@ public class BlockRefreshEntity extends BlockEntity {
         super.loadAdditional(input);
         CompoundTag customTag = input.read(KEY_REFRESH_DATA, CompoundTag.CODEC).orElse(new CompoundTag());
         if (customTag.contains(NBT_KEY_CORE_POS_X) && customTag.contains(NBT_KEY_CORE_POS_Y) && customTag.contains(NBT_KEY_CORE_POS_Z)) {
-            this.corePos = new BlockPos(
+            corePos = new BlockPos(
                     customTag.getIntOr(NBT_KEY_CORE_POS_X, 0),
                     customTag.getIntOr(NBT_KEY_CORE_POS_Y, 0),
                     customTag.getIntOr(NBT_KEY_CORE_POS_Z, 0));
         } else {
-            this.corePos = null;
+            corePos = null;
         }
-    }
-
-    @Nullable
-    @Override
-    public Packet<@NonNull ClientGamePacketListener> getUpdatePacket() {
-        HolderLookup.Provider registries = this.level != null ? this.level.registryAccess() : RegistryAccess.EMPTY;
-        return ClientboundBlockEntityDataPacket.create(this, (blockEntity, _) -> blockEntity.getUpdateTag(registries));
-    }
-
-    @Override
-    public @NonNull CompoundTag getUpdateTag(@NonNull HolderLookup.Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-        if (corePos != null) {
-            tag.putInt(NBT_KEY_CORE_POS_X, corePos.getX());
-            tag.putInt(NBT_KEY_CORE_POS_Y, corePos.getY());
-            tag.putInt(NBT_KEY_CORE_POS_Z, corePos.getZ());
-        }
-        return tag;
     }
 }

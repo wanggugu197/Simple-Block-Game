@@ -8,7 +8,6 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-/** 扫雷游戏核心逻辑 */
 public final class GameMinesweeperLogic {
 
     private static final Random RANDOM = ThreadLocalRandom.current();
@@ -19,18 +18,46 @@ public final class GameMinesweeperLogic {
 
     private GameMinesweeperLogic() {}
 
-    /** 生成雷区布局（首次点击位置周围3x3安全） */
     public static boolean[][] generateMineGrid(int width, int height, int mineCount, int startX, int startZ) {
+        if (width <= 0 || height <= 0) return new boolean[0][0];
+
         boolean[][] mineGrid = new boolean[height][width];
-        int placed = 0;
-        while (placed < mineCount) {
-            int x = RANDOM.nextInt(width);
-            int z = RANDOM.nextInt(height);
-            if (!isSafe(x, z, startX, startZ) && !mineGrid[z][x]) {
-                mineGrid[z][x] = true;
-                placed++;
+
+        int safeZoneStartX = Math.max(0, startX - 1);
+        int safeZoneEndX = Math.min(width - 1, startX + 1);
+        int safeZoneStartZ = Math.max(0, startZ - 1);
+        int safeZoneEndZ = Math.min(height - 1, startZ + 1);
+
+        int safeCells = (safeZoneEndX - safeZoneStartX + 1) * (safeZoneEndZ - safeZoneStartZ + 1);
+        int availableCells = width * height - safeCells;
+        int actualMineCount = Math.min(mineCount, availableCells);
+
+        if (actualMineCount <= 0) return mineGrid;
+
+        int[] positions = new int[availableCells];
+        int idx = 0;
+        for (int z = 0; z < height; z++) {
+            for (int x = 0; x < width; x++) {
+                if (x < safeZoneStartX || x > safeZoneEndX || z < safeZoneStartZ || z > safeZoneEndZ) {
+                    positions[idx++] = (z << 16) | x;
+                }
             }
         }
+
+        for (int i = positions.length - 1; i > 0; i--) {
+            int j = RANDOM.nextInt(i + 1);
+            int temp = positions[i];
+            positions[i] = positions[j];
+            positions[j] = temp;
+        }
+
+        for (int i = 0; i < actualMineCount; i++) {
+            int pos = positions[i];
+            int z = pos >> 16;
+            int x = pos & 0xFFFF;
+            mineGrid[z][x] = true;
+        }
+
         return mineGrid;
     }
 
@@ -40,27 +67,34 @@ public final class GameMinesweeperLogic {
         return grid;
     }
 
-    /** 处理方块翻开操作 */
     public static FlipResult processFlip(boolean[][] mineGrid, MinesweeperState[][] displayGrid, int x, int z, int flagCount) {
-        MinesweeperState current = displayGrid[z][x];
-        if (current != MinesweeperState.UNOPENED) {
+        if (!isValidGrid(mineGrid, displayGrid)) {
+            return new FlipResult(new boolean[0][0], new MinesweeperState[0][0], true, false, flagCount);
+        }
+        if (x < 0 || x >= mineGrid[0].length || z < 0 || z >= mineGrid.length) {
             return new FlipResult(copy(mineGrid), copy(displayGrid), false, isWin(mineGrid, displayGrid), flagCount);
         }
+
+        MinesweeperState[][] newGrid = copy(displayGrid);
+        MinesweeperState current = newGrid[z][x];
+
+        if (current != MinesweeperState.UNOPENED) {
+            return new FlipResult(copy(mineGrid), newGrid, false, isWin(mineGrid, newGrid), flagCount);
+        }
         if (mineGrid[z][x]) {
-            revealMines(displayGrid, mineGrid, x, z);
-            return new FlipResult(copy(mineGrid), displayGrid, true, isWin(mineGrid, displayGrid), flagCount);
+            revealMines(newGrid, mineGrid, x, z);
+            return new FlipResult(copy(mineGrid), newGrid, true, isWin(mineGrid, newGrid), flagCount);
         }
         int adj = countAdjacent(mineGrid, x, z);
         if (adj == 0) {
-            displayGrid[z][x] = MinesweeperState.OPEN_EMPTY;
-            chainFlip(mineGrid, displayGrid, x, z);
+            newGrid[z][x] = MinesweeperState.OPEN_EMPTY;
+            chainFlip(mineGrid, newGrid, x, z);
         } else {
-            displayGrid[z][x] = MinesweeperState.fromInt(adj);
+            newGrid[z][x] = MinesweeperState.fromInt(adj);
         }
-        return new FlipResult(copy(mineGrid), copy(displayGrid), false, isWin(mineGrid, displayGrid), flagCount);
+        return new FlipResult(copy(mineGrid), newGrid, false, isWin(mineGrid, newGrid), flagCount);
     }
 
-    /** 处理旗帜标记操作 */
     public static FlagResult processFlag(boolean[][] mineGrid, MinesweeperState[][] displayGrid, int x, int z, int flagCount, int totalMines) {
         MinesweeperState[][] newGrid = copy(displayGrid);
         int newFlagCount = flagCount;
@@ -78,7 +112,42 @@ public final class GameMinesweeperLogic {
         return new FlagResult(newGrid, newFlagCount, success, isWin(mineGrid, newGrid));
     }
 
-    /** BFS连锁翻开空白区域 */
+    public static int countAdjacent(boolean[][] mineGrid, int x, int z) {
+        int count = 0;
+        int w = mineGrid[0].length, h = mineGrid.length;
+        for (int dz = -1; dz <= 1; dz++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                if (dx == 0 && dz == 0) continue;
+                int nx = x + dx, nz = z + dz;
+                if (nx >= 0 && nx < w && nz >= 0 && nz < h && mineGrid[nz][nx]) count++;
+            }
+        }
+        return count;
+    }
+
+    public static boolean isWin(boolean[][] mineGrid, MinesweeperState[][] displayGrid) {
+        int w = mineGrid[0].length, h = mineGrid.length;
+        for (int z = 0; z < h; z++) {
+            for (int x = 0; x < w; x++) {
+                if (!mineGrid[z][x] && displayGrid[z][x] == MinesweeperState.UNOPENED) return false;
+                if (mineGrid[z][x] && displayGrid[z][x] != MinesweeperState.FLAGGED) return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean[][] copy(boolean[][] original) {
+        boolean[][] copy = new boolean[original.length][];
+        for (int i = 0; i < original.length; i++) copy[i] = Arrays.copyOf(original[i], original[i].length);
+        return copy;
+    }
+
+    public static MinesweeperState[][] copy(MinesweeperState[][] original) {
+        MinesweeperState[][] copy = new MinesweeperState[original.length][];
+        for (int i = 0; i < original.length; i++) copy[i] = Arrays.copyOf(original[i], original[i].length);
+        return copy;
+    }
+
     private static void chainFlip(boolean[][] mineGrid, MinesweeperState[][] displayGrid, int startX, int startZ) {
         int w = mineGrid[0].length, h = mineGrid.length;
         boolean[][] visited = new boolean[h][w];
@@ -107,33 +176,6 @@ public final class GameMinesweeperLogic {
         }
     }
 
-    /** 计算周围地雷数量 */
-    public static int countAdjacent(boolean[][] mineGrid, int x, int z) {
-        int count = 0;
-        int w = mineGrid[0].length, h = mineGrid.length;
-        for (int dz = -1; dz <= 1; dz++) {
-            for (int dx = -1; dx <= 1; dx++) {
-                if (dx == 0 && dz == 0) continue;
-                int nx = x + dx, nz = z + dz;
-                if (nx >= 0 && nx < w && nz >= 0 && nz < h && mineGrid[nz][nx]) count++;
-            }
-        }
-        return count;
-    }
-
-    /** 判断游戏是否胜利 */
-    public static boolean isWin(boolean[][] mineGrid, MinesweeperState[][] displayGrid) {
-        int w = mineGrid[0].length, h = mineGrid.length;
-        for (int z = 0; z < h; z++) {
-            for (int x = 0; x < w; x++) {
-                if (!mineGrid[z][x] && displayGrid[z][x] == MinesweeperState.UNOPENED) return false;
-                if (mineGrid[z][x] && displayGrid[z][x] != MinesweeperState.FLAGGED) return false;
-            }
-        }
-        return true;
-    }
-
-    /** 揭示所有地雷（游戏结束时调用） */
     private static void revealMines(MinesweeperState[][] displayGrid, boolean[][] mineGrid, int deathX, int deathZ) {
         int w = mineGrid[0].length, h = mineGrid.length;
         for (int z = 0; z < h; z++) {
@@ -147,19 +189,11 @@ public final class GameMinesweeperLogic {
         }
     }
 
-    public static boolean[][] copy(boolean[][] original) {
-        boolean[][] copy = new boolean[original.length][];
-        for (int i = 0; i < original.length; i++) copy[i] = Arrays.copyOf(original[i], original[i].length);
-        return copy;
-    }
-
-    public static MinesweeperState[][] copy(MinesweeperState[][] original) {
-        MinesweeperState[][] copy = new MinesweeperState[original.length][];
-        for (int i = 0; i < original.length; i++) copy[i] = Arrays.copyOf(original[i], original[i].length);
-        return copy;
-    }
-
-    private static boolean isSafe(int x, int z, int startX, int startZ) {
-        return Math.abs(x - startX) <= 1 && Math.abs(z - startZ) <= 1;
+    private static boolean isValidGrid(boolean[][] mineGrid, MinesweeperState[][] displayGrid) {
+        if (mineGrid == null || displayGrid == null) return false;
+        if (mineGrid.length != displayGrid.length) return false;
+        if (mineGrid.length == 0) return false;
+        if (mineGrid[0] == null || displayGrid[0] == null) return false;
+        return mineGrid[0].length == displayGrid[0].length;
     }
 }

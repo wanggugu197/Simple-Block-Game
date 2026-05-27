@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "front": "simple_block_game:block/base_front",
+    "back": "simple_block_game:block/base_back",
+    "side": "simple_block_game:block/base_rotated",
+    "top": "simple_block_game:block/base_vertical",
+    "particle": "#front"
+  },
+  "render_type": "minecraft:solid",
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "shade": false,
+      "faces": {
+        "north": {"uv": [0, 0, 16, 16], "texture": "#front", "cullface": "north"},
+        "south": {"uv": [0, 0, 16, 16], "texture": "#back", "cullface": "south"},
+        "east": {"uv": [16, 16, 0, 0], "texture": "#side", "cullface": "east"},
+        "west": {"uv": [16, 16, 0, 0], "texture": "#side", "cullface": "west"},
+        "down": {"uv": [16, 0, 0, 16], "texture": "#top", "cullface": "down"},
+        "up": {"uv": [16, 0, 0, 16], "texture": "#top", "cullface": "up"}
+      }
+    }
+  ],
+  "display": {
+    "firstperson_righthand": {
+      "rotation": [ 0, 135, 0 ],
+      "translation": [ 0, 0, 0 ],
+      "scale": [ 0.40, 0.40, 0.40 ]
+    }
+  }
+}

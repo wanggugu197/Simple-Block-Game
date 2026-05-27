@@ -35,9 +35,11 @@ public enum MinesweeperState implements StringRepresentable {
     WRONG_FLAG_7(-17, "wrong_flag_7"),
     WRONG_FLAG_8(-18, "wrong_flag_8");
 
-    private static final Map<String, MinesweeperState> NAME_MAP = new HashMap<>();
+    private static final MinesweeperState[] VALUES = values();
+
+    private static final Map<String, MinesweeperState> NAME_MAP = new HashMap<>(VALUES.length);
     static {
-        for (MinesweeperState state : values()) {
+        for (MinesweeperState state : VALUES) {
             NAME_MAP.put(state.serializedName, state);
         }
     }
@@ -57,28 +59,15 @@ public enum MinesweeperState implements StringRepresentable {
     }
 
     public static MinesweeperState fromInt(int value) {
+        if (value >= 1 && value <= 8) return VALUES[4 + value];
+        if (value >= -18 && value <= -11) return VALUES[12 + (-value - 10)];
+
         return switch (value) {
             case -10 -> DEATH_BOMB;
             case -9 -> BOMB;
             case -5 -> OPEN_EMPTY;
             case -1 -> FLAGGED;
             case 0 -> UNOPENED;
-            case 1 -> NUMBER_1;
-            case 2 -> NUMBER_2;
-            case 3 -> NUMBER_3;
-            case 4 -> NUMBER_4;
-            case 5 -> NUMBER_5;
-            case 6 -> NUMBER_6;
-            case 7 -> NUMBER_7;
-            case 8 -> NUMBER_8;
-            case -11 -> WRONG_FLAG_1;
-            case -12 -> WRONG_FLAG_2;
-            case -13 -> WRONG_FLAG_3;
-            case -14 -> WRONG_FLAG_4;
-            case -15 -> WRONG_FLAG_5;
-            case -16 -> WRONG_FLAG_6;
-            case -17 -> WRONG_FLAG_7;
-            case -18 -> WRONG_FLAG_8;
             default -> UNOPENED;
         };
     }
@@ -108,5 +97,10 @@ public enum MinesweeperState implements StringRepresentable {
 
     public boolean isWrongFlag() {
         return value >= -18 && value <= -11;
+    }
+
+    public MinesweeperState getWrongNumber() {
+        if (!isWrongFlag()) return fromInt(value);
+        return fromInt(-10 - value);
     }
 }

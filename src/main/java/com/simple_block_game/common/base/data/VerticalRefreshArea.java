@@ -4,7 +4,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
-/** 垂直放置的刷新方块的点击区域 */
 public enum VerticalRefreshArea {
 
     NORTH_EAST,
@@ -16,10 +15,10 @@ public enum VerticalRefreshArea {
 
     public static VerticalRefreshArea fromHit(BlockHitResult hit) {
         Vec3 worldPos = hit.getLocation();
-        Vec3 blockPos = hit.getBlockPos().getCenter();
+        Vec3 blockCenter = hit.getBlockPos().getCenter();
 
-        double u = Mth.clamp((worldPos.x - (blockPos.x - 0.5)) * 16, 0, 16);
-        double v = Mth.clamp((worldPos.z - (blockPos.z - 0.5)) * 16, 0, 16);
+        double u = Mth.clamp((worldPos.x - (blockCenter.x - 0.5)) * 16, 0, 16);
+        double v = Mth.clamp((worldPos.z - (blockCenter.z - 0.5)) * 16, 0, 16);
 
         if (u >= HALF_PIXEL) {
             return v < HALF_PIXEL ? NORTH_EAST : SOUTH_EAST;

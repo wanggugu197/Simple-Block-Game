@@ -10,9 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.simple_block_game.SimpleBlockGame.REGISTRYLIB;
-import static com.simple_block_game.common.SimpleBlockGameRegistration.BLOCK_2048_CORE;
-import static com.simple_block_game.common.SimpleBlockGameRegistration.BLOCK_MEMORY_KEY_CORE;
-import static com.simple_block_game.common.SimpleBlockGameRegistration.BLOCK_MINESWEEPER_CORE;
+import static com.simple_block_game.common.SimpleBlockGameRegistration.*;
 
 public class SimpleBlockGameRecipe {
 

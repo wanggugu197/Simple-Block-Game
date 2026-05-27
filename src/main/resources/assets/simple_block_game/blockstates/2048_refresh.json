@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "simple_block_game:block/simple2048/2048_refresh", "y": 0 },
-    "facing=east": { "model": "simple_block_game:block/simple2048/2048_refresh", "y": 90 },
-    "facing=south": { "model": "simple_block_game:block/simple2048/2048_refresh", "y": 180 },
-    "facing=west": { "model": "simple_block_game:block/simple2048/2048_refresh", "y": 270 }
-  }
-}

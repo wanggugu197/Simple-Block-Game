@@ -1,7 +1,9 @@
 package com.simple_block_game.common.simpleMinesweeper.logic;
 
 import com.simple_block_game.common.SimpleBlockGameRegistration;
+import com.simple_block_game.common.base.block.BaseVerticalBlock;
 import com.simple_block_game.common.base.block.BlockRefreshEntity;
+import com.simple_block_game.common.base.block.IGameCoreBlock;
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperCore;
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperCoreEntity;
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperDisplay;
@@ -9,15 +11,16 @@ import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperDisp
 import com.simple_block_game.common.simpleMinesweeper.data.MinesweeperState;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 
-/** 扫雷游戏布局辅助工具 */
 public final class GameMinesweeperHelper {
 
     private static final Block FRAME = SimpleBlockGameRegistration.BLOCK_VERTICAL_FRAME.get();
@@ -27,7 +30,9 @@ public final class GameMinesweeperHelper {
 
     private GameMinesweeperHelper() {}
 
-    public static boolean isAreaEmpty(ServerLevel level, BlockPos corePos, int width, int height) {
+    public static boolean checkLayoutAreaIsEmpty(ServerLevel level, BlockPos corePos, int width, int height) {
+        if (corePos == null || !level.isLoaded(corePos)) return false;
+
         for (int x = 0; x <= width + 1; x++) {
             for (int z = 0; z <= height + 1; z++) {
                 BlockPos pos = corePos.offset(x, 0, z);
@@ -37,35 +42,26 @@ public final class GameMinesweeperHelper {
         return level.isEmptyBlock(corePos.offset(width + 1, 0, height + 1));
     }
 
-    public static void placeLayoutBlocks(ServerLevel level, BlockPos corePos, int width, int height) {
+    public static void generateLayout(ServerLevel level, BlockPos corePos, int width, int height) {
+        Direction coreFacing = level.getBlockState(corePos).getValue(BaseVerticalBlock.FACING);
+        BlockState displayState = DISPLAY.defaultBlockState().setValue(BaseVerticalBlock.FACING, coreFacing);
+        BlockState frameState = FRAME.defaultBlockState().setValue(BaseVerticalBlock.FACING, coreFacing);
+        BlockState refreshState = REFRESH.defaultBlockState().setValue(BaseVerticalBlock.FACING, coreFacing);
+
         for (int x = 0; x <= width + 1; x++) {
             for (int z = 0; z <= height + 1; z++) {
                 BlockPos pos = corePos.offset(x, 0, z);
                 if (pos.equals(corePos)) continue;
-                level.setBlock(pos, (x > 0 && x <= width && z > 0 && z <= height) ?
-                        DISPLAY.defaultBlockState() : FRAME.defaultBlockState(), 3);
-            }
-        }
-        level.setBlock(corePos.offset(width + 1, 0, height + 1), REFRESH.defaultBlockState(), 3);
-    }
-
-    public static void initLayoutEntities(ServerLevel level, BlockPos corePos, int width, int height) {
-        if (!level.isLoaded(corePos)) return;
-        for (int x = 1; x <= width; x++) {
-            for (int z = 1; z <= height; z++) {
-                BlockPos pos = corePos.offset(x, 0, z);
-                if (!level.isLoaded(pos)) continue;
-                if (level.getBlockEntity(pos) instanceof BlockMinesweeperDisplayEntity entity) {
-                    entity.setCorePos(corePos);
-                    entity.setChanged();
+                boolean isDisplay = x > 0 && x <= width && z > 0 && z <= height;
+                level.setBlock(pos, isDisplay ? displayState : frameState, Block.UPDATE_ALL);
+                if (isDisplay) {
+                    initDisplayEntity(level, pos, corePos);
                 }
             }
         }
         BlockPos refreshPos = corePos.offset(width + 1, 0, height + 1);
-        if (level.isLoaded(refreshPos) && level.getBlockEntity(refreshPos) instanceof BlockRefreshEntity entity) {
-            entity.setCorePos(corePos);
-            entity.setChanged();
-        }
+        level.setBlock(refreshPos, refreshState, Block.UPDATE_ALL);
+        initRefreshEntity(level, refreshPos, corePos);
     }
 
     public static void minimizeLayout(ServerLevel level, BlockPos corePos, int width, int height) {
@@ -81,7 +77,8 @@ public final class GameMinesweeperHelper {
         }
         BlockState coreState = level.getBlockState(corePos);
         if (coreState.getBlock() instanceof BlockMinesweeperCore) {
-            level.setBlock(corePos, coreState.setValue(BlockMinesweeperCore.GAME_STARTED, false), 3);
+            level.setBlock(corePos, coreState.setValue(IGameCoreBlock.UNFOLDED, false), Block.UPDATE_ALL);
+            BlockMinesweeperCore.reset(level, corePos);
         }
     }
 
@@ -140,7 +137,6 @@ public final class GameMinesweeperHelper {
         boolean[][] mineGrid = core.getMineGrid();
         int w = core.getGridWidth(), h = core.getGridHeight();
         MinesweeperState[][] grid = readDisplayGrid(level, corePos, w, h);
-        boolean[] over = new boolean[2];
 
         for (int dz = -1; dz <= 1; dz++) {
             for (int dx = -1; dx <= 1; dx++) {
@@ -149,14 +145,18 @@ public final class GameMinesweeperHelper {
                 if (nx < 0 || nx >= w || nz < 0 || nz >= h) continue;
                 if (grid[nz][nx].isUnopened()) {
                     GameMinesweeperLogic.FlipResult result = GameMinesweeperLogic.processFlip(mineGrid, grid, nx, nz, core.getCurrentFlagCount());
-                    over[0] |= result.gameOver();
-                    over[1] |= result.gameWin();
+                    if (result.gameOver()) {
+                        writeDisplayGrid(level, corePos, result.displayGrid());
+                        return new boolean[] { true, false };
+                    }
+                    for (int i = 0; i < h; i++) {
+                        System.arraycopy(result.displayGrid()[i], 0, grid[i], 0, w);
+                    }
                 }
             }
         }
         writeDisplayGrid(level, corePos, grid);
-        over[1] = GameMinesweeperLogic.isWin(mineGrid, readDisplayGrid(level, corePos, w, h));
-        return over;
+        return new boolean[] { false, GameMinesweeperLogic.isWin(mineGrid, grid) };
     }
 
     public static void generateExplosions(ServerLevel level, BlockPos corePos, BlockMinesweeperCoreEntity core) {
@@ -179,5 +179,24 @@ public final class GameMinesweeperHelper {
             }
         }
         return true;
+    }
+
+    private static void initDisplayEntity(ServerLevel level, BlockPos pos, BlockPos corePos) {
+        if (!level.isLoaded(pos)) return;
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof BlockMinesweeperDisplayEntity entity) {
+            entity.setCorePos(corePos);
+            entity.setDisplayState(MinesweeperState.UNOPENED);
+            entity.setChanged();
+        }
+    }
+
+    private static void initRefreshEntity(ServerLevel level, BlockPos pos, BlockPos corePos) {
+        if (!level.isLoaded(pos)) return;
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof BlockRefreshEntity entity) {
+            entity.setCorePos(corePos);
+            entity.setChanged();
+        }
     }
 }

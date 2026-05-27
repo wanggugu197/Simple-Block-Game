@@ -1,5 +1,5 @@
 {
-  "parent": "simple_block_game:block/simple_minesweeper/minesweeper_display_bomb",
+  "parent": "simple_block_game:block/base/vertical_base",
   "textures": {
     "overlay_top": "simple_block_game:block/simple_minesweeper/minesweeper_display"
   }

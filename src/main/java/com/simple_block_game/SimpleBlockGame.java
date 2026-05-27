@@ -17,13 +17,17 @@ import org.slf4j.Logger;
 public class SimpleBlockGame {
 
     public static final String MODID = "simple_block_game";
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
     public static final GameRegistryCore REGISTRYLIB = GameRegistryCore.create(MODID);
 
     public SimpleBlockGame(IEventBus modEventBus, ModContainer modContainer) {
         LOGGER.info("Simple Block Game Registration Init");
         modContainer.registerConfig(ModConfig.Type.COMMON, SimpleBlockGameConfig.SPEC, "Simple-Block-Game-Config.toml");
         CommonInit.init(modEventBus);
+    }
+
+    public static Identifier getId(String path) {
+        return Identifier.fromNamespaceAndPath(MODID, path);
     }
 
     public static Identifier getRL(String namespace, String path) {

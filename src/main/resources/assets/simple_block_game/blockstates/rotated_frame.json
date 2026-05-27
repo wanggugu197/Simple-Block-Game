@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "simple_block_game:block/rotated_frame", "y": 0 },
-    "facing=east": { "model": "simple_block_game:block/rotated_frame", "y": 90 },
-    "facing=south": { "model": "simple_block_game:block/rotated_frame", "y": 180 },
-    "facing=west": { "model": "simple_block_game:block/rotated_frame", "y": 270 }
-  }
-}

@@ -15,10 +15,13 @@ src/main/java/com/simple_block_game/common/simpleMinesweeper/
 ├── data/                     # 数据类
 │   ├── MinesweeperState.java              # 格子状态枚举
 │   └── PresetDifficulty.java              # 预设难度枚举
-└── logic/                    # 逻辑类
-    ├── GameMinesweeperLogic.java          # 游戏核心逻辑
-    ├── GameMinesweeperHelper.java         # Minecraft交互辅助方法
-    └── GameMinesweeperReward.java         # 奖励系统
+├── logic/                    # 逻辑类
+│   ├── GameMinesweeperLogic.java          # 游戏核心逻辑
+│   ├── GameMinesweeperHelper.java         # Minecraft交互辅助方法
+│   └── GameMinesweeperReward.java         # 奖励系统
+└── renderer/                 # 渲染器
+    ├── BlockMinesweeperCoreEntityRenderer.java      # 核心实体渲染器
+    └── BlockMinesweeperDisplayEntityRenderer.java   # 显示实体渲染器
 ```
 
 ---
@@ -66,6 +69,13 @@ src/main/java/com/simple_block_game/common/simpleMinesweeper/
 | `GameMinesweeperLogic` | 纯游戏逻辑（无Minecraft依赖） | `generateMineGrid()`, `processFlip()`, `processFlag()` |
 | `GameMinesweeperHelper` | Minecraft世界交互方法 | `placeLayoutBlocks()`, `readDisplayGrid()`, `writeDisplayGrid()` |
 | `GameMinesweeperReward` | 通关奖励系统 | `handleWinReward()` |
+
+### 2.4 渲染器类
+
+| 类名 | 职责 | 关键方法 |
+|------|------|---------|
+| `BlockMinesweeperCoreEntityRenderer` | 核心实体渲染器，显示难度和地雷数 | `getTextureForState()` |
+| `BlockMinesweeperDisplayEntityRenderer` | 显示实体渲染器，显示格子状态纹理 | `getTexturesForState()` |
 
 ---
 
@@ -187,72 +197,23 @@ public static boolean isWin(boolean[][] mineGrid, MinesweeperState[][] displayGr
 
 ---
 
-## 五、添加新游戏的模板
+## 五、设计模式
 
-参考项目中已有的三个游戏实现模式：
-
-### 5.1 核心方块实体模板
-
-```java
-public class BlockNewGameCoreEntity extends BlockEntity {
-    private GameState gameState = GameState.IDLE;
-    
-    public void tick() { /* 游戏逻辑更新 */ }
-    public void initGameData() { /* 初始化游戏数据 */ }
-    public void completeReset() { /* 完全重置 */ }
-}
-```
-
-### 5.2 核心方块模板
-
-```java
-public class BlockNewGameCore extends BaseVerticalBlock implements IGameCoreBlock {
-    @Override
-    public boolean unfoldGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
-        // 生成布局
-        GameNewGameHelper.placeLayoutBlocks(level, pos, width, height);
-        level.setBlock(pos, state.setValue(GAME_STARTED, true), 3);
-        return true;
-    }
-    
-    @Override
-    public void startGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
-        // 初始化游戏数据
-    }
-    
-    // ... 其他IGameCoreBlock方法
-}
-```
-
-### 5.3 纯逻辑类模板
-
-```java
-public final class GameNewGameLogic {
-    public static GameResult processInput(GameData data, Input input) {
-        // 纯逻辑处理，无Minecraft依赖
-    }
-}
-```
-
----
-
-## 六、设计模式
-
-### 6.1 纯逻辑与交互分离
+### 5.1 纯逻辑与交互分离
 
 游戏核心逻辑(`GameMinesweeperLogic`)不依赖Minecraft，可以独立测试。
 
-### 6.2 实体存储状态
+### 5.2 实体存储状态
 
 游戏状态通过`BlockEntity`持久化，支持保存/加载。
 
-### 6.3 难度可配置
+### 5.3 难度可配置
 
 支持多种预设难度和自定义尺寸/地雷数。
 
 ---
 
-## 七、文件清单
+## 六、文件清单
 
 | 文件 | 路径 | 说明 |
 |------|------|------|
@@ -266,15 +227,18 @@ public final class GameNewGameLogic {
 | 游戏逻辑 | `logic/GameMinesweeperLogic.java` | 纯扫雷算法 |
 | 辅助方法 | `logic/GameMinesweeperHelper.java` | Minecraft交互 |
 | 奖励系统 | `logic/GameMinesweeperReward.java` | 通关奖励 |
+| 核心渲染器 | `renderer/BlockMinesweeperCoreEntityRenderer.java` | 核心实体渲染 |
+| 显示渲染器 | `renderer/BlockMinesweeperDisplayEntityRenderer.java` | 显示实体渲染 |
 
 ---
 
-## 八、版本历史
+## 七、版本历史
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
 | v1.0 | 2026-05 | 初始版本，完成核心玩法 |
 | v1.1 | 2026-05 | 添加自定义难度和奖励系统 |
+| v1.2 | 2026-05 | 添加自定义渲染器 |
 
-*文档版本: 1.1*  
-*最后更新: 2026-05-27*
+*文档版本: 1.2*  
+*最后更新: 2026-05-29*

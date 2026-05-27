@@ -4,6 +4,7 @@ import com.simple_block_game.common.base.data.VerticalRefreshArea;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -16,8 +17,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import com.mojang.serialization.MapCodec;
 import lombok.NonNull;
 
-/** 垂直固定刷新方块基类，处理游戏控制（最小化/关闭/重置） */
-public abstract class BaseVerticalRefreshBlock extends BaseVerticalBlock {
+public class BaseVerticalRefreshBlock extends BaseVerticalBlock {
 
     protected final String coreNotFoundKey;
     protected final String coreInvalidKey;
@@ -25,18 +25,40 @@ public abstract class BaseVerticalRefreshBlock extends BaseVerticalBlock {
     protected final String closedKey;
     protected final String resetKey;
 
-    protected BaseVerticalRefreshBlock(BlockBehaviour.Properties properties,
-                                       String coreNotFoundKey, String coreInvalidKey,
-                                       String minimizedKey, String closedKey, String resetKey) {
+    private final MapCodec<BaseVerticalRefreshBlock> codec;
+
+    private BaseVerticalRefreshBlock(BlockBehaviour.Properties properties,
+                                     String coreNotFoundKey, String coreInvalidKey,
+                                     String minimizedKey, String closedKey, String resetKey,
+                                     MapCodec<BaseVerticalRefreshBlock> codec) {
         super(properties);
         this.coreNotFoundKey = coreNotFoundKey;
         this.coreInvalidKey = coreInvalidKey;
         this.minimizedKey = minimizedKey;
         this.closedKey = closedKey;
         this.resetKey = resetKey;
+        this.codec = codec;
     }
 
-    protected abstract @NonNull MapCodec<? extends BaseVerticalRefreshBlock> codec();
+    public static BaseVerticalRefreshBlock create(BlockBehaviour.Properties properties,
+                                                  String coreNotFoundKey, String coreInvalidKey, String minimizedKey, String closedKey, String resetKey) {
+        MapCodec<BaseVerticalRefreshBlock> codec = simpleCodec(p -> new BaseVerticalRefreshBlock(p, coreNotFoundKey, coreInvalidKey, minimizedKey, closedKey, resetKey, null));
+        return new BaseVerticalRefreshBlock(properties, coreNotFoundKey, coreInvalidKey, minimizedKey, closedKey, resetKey, codec);
+    }
+
+    public static BaseVerticalRefreshBlock create(BlockBehaviour.Properties properties, String gameKey) {
+        String prefix = "msg." + gameKey + ".";
+        return create(properties,
+                prefix + "core_not_found",
+                prefix + "core_invalid",
+                prefix + "minimized",
+                prefix + "closed",
+                prefix + "reset");
+    }
+
+    protected @NonNull MapCodec<BaseVerticalRefreshBlock> codec() {
+        return codec;
+    }
 
     @Override
     public BlockEntity newBlockEntity(@NonNull BlockPos pos, @NonNull BlockState state) {
@@ -54,19 +76,19 @@ public abstract class BaseVerticalRefreshBlock extends BaseVerticalBlock {
 
         BlockEntity be = serverLevel.getBlockEntity(pos);
         if (!(be instanceof BlockRefreshEntity refreshEntity)) {
-            player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("msg.common.refresh_entity_error"));
+            player.sendOverlayMessage(Component.translatable("msg.common.refresh_entity_error"));
             return InteractionResult.FAIL;
         }
 
         BlockPos corePos = refreshEntity.getCorePos();
         if (corePos == null) {
-            player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable(coreNotFoundKey));
+            player.sendOverlayMessage(Component.translatable(coreNotFoundKey));
             return InteractionResult.FAIL;
         }
 
         BlockState coreState = serverLevel.getBlockState(corePos);
         if (!(coreState.getBlock() instanceof IGameCoreBlock coreBlock)) {
-            player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable(coreInvalidKey));
+            player.sendOverlayMessage(Component.translatable(coreInvalidKey));
             return InteractionResult.FAIL;
         }
 
@@ -76,15 +98,15 @@ public abstract class BaseVerticalRefreshBlock extends BaseVerticalBlock {
         switch (area) {
             case NORTH_EAST -> {
                 coreBlock.minimizeGame(serverLevel, corePos, coreState);
-                player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable(minimizedKey));
+                player.sendOverlayMessage(Component.translatable(minimizedKey));
             }
             case SOUTH_EAST -> {
                 coreBlock.closeGame(serverLevel, corePos, coreState);
-                player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable(closedKey));
+                player.sendOverlayMessage(Component.translatable(closedKey));
             }
             case WEST -> {
                 coreBlock.resetGame(serverLevel, corePos, coreState);
-                player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable(resetKey));
+                player.sendOverlayMessage(Component.translatable(resetKey));
             }
         }
         return InteractionResult.SUCCESS;

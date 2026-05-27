@@ -7,9 +7,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
-/** 游戏核心方块接口，定义游戏生命周期管理 */
 public interface IGameCoreBlock {
 
     BooleanProperty UNFOLDED = BooleanProperty.create("unfolded");
@@ -26,7 +25,9 @@ public interface IGameCoreBlock {
 
     void closeGame(ServerLevel serverLevel, BlockPos pos, BlockState state);
 
-    boolean isGameUnfolded(BlockState state);
+    default boolean isGameUnfolded(BlockState state) {
+        return state.getValue(UNFOLDED);
+    }
 
     @Nullable
     BlockEntity getGameCoreEntity(ServerLevel serverLevel, BlockPos pos);

@@ -1,5 +1,6 @@
 package com.simple_block_game.common.simple2048.logic;
 
+import com.simple_block_game.SimpleBlockGameConfig;
 import com.simple_block_game.common.base.reward.BaseGameReward;
 
 import net.minecraft.resources.Identifier;
@@ -15,28 +16,30 @@ public final class Game2048Reward extends BaseGameReward {
     private static final Int2ObjectOpenHashMap<Identifier> MAX_REWARDS = new Int2ObjectOpenHashMap<>();
 
     static {
-        SCORE_REWARDS.put(500, id("minecraft:chests/igloo_chest"));
-        SCORE_REWARDS.put(1000, id("minecraft:chests/shipwreck_treasure"));
-        SCORE_REWARDS.put(1500, id("minecraft:chests/underwater_ruin_big"));
-        SCORE_REWARDS.put(2000, id("minecraft:chests/desert_pyramid"));
-        SCORE_REWARDS.put(3000, id("minecraft:chests/abandoned_mineshaft"));
-        SCORE_REWARDS.put(4000, id("minecraft:chests/jungle_temple"));
-        SCORE_REWARDS.put(5000, id("minecraft:chests/pillager_outpost"));
-        SCORE_REWARDS.put(7500, id("minecraft:chests/stronghold_library"));
-        SCORE_REWARDS.put(10000, id("minecraft:chests/bastion_other"));
-        SCORE_REWARDS.put(15000, id("minecraft:chests/bastion_treasure"));
-        SCORE_REWARDS.put(20000, id("minecraft:chests/woodland_mansion"));
-        SCORE_REWARDS.put(25000, id("minecraft:chests/ancient_city_ice_box"));
-        SCORE_REWARDS.put(30000, id("minecraft:chests/ancient_city"));
-        SCORE_REWARDS.put(50000, id("minecraft:chests/end_city_treasure"));
+        var config = SimpleBlockGameConfig.GAME_2048_CONFIG;
 
-        MAX_REWARDS.put(1024, id("minecraft:chests/simple_dungeon"));
-        MAX_REWARDS.put(2048, id("minecraft:chests/village/village_weaponsmith"));
-        MAX_REWARDS.put(4096, id("minecraft:chests/woodland_mansion"));
-        MAX_REWARDS.put(8192, id("minecraft:chests/ancient_city"));
-        MAX_REWARDS.put(16384, id("minecraft:chests/bastion_treasure"));
-        MAX_REWARDS.put(32768, id("minecraft:chests/buried_treasure"));
-        MAX_REWARDS.put(65536, id("minecraft:chests/end_city_treasure"));
+        SCORE_REWARDS.put(config.scoreThreshold1.get().intValue(), id(config.scoreReward1.get()));
+        SCORE_REWARDS.put(config.scoreThreshold2.get().intValue(), id(config.scoreReward2.get()));
+        SCORE_REWARDS.put(config.scoreThreshold3.get().intValue(), id(config.scoreReward3.get()));
+        SCORE_REWARDS.put(config.scoreThreshold4.get().intValue(), id(config.scoreReward4.get()));
+        SCORE_REWARDS.put(config.scoreThreshold5.get().intValue(), id(config.scoreReward5.get()));
+        SCORE_REWARDS.put(config.scoreThreshold6.get().intValue(), id(config.scoreReward6.get()));
+        SCORE_REWARDS.put(config.scoreThreshold7.get().intValue(), id(config.scoreReward7.get()));
+        SCORE_REWARDS.put(config.scoreThreshold8.get().intValue(), id(config.scoreReward8.get()));
+        SCORE_REWARDS.put(config.scoreThreshold9.get().intValue(), id(config.scoreReward9.get()));
+        SCORE_REWARDS.put(config.scoreThreshold10.get().intValue(), id(config.scoreReward10.get()));
+        SCORE_REWARDS.put(config.scoreThreshold11.get().intValue(), id(config.scoreReward11.get()));
+        SCORE_REWARDS.put(config.scoreThreshold12.get().intValue(), id(config.scoreReward12.get()));
+        SCORE_REWARDS.put(config.scoreThreshold13.get().intValue(), id(config.scoreReward13.get()));
+        SCORE_REWARDS.put(config.scoreThreshold14.get().intValue(), id(config.scoreReward14.get()));
+
+        MAX_REWARDS.put(1024, id(config.maxReward1024.get()));
+        MAX_REWARDS.put(2048, id(config.maxReward2048.get()));
+        MAX_REWARDS.put(4096, id(config.maxReward4096.get()));
+        MAX_REWARDS.put(8192, id(config.maxReward8192.get()));
+        MAX_REWARDS.put(16384, id(config.maxReward16384.get()));
+        MAX_REWARDS.put(32768, id(config.maxReward32768.get()));
+        MAX_REWARDS.put(65536, id(config.maxReward65536.get()));
     }
 
     private Game2048Reward() {}

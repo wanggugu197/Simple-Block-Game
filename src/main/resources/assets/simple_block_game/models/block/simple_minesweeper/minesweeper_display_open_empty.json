@@ -1,6 +1,0 @@
-{
-  "parent": "simple_block_game:block/vertical_base",
-  "textures": {
-    "overlay_top": "simple_block_game:block/void"
-  }
-}

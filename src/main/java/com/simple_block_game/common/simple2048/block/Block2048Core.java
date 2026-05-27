@@ -1,5 +1,6 @@
 package com.simple_block_game.common.simple2048.block;
 
+import com.simple_block_game.SimpleBlockGameConfig;
 import com.simple_block_game.common.base.block.BaseRotatedBlock;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
 import com.simple_block_game.common.simple2048.data.Quadrant;
@@ -35,7 +36,6 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
     public Block2048Core(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
-                .setValue(FACING, Direction.NORTH)
                 .setValue(UNFOLDED, false));
     }
 
@@ -61,6 +61,8 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
     public @NonNull InteractionResult useWithoutItem(@NonNull BlockState state, @NonNull Level level,
                                                      @NonNull BlockPos pos, @NonNull Player player,
                                                      @NonNull BlockHitResult hit) {
+        if (!SimpleBlockGameConfig.enable2048Game.get()) return InteractionResult.PASS;
+
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.FAIL;
 
@@ -150,17 +152,16 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
 
     private void syncEntity(ServerLevel level, BlockPos pos, Block2048CoreEntity coreEntity) {
         coreEntity.setChanged();
-        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 3);
+        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), Block.UPDATE_ALL);
     }
 
     public static void reset(ServerLevel level, BlockPos pos) {
         BlockEntity be = level.getBlockEntity(pos);
         if (!(be instanceof Block2048CoreEntity coreEntity)) return;
-
         coreEntity.resetScore();
         coreEntity.resetMaxNumber();
         coreEntity.setChanged();
-        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), 3);
+        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), Block.UPDATE_ALL);
     }
 
     @Override
@@ -176,8 +177,8 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
         }
 
         Direction facing = state.getValue(FACING);
-        Game2048Helper.generate2048Layout(serverLevel, pos, facing);
-        serverLevel.setBlock(pos, state.setValue(UNFOLDED, true), 3);
+        Game2048Helper.generateLayout(serverLevel, pos, facing);
+        serverLevel.setBlock(pos, state.setValue(UNFOLDED, true), Block.UPDATE_ALL);
         Game2048Helper.writeDisplayGrid(serverLevel, pos, facing, Game2048Logic.initGrid());
         reset(serverLevel, pos);
 
@@ -194,22 +195,17 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
 
     @Override
     public void resetGame(ServerLevel serverLevel, BlockPos pos, BlockState state) {
-        Game2048Helper.reset2048Layout(serverLevel, pos, state.getValue(FACING));
+        Game2048Helper.resetLayout(serverLevel, pos, state.getValue(FACING));
     }
 
     @Override
     public void minimizeGame(ServerLevel serverLevel, BlockPos pos, BlockState state) {
-        Game2048Helper.minimize2048Layout(serverLevel, pos, state.getValue(FACING));
+        Game2048Helper.minimizeLayout(serverLevel, pos, state.getValue(FACING));
     }
 
     @Override
     public void closeGame(ServerLevel serverLevel, BlockPos pos, BlockState state) {
-        Game2048Helper.close2048Layout(serverLevel, pos, state.getValue(FACING));
-    }
-
-    @Override
-    public boolean isGameUnfolded(BlockState state) {
-        return state.getValue(UNFOLDED);
+        Game2048Helper.closeLayout(serverLevel, pos, state.getValue(FACING));
     }
 
     @Override

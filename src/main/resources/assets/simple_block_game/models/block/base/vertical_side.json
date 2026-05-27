@@ -1,0 +1,7 @@
+{
+  "parent": "simple_block_game:block/base/vertical_center",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "top": "simple_block_game:block/base_back"
+  }
+}

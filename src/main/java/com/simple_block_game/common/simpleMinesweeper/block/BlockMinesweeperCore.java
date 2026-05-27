@@ -1,5 +1,6 @@
 package com.simple_block_game.common.simpleMinesweeper.block;
 
+import com.simple_block_game.SimpleBlockGameConfig;
 import com.simple_block_game.common.base.block.BaseVerticalBlock;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
 import com.simple_block_game.common.simpleMinesweeper.data.PresetDifficulty;
@@ -18,26 +19,22 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 import com.mojang.serialization.MapCodec;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 
 /** 扫雷游戏核心方块 */
 public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCoreBlock {
 
-    public static final BooleanProperty GAME_STARTED = BooleanProperty.create("game_started");
-    public static final EnumProperty<PresetDifficulty> DIFFICULTY = EnumProperty.create("difficulty", PresetDifficulty.class);
-
-    private static final MapCodec<BlockMinesweeperCore> CODEC = simpleCodec(BlockMinesweeperCore::new);
-
     public BlockMinesweeperCore(BlockBehaviour.Properties properties) {
         super(properties);
-        registerDefaultState(stateDefinition.any().setValue(GAME_STARTED, false).setValue(DIFFICULTY, PresetDifficulty.EASY));
+        this.registerDefaultState(this.stateDefinition.any()
+                .setValue(UNFOLDED, false));
     }
+
+    private static final MapCodec<BlockMinesweeperCore> CODEC = simpleCodec(BlockMinesweeperCore::new);
 
     @Override
     protected @NonNull MapCodec<? extends BaseVerticalBlock> codec() {
@@ -47,7 +44,7 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NonNull Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(GAME_STARTED, DIFFICULTY);
+        builder.add(UNFOLDED);
     }
 
     @Override
@@ -56,14 +53,16 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
     }
 
     @Override
-    public @NonNull InteractionResult useWithoutItem(@NonNull BlockState state, Level level, @NonNull BlockPos pos, @NonNull Player player, @NonNull BlockHitResult hit) {
+    public @NonNull InteractionResult useWithoutItem(@NonNull BlockState state, @NonNull Level level, @NonNull BlockPos pos, @NonNull Player player, @NonNull BlockHitResult hit) {
+        if (!SimpleBlockGameConfig.enableMinesweeperGame.get()) return InteractionResult.PASS;
+
         if (level.isClientSide()) return InteractionResult.SUCCESS;
         ServerLevel serverLevel = (ServerLevel) level;
 
         if (hit.getDirection() == Direction.UP) {
             return handleTopClick(serverLevel, state, pos, player, hit);
         } else if (hit.getDirection() != Direction.DOWN) {
-            return handleSideClick(serverLevel, state, pos, player, hit);
+            return handleSideClick(serverLevel, pos, player, hit);
         }
         return InteractionResult.SUCCESS;
     }
@@ -72,7 +71,13 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         ClickArea area = getClickArea(hit, pos);
         if (area == ClickArea.NULL) return InteractionResult.PASS;
 
-        boolean started = state.getValue(GAME_STARTED);
+        BlockMinesweeperCoreEntity core = getCore(level, pos);
+        if (core == null) {
+            sendError(player);
+            return InteractionResult.PASS;
+        }
+
+        boolean started = core.isGameOver() || core.getMineGrid() != null && core.getMineGrid().length > 0;
         if (area == ClickArea.CENTER_8x8) {
             if (!started) unfoldGame(level, pos, state, player);
             else startGame(level, pos, state, player);
@@ -82,11 +87,11 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         if (started) return InteractionResult.PASS;
 
         if (area == ClickArea.NORTHWEST_CORNER || area == ClickArea.SOUTHWEST_CORNER) {
-            switchDifficulty(level, pos, state, player, area == ClickArea.NORTHWEST_CORNER);
+            switchDifficulty(level, pos, player, area == ClickArea.NORTHWEST_CORNER);
             return InteractionResult.SUCCESS;
         }
 
-        if (state.getValue(DIFFICULTY) != PresetDifficulty.CUSTOM) return InteractionResult.PASS;
+        if (core.getPresetDifficulty() != PresetDifficulty.CUSTOM) return InteractionResult.PASS;
 
         if (area == ClickArea.NORTHEAST_CORNER || area == ClickArea.SOUTHEAST_CORNER) {
             adjustMineCount(level, pos, player, area == ClickArea.NORTHEAST_CORNER);
@@ -95,8 +100,14 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         return InteractionResult.PASS;
     }
 
-    private InteractionResult handleSideClick(ServerLevel level, BlockState state, BlockPos pos, Player player, BlockHitResult hit) {
-        if (state.getValue(GAME_STARTED) || state.getValue(DIFFICULTY) != PresetDifficulty.CUSTOM) {
+    private InteractionResult handleSideClick(ServerLevel level, BlockPos pos, Player player, BlockHitResult hit) {
+        BlockMinesweeperCoreEntity core = getCore(level, pos);
+        if (core == null) {
+            sendError(player);
+            return InteractionResult.PASS;
+        }
+        boolean started = core.isGameOver() || core.getMineGrid() != null && core.getMineGrid().length > 0;
+        if (started || core.getPresetDifficulty() != PresetDifficulty.CUSTOM) {
             return InteractionResult.PASS;
         }
         boolean isX = hit.getDirection() == Direction.NORTH || hit.getDirection() == Direction.SOUTH;
@@ -126,7 +137,7 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         player.sendOverlayMessage(Component.translatable("msg.common.entity_error"));
     }
 
-    private void switchDifficulty(ServerLevel level, BlockPos pos, BlockState state, Player player, boolean forward) {
+    private void switchDifficulty(ServerLevel level, BlockPos pos, Player player, boolean forward) {
         BlockMinesweeperCoreEntity core = getCore(level, pos);
         if (core == null) {
             sendError(player);
@@ -135,7 +146,6 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         PresetDifficulty preset = forward ? core.getPresetDifficulty().next() : core.getPresetDifficulty().prev();
         core.setPresetDifficulty(preset);
         core.setChanged();
-        level.setBlock(pos, state.setValue(GAME_STARTED, false).setValue(DIFFICULTY, preset), 3);
         player.sendOverlayMessage(Component.translatable("msg.minesweeper.difficulty_switched",
                 Component.translatable(preset.getDisplayName()), preset.getWidth(), preset.getHeight(), preset.getMineCount()));
     }
@@ -171,10 +181,17 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         NULL
     }
 
+    public static void reset(ServerLevel level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
+        if (!(be instanceof BlockMinesweeperCoreEntity coreEntity)) return;
+        coreEntity.initGameData();
+        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), Block.UPDATE_ALL);
+    }
+
     @Override
     public boolean checkLayoutAreaIsEmpty(ServerLevel level, BlockPos pos, BlockState state) {
         BlockMinesweeperCoreEntity core = getCore(level, pos);
-        return core != null && GameMinesweeperHelper.isAreaEmpty(level, pos, core.getGridWidth(), core.getGridHeight());
+        return core != null && GameMinesweeperHelper.checkLayoutAreaIsEmpty(level, pos, core.getGridWidth(), core.getGridHeight());
     }
 
     @Override
@@ -186,13 +203,13 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         }
 
         int w = core.getGridWidth(), h = core.getGridHeight();
-        if (!GameMinesweeperHelper.isAreaEmpty(level, pos, w, h)) {
+        if (!GameMinesweeperHelper.checkLayoutAreaIsEmpty(level, pos, w, h)) {
             player.sendOverlayMessage(Component.translatable("msg.common.obstructed"));
             return false;
         }
 
-        GameMinesweeperHelper.placeLayoutBlocks(level, pos, w, h);
-        level.setBlock(pos, state.setValue(GAME_STARTED, true), 3);
+        GameMinesweeperHelper.generateLayout(level, pos, w, h);
+        level.setBlock(pos, state.setValue(UNFOLDED, true), Block.UPDATE_ALL);
         player.sendOverlayMessage(Component.translatable("msg.minesweeper.layout_placed",
                 Component.translatable(core.getPresetDifficulty().getDisplayName()), w, h));
         return true;
@@ -207,7 +224,6 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         }
 
         int w = core.getGridWidth(), h = core.getGridHeight();
-        GameMinesweeperHelper.initLayoutEntities(level, pos, w, h);
         core.initGameData();
         core.setChanged();
         GameMinesweeperHelper.resetLayout(level, pos, w, h);
@@ -218,7 +234,10 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
     @Override
     public void resetGame(ServerLevel level, BlockPos pos, BlockState state) {
         BlockMinesweeperCoreEntity core = getCore(level, pos);
-        if (core != null) GameMinesweeperHelper.resetLayout(level, pos, core.getGridWidth(), core.getGridHeight());
+        if (core == null) return;
+        GameMinesweeperHelper.resetLayout(level, pos, core.getGridWidth(), core.getGridHeight());
+        core.initGameData();
+        core.setChanged();
     }
 
     @Override
@@ -226,7 +245,10 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         BlockMinesweeperCoreEntity core = getCore(level, pos);
         if (core != null) {
             GameMinesweeperHelper.minimizeLayout(level, pos, core.getGridWidth(), core.getGridHeight());
-            level.setBlock(pos, state.setValue(GAME_STARTED, false), 3);
+        }
+        if (state.getBlock() instanceof BlockMinesweeperCore) {
+            level.setBlock(pos, state.setValue(IGameCoreBlock.UNFOLDED, false), Block.UPDATE_ALL);
+            reset(level, pos);
         }
     }
 
@@ -234,11 +256,6 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
     public void closeGame(ServerLevel level, BlockPos pos, BlockState state) {
         BlockMinesweeperCoreEntity core = getCore(level, pos);
         if (core != null) GameMinesweeperHelper.closeLayout(level, pos, core.getGridWidth(), core.getGridHeight());
-    }
-
-    @Override
-    public boolean isGameUnfolded(BlockState state) {
-        return state.getValue(GAME_STARTED);
     }
 
     @Override

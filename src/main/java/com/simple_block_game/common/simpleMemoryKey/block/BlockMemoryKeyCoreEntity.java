@@ -1,31 +1,29 @@
 package com.simple_block_game.common.simpleMemoryKey.block;
 
 import com.simple_block_game.common.SimpleBlockGameRegistration;
+import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyGameState;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyLevel;
 import com.simple_block_game.common.simpleMemoryKey.logic.GameMemoryKeyHelper;
 import com.simple_block_game.common.simpleMemoryKey.logic.GameMemoryKeyLogic;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
-import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /** 记忆键游戏核心方块实体 */
-public class BlockMemoryKeyCoreEntity extends BlockEntity {
+public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
 
     private static final String KEY_GAME_STATE = "GameState";
     private static final String KEY_CURRENT_LEVEL = "CurrentLevel";
@@ -33,6 +31,10 @@ public class BlockMemoryKeyCoreEntity extends BlockEntity {
     private static final String KEY_CURRENT_SEQUENCE_INDEX = "CurrentSequenceIndex";
     private static final String KEY_SEQUENCE_DATA = "SequenceData";
     private static final String KEY_FLASHING_INDEX = "FlashingIndex";
+
+    private static final int ERROR_STATE_DURATION_TICKS = 40;  // 2秒
+    private static final int LEVEL_SUCCESS_DURATION_TICKS = 20; // 1秒
+    private static final int INITIAL_LIVES = 3;
 
     @Getter
     private MemoryKeyGameState gameState = MemoryKeyGameState.IDLE;
@@ -42,19 +44,7 @@ public class BlockMemoryKeyCoreEntity extends BlockEntity {
     private MemoryKeyLevel currentLevel = MemoryKeyLevel.LEVEL_1;
 
     @Getter
-    private int remainingLives = 3;
-
-    public void setGameState(MemoryKeyGameState gameState) {
-        this.gameState = gameState;
-        updateBlockState();
-        setChanged();
-    }
-
-    public void setRemainingLives(int remainingLives) {
-        this.remainingLives = remainingLives;
-        updateBlockState();
-        setChanged();
-    }
+    private int remainingLives = INITIAL_LIVES;
 
     @Setter
     @Getter
@@ -78,33 +68,29 @@ public class BlockMemoryKeyCoreEntity extends BlockEntity {
     @Setter
     private int errorTickCounter = 0;
 
-    /** 过渡状态持续时间常量 */
-    private static final int ERROR_STATE_DURATION_TICKS = 40;  // 2秒
-    private static final int LEVEL_SUCCESS_DURATION_TICKS = 20; // 1秒
-
     public BlockMemoryKeyCoreEntity(BlockPos pos, BlockState state) {
         super(SimpleBlockGameRegistration.BLOCK_MEMORY_KEY_CORE_ENTITY.get(), pos, state);
     }
 
+    public void setGameState(MemoryKeyGameState gameState) {
+        this.gameState = gameState;
+        setChanged();
+        syncToClient();
+    }
+
+    public void setRemainingLives(int remainingLives) {
+        this.remainingLives = remainingLives;
+        setChanged();
+        syncToClient();
+    }
+
     /**
-     * 更新方块状态，同步游戏状态和生命值到方块属性
+     * 同步数据到客户端
      */
-    private void updateBlockState() {
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
+    private void syncToClient() {
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
-
-        BlockState state = serverLevel.getBlockState(worldPosition);
-        if (!(state.getBlock() instanceof BlockMemoryKeyCore)) {
-            return;
-        }
-
-        BlockState newState = state
-                .setValue(BlockMemoryKeyCore.GAME_STATE, gameState)
-                .setValue(BlockMemoryKeyCore.LIVES, remainingLives);
-
-        serverLevel.setBlock(worldPosition, newState, 3);
-        serverLevel.sendBlockUpdated(worldPosition, state, newState, 3);
     }
 
     /**
@@ -113,7 +99,13 @@ public class BlockMemoryKeyCoreEntity extends BlockEntity {
      * @param newSequence 新的序列列表
      */
     public void setSequence(List<Integer> newSequence) {
-        this.sequence = new ArrayList<>(newSequence);
+        if (newSequence == null) {
+            this.sequence.clear();
+        } else {
+            this.sequence = new ArrayList<>(newSequence.stream()
+                    .filter(v -> v >= 0)
+                    .toList());
+        }
         setChanged();
     }
 
@@ -122,7 +114,7 @@ public class BlockMemoryKeyCoreEntity extends BlockEntity {
      */
     public void loseLife() {
         if (remainingLives > 0) {
-            setRemainingLives(remainingLives - 1);
+            setRemainingLives(Math.max(0, remainingLives - 1));
         }
     }
 
@@ -140,6 +132,7 @@ public class BlockMemoryKeyCoreEntity extends BlockEntity {
         errorTickCounter = 0;
         startDemonstration();
         setChanged();
+        syncToClient();
     }
 
     /**
@@ -160,20 +153,16 @@ public class BlockMemoryKeyCoreEntity extends BlockEntity {
         // 只重置状态和计数变量，保持序列不变
         this.gameState = MemoryKeyGameState.IDLE;
         this.currentLevel = MemoryKeyLevel.LEVEL_1;
-        this.remainingLives = 3;
+        this.remainingLives = INITIAL_LIVES;
         this.currentSequenceIndex = 0;
         this.flashingIndex = -1;
         this.demoCurrentIndex = -1;
         this.demoTickCounter = 0;
         this.errorTickCounter = 0;
 
-        // 同步到方块状态
-        updateBlockState();
         setChanged();
+        syncToClient();
     }
-
-    /** 初始生命数 */
-    private static final int INITIAL_LIVES = 3;
 
     /**
      * 完全重置游戏（从进行中回到未开始状态）
@@ -299,7 +288,7 @@ public class BlockMemoryKeyCoreEntity extends BlockEntity {
             demoCurrentIndex++;
             demoTickCounter = 0;
             setChanged();
-            serverLevel.sendBlockUpdated(worldPosition, serverLevel.getBlockState(worldPosition), serverLevel.getBlockState(worldPosition), 3);
+            syncToClient();
         }
     }
 
@@ -307,7 +296,12 @@ public class BlockMemoryKeyCoreEntity extends BlockEntity {
     protected void saveAdditional(@NonNull ValueOutput output) {
         super.saveAdditional(output);
         CompoundTag tag = new CompoundTag();
-        writeToTag(tag);
+        tag.putInt(KEY_GAME_STATE, gameState.getValue());
+        tag.putInt(KEY_CURRENT_LEVEL, currentLevel.getLevelNumber());
+        tag.putInt(KEY_REMAINING_LIVES, remainingLives);
+        tag.putInt(KEY_CURRENT_SEQUENCE_INDEX, currentSequenceIndex);
+        tag.putInt(KEY_FLASHING_INDEX, flashingIndex);
+        tag.putIntArray(KEY_SEQUENCE_DATA, sequence.stream().mapToInt(Integer::intValue).toArray());
         output.store("MemoryKeyData", CompoundTag.CODEC, tag);
     }
 
@@ -315,39 +309,7 @@ public class BlockMemoryKeyCoreEntity extends BlockEntity {
     protected void loadAdditional(@NonNull ValueInput input) {
         super.loadAdditional(input);
         CompoundTag tag = input.read("MemoryKeyData", CompoundTag.CODEC).orElse(new CompoundTag());
-        readFromTag(tag);
-    }
-
-    @Override
-    public @NonNull CompoundTag getUpdateTag(HolderLookup.@NonNull Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-        writeToTag(tag);
-        return tag;
-    }
-
-    /**
-     * 将游戏数据写入NBT标签
-     */
-    private void writeToTag(CompoundTag tag) {
-        tag.putString(KEY_GAME_STATE, gameState.getSerializedName());
-        tag.putInt(KEY_CURRENT_LEVEL, currentLevel.getLevelNumber());
-        tag.putInt(KEY_REMAINING_LIVES, remainingLives);
-        tag.putInt(KEY_CURRENT_SEQUENCE_INDEX, currentSequenceIndex);
-        tag.putInt(KEY_FLASHING_INDEX, flashingIndex);
-        tag.putIntArray(KEY_SEQUENCE_DATA, sequence.stream().mapToInt(Integer::intValue).toArray());
-    }
-
-    /**
-     * 从NBT标签读取游戏数据
-     */
-    private void readFromTag(CompoundTag tag) {
-        String gameStateStr = tag.getString(KEY_GAME_STATE).orElse(MemoryKeyGameState.IDLE.name());
-        try {
-            gameState = MemoryKeyGameState.valueOf(gameStateStr);
-        } catch (IllegalArgumentException e) {
-            gameState = MemoryKeyGameState.IDLE;
-        }
-
+        gameState = MemoryKeyGameState.fromInt(tag.getIntOr(KEY_GAME_STATE, 0));
         currentLevel = MemoryKeyLevel.fromLevelNumber(tag.getIntOr(KEY_CURRENT_LEVEL, 1));
         remainingLives = tag.getIntOr(KEY_REMAINING_LIVES, INITIAL_LIVES);
         currentSequenceIndex = tag.getIntOr(KEY_CURRENT_SEQUENCE_INDEX, 0);
@@ -357,11 +319,5 @@ public class BlockMemoryKeyCoreEntity extends BlockEntity {
             sequence.clear();
             for (int value : arr) sequence.add(value);
         });
-    }
-
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        HolderLookup.Provider registries = level != null ? level.registryAccess() : RegistryAccess.EMPTY;
-        return ClientboundBlockEntityDataPacket.create(this, (be, _) -> be.getUpdateTag(registries));
     }
 }

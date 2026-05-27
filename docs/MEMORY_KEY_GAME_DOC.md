@@ -16,10 +16,13 @@ src/main/java/com/simple_block_game/common/simpleMemoryKey/
 │   ├── MemoryKeyGameState.java          # 游戏状态枚举
 │   ├── MemoryKeyLevel.java              # 关卡枚举
 │   └── MemoryKeyPosition.java           # 按键位置枚举
-└── logic/                    # 逻辑类
-    ├── GameMemoryKeyLogic.java          # 游戏核心逻辑
-    ├── GameMemoryKeyHelper.java         # Minecraft交互辅助方法
-    └── GameMemoryKeyReward.java         # 奖励系统
+├── logic/                    # 逻辑类
+│   ├── GameMemoryKeyLogic.java          # 游戏核心逻辑
+│   ├── GameMemoryKeyHelper.java         # Minecraft交互辅助方法
+│   └── GameMemoryKeyReward.java         # 奖励系统
+└── renderer/                 # 渲染器
+    ├── BlockMemoryKeyCoreEntityRenderer.java      # 核心实体渲染器
+    └── BlockMemoryKeyButtonEntityRenderer.java    # 按键实体渲染器
 ```
 
 ---
@@ -81,6 +84,13 @@ src/main/java/com/simple_block_game/common/simpleMemoryKey/
 | `GameMemoryKeyLogic` | 游戏核心逻辑 | `generateFullSequence()`, `getSequenceLengthForLevel()`, `validateInput()` |
 | `GameMemoryKeyHelper` | Minecraft交互辅助方法 | `generateMemoryKeyLayout()`, `minimizeMemoryKeyLayout()`, `destroyMemoryKeyLayout()`, `triggerButtonFlash()`, `handlePlayerInput()` |
 | `GameMemoryKeyReward` | 奖励系统 | `handleReward()` |
+
+### 2.4 渲染器类
+
+| 类名 | 职责 | 关键方法 |
+|------|------|---------|
+| `BlockMemoryKeyCoreEntityRenderer` | 核心实体渲染器，显示关卡和生命值 | `getTextureForState()` |
+| `BlockMemoryKeyButtonEntityRenderer` | 按键实体渲染器，显示按键状态和闪烁效果 | `getTexturesForState()` |
 
 ---
 
@@ -221,142 +231,28 @@ private void updateBlockState() {
 
 ---
 
-## 五、添加新游戏的模板
+## 五、设计模式
 
-参考项目中已有的三个游戏实现模式：
-
-### 5.1 核心方块实体模板
-
-```java
-public class BlockNewGameCoreEntity extends BlockEntity {
-    private NewGameState gameState = NewGameState.IDLE;
-    
-    public void tick() {
-        // 游戏逻辑更新
-    }
-    
-    public void initialize() {
-        // 初始化（首次展开）
-    }
-    
-    public void completeReset() {
-        // 完全重置
-    }
-}
-```
-
-### 5.2 核心方块模板
-
-```java
-public class BlockNewGameCore extends BaseVerticalBlock implements IGameCoreBlock {
-    public static final EnumProperty<NewGameState> GAME_STATE = ...;
-    
-    @Override
-    public boolean unfoldGame(ServerLevel level, BlockPos pos, 
-                             BlockState state, Player player) {
-        // 生成布局
-        return true;
-    }
-    
-    @Override
-    public void startGame(ServerLevel level, BlockPos pos, 
-                         BlockState state, Player player) {
-        // 开始游戏
-    }
-    
-    @Override
-    public void resetGame(ServerLevel level, BlockPos pos, BlockState state) {
-        // 重置游戏
-    }
-    
-    @Override
-    public void minimizeGame(ServerLevel level, BlockPos pos, BlockState state) {
-        // 最小化游戏
-    }
-    
-    @Override
-    public void closeGame(ServerLevel level, BlockPos pos, BlockState state) {
-        // 关闭游戏
-    }
-}
-```
-
-### 5.3 辅助方法类模板
-
-```java
-public final class GameNewGameHelper {
-    public static void generateLayout(ServerLevel level, BlockPos corePos) {
-        // 生成游戏布局
-    }
-    
-    public static void handlePlayerInput(ServerLevel level, BlockPos corePos,
-                                        BlockNewGameCoreEntity core, int input) {
-        // 处理玩家输入
-    }
-}
-```
-
----
-
-## 六、接口说明
-
-### 6.1 IGameCoreBlock 接口
-
-```java
-public interface IGameCoreBlock {
-    /** 游戏是否已展开的属性 */
-    BooleanProperty UNFOLDED = BooleanProperty.create("unfolded");
-    
-    /** 检查游戏布局区域是否为空 */
-    boolean checkLayoutAreaIsEmpty(ServerLevel serverLevel, BlockPos pos, BlockState state);
-    
-    /** 展开游戏（放置布局方块） */
-    boolean unfoldGame(ServerLevel serverLevel, BlockPos pos, BlockState state, Player player);
-    
-    /** 开始/重载游戏（初始化游戏数据） */
-    void startGame(ServerLevel serverLevel, BlockPos pos, BlockState state, Player player);
-    
-    /** 重置游戏（保持布局，重置数据） */
-    void resetGame(ServerLevel serverLevel, BlockPos pos, BlockState state);
-    
-    /** 最小化游戏（保留数据，隐藏布局） */
-    void minimizeGame(ServerLevel serverLevel, BlockPos pos, BlockState state);
-    
-    /** 关闭游戏（移除布局，清理数据） */
-    void closeGame(ServerLevel serverLevel, BlockPos pos, BlockState state);
-    
-    /** 获取游戏是否已展开 */
-    boolean isGameUnfolded(BlockState state);
-    
-    /** 获取游戏核心实体 */
-    @Nullable
-    BlockEntity getGameCoreEntity(ServerLevel serverLevel, BlockPos pos);
-}
-```
-
----
-
-## 七、设计模式
-
-### 7.1 状态机模式
+### 5.1 状态机模式
 
 使用枚举管理游戏状态，通过状态转换驱动游戏流程。
 
-### 7.2 实体Tick驱动
+### 5.2 实体Tick驱动
 
 避免使用外部调度器，通过实体的 `tick()` 方法处理延迟逻辑。
 
-### 7.3 模块化分离
+### 5.3 模块化分离
 
 - **逻辑层**：纯业务逻辑，无Minecraft依赖
 - **交互层**：与Minecraft世界交互
 - **数据层**：状态和配置数据
+- **渲染层**：自定义渲染逻辑
 
 ---
 
-## 八、扩展建议
+## 六、扩展建议
 
-### 8.1 可扩展功能
+### 6.1 可扩展功能
 
 | 功能 | 说明 |
 |------|------|
@@ -365,7 +261,7 @@ public interface IGameCoreBlock {
 | 难度配置 | 允许玩家选择难度等级 |
 | 多人模式 | 支持多人协作或竞争玩法 |
 
-### 8.2 代码优化
+### 6.2 代码优化
 
 1. **配置外置**：将游戏参数（序列长度、延迟时间）外置为配置文件
 2. **事件系统**：使用事件总线解耦游戏逻辑
@@ -373,7 +269,7 @@ public interface IGameCoreBlock {
 
 ---
 
-## 九、文件清单
+## 七、文件清单
 
 | 文件 | 路径 | 说明 |
 |------|------|------|
@@ -388,16 +284,18 @@ public interface IGameCoreBlock {
 | 游戏逻辑 | `logic/GameMemoryKeyLogic.java` | 核心游戏逻辑 |
 | 辅助方法 | `logic/GameMemoryKeyHelper.java` | Minecraft交互方法 |
 | 奖励系统 | `logic/GameMemoryKeyReward.java` | 战利品奖励 |
+| 核心渲染器 | `renderer/BlockMemoryKeyCoreEntityRenderer.java` | 核心实体渲染 |
+| 按键渲染器 | `renderer/BlockMemoryKeyButtonEntityRenderer.java` | 按键实体渲染 |
 
 ---
 
-## 十、版本历史
+## 八、版本历史
 
 | 版本 | 日期 | 说明 |
 |------|------|------|
 | v1.0 | 2026-05 | 初始版本，完成核心玩法 |
 | v1.1 | 2026-05 | 修复状态切换问题 |
-| v1.2 | 2026-05 | 添加奖励系统 |
+| v1.2 | 2026-05 | 添加奖励系统和自定义渲染器 |
 
 *文档版本: 1.2*  
-*最后更新: 2026-05-27*
+*最后更新: 2026-05-29*

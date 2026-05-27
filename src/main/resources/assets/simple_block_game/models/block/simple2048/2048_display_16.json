@@ -1,6 +1,0 @@
-{
-  "parent": "simple_block_game:block/rotated_base",
-  "textures": {
-    "overlay": "simple_block_game:block/simple2048/2048_display_16"
-  }
-}

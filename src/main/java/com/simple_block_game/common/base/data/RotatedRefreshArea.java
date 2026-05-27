@@ -9,7 +9,6 @@ import net.minecraft.world.phys.Vec3;
 
 import static com.simple_block_game.common.base.block.BaseRotatedBlock.FACING;
 
-/** 旋转放置的刷新方块的点击区域 */
 public enum RotatedRefreshArea {
 
     NULL,
@@ -27,14 +26,9 @@ public enum RotatedRefreshArea {
         if (uv.y < HALF_PIXEL) return BOTTOM;
 
         boolean swapX = facing == Direction.NORTH || facing == Direction.EAST;
-        return uv.x <= HALF_PIXEL ?
-                (swapX ? RIGHT_TOP : LEFT_TOP) :
-                (swapX ? LEFT_TOP : RIGHT_TOP);
+        return uv.x <= HALF_PIXEL ? (swapX ? RIGHT_TOP : LEFT_TOP) : (swapX ? LEFT_TOP : RIGHT_TOP);
     }
 
-    /**
-     * 将世界坐标转换为UV坐标（0-16像素范围）
-     */
     private static Vec3 getUV(Direction facing, Vec3 worldPos, BlockPos blockPos) {
         double localX = worldPos.x - blockPos.getX();
         double localY = worldPos.y - blockPos.getY();
