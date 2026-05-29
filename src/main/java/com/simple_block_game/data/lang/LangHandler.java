@@ -67,5 +67,23 @@ public class LangHandler {
         addLang("msg.memory_key.minimized", "记忆键布局已最小化！", "Memory Key layout minimized!");
         addLang("msg.memory_key.closed", "记忆键布局已关闭！", "Memory Key layout closed!");
         addLang("msg.memory_key.reset", "记忆键游戏已重置！", "Memory Key game reset!");
+
+        // ========== Game Ten Drop ==========
+        addLang("msg.ten_drops.start", "十滴水游戏开始！", "Ten Drop Game Started!");
+        addLang("msg.ten_drops.game_started", "十滴水游戏布局已展开！", "Ten Drop layout deployed!");
+        addLang("msg.ten_drops.obstructed", "无法生成十滴水布局，区域被阻挡！", "Cannot place Ten Drop layout - area is obstructed!");
+        addLang("msg.ten_drops.victory", "恭喜通关！进入下一关！", "Victory! Proceeding to next level!");
+        addLang("msg.ten_drops.game_over", "游戏结束！水滴用尽！", "Game Over! No water drops left!");
+        addLang("msg.ten_drops.level_up", "第 %d 关", "Level %d");
+        addLang("msg.ten_drops.water_drops", "剩余水滴: %d", "Water drops: %d");
+        addLang("msg.ten_drops.combo", "连击 x%d！", "Combo x%d!");
+        addLang("msg.ten_drops.no_drops", "没有水滴了！", "No water drops!");
+        addLang("msg.ten_drops.invalid_click", "无效点击！", "Invalid click!");
+
+        addLang("msg.ten_drops.core_not_found", "未找到十滴水核心方块！", "Ten Drop Core block not found!");
+        addLang("msg.ten_drops.core_invalid", "无效的十滴水核心方块！", "Invalid Ten Drop Core block!");
+        addLang("msg.ten_drops.minimized", "十滴水布局已最小化！", "Ten Drop layout minimized!");
+        addLang("msg.ten_drops.closed", "十滴水布局已关闭！", "Ten Drop layout closed!");
+        addLang("msg.ten_drops.reset", "十滴水游戏已重置！", "Ten Drop game reset!");
     }
 }

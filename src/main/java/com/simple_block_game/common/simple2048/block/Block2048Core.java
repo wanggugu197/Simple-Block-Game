@@ -27,7 +27,9 @@ import net.minecraft.world.phys.Vec3;
 import com.mojang.serialization.MapCodec;
 import lombok.NonNull;
 
-/** 2048游戏核心方块 */
+/**
+ * 2048游戏核心方块
+ */
 public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
 
     private static final int CENTER_MIN = 4;

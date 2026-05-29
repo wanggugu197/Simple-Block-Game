@@ -9,7 +9,9 @@ import net.minecraft.world.entity.player.Player;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
-/** 2048游戏奖励处理器 */
+/**
+ * 2048游戏奖励处理器
+ */
 public final class Game2048Reward extends BaseGameReward {
 
     private static final Int2ObjectOpenHashMap<Identifier> SCORE_REWARDS = new Int2ObjectOpenHashMap<>();
@@ -48,7 +50,7 @@ public final class Game2048Reward extends BaseGameReward {
         if (oldScore >= newScore) return;
         SCORE_REWARDS.keySet().forEach(threshold -> {
             if (threshold > oldScore && threshold <= newScore) {
-                Identifier tableId = SCORE_REWARDS.get(threshold);
+                Identifier tableId = SCORE_REWARDS.getOrDefault(threshold, null);
                 if (tableId != null) dropLoot(level, player, tableId);
             }
         });
@@ -58,7 +60,7 @@ public final class Game2048Reward extends BaseGameReward {
         if (oldMax >= newMax) return;
         MAX_REWARDS.keySet().forEach(threshold -> {
             if (threshold > oldMax && threshold <= newMax) {
-                Identifier tableId = MAX_REWARDS.get(threshold);
+                Identifier tableId = MAX_REWARDS.getOrDefault(threshold, null);
                 if (tableId != null) dropLoot(level, player, tableId);
             }
         });

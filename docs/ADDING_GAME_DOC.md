@@ -466,7 +466,7 @@ public class BlockXXXCore extends BaseVerticalBlock implements IGameCoreBlock {
         if (be instanceof BlockXXXCoreEntity entity) {
             entity.setGameState(XXXGameState.PLAYING);
             // 发送开始消息
-            player.sendSystemMessage(
+            player.sendOverlayMessage(
                 net.minecraft.network.chat.Component.translatable("msg.xxx.start")
             );
         }

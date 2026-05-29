@@ -12,7 +12,9 @@ import net.neoforged.fml.config.ModConfig;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
-/** 简单方块游戏主类 */
+/**
+ * 简单方块游戏主类
+ */
 @Mod(SimpleBlockGame.MODID)
 public class SimpleBlockGame {
 

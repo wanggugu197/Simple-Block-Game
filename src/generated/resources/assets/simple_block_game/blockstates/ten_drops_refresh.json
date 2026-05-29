@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "vertical_direction=down": {
+      "model": "simple_block_game:block/base/vertical_side",
+      "x": 180
+    },
+    "vertical_direction=up": {
+      "model": "simple_block_game:block/base/vertical_side"
+    }
+  }
+}

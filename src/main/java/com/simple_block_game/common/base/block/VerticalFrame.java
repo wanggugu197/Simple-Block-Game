@@ -5,7 +5,9 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import com.mojang.serialization.MapCodec;
 import org.jspecify.annotations.NonNull;
 
-/** 垂直固定框架方块 */
+/**
+ * 垂直固定框架方块
+ */
 public class VerticalFrame extends BaseVerticalBlock {
 
     private static final MapCodec<VerticalFrame> CODEC = simpleCodec(VerticalFrame::new);

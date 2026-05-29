@@ -5,7 +5,9 @@ import net.minecraft.util.StringRepresentable;
 import lombok.Getter;
 import org.jspecify.annotations.NonNull;
 
-/** 扫雷预设难度枚举 */
+/**
+ * 扫雷预设难度枚举
+ */
 public enum PresetDifficulty implements StringRepresentable {
 
     EASY(9, 9, 10, "easy"),

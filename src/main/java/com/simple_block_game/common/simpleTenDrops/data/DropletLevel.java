@@ -1,4 +1,4 @@
-package com.simple_block_game.common.simpleTenDrop.data;
+package com.simple_block_game.common.simpleTenDrops.data;
 
 import net.minecraft.util.StringRepresentable;
 
@@ -11,22 +11,34 @@ import org.jspecify.annotations.NonNull;
  */
 public enum DropletLevel implements StringRepresentable {
 
-    /** 空状态 - 单元格中没有水滴 */
+    /**
+     * 空状态 - 单元格中没有水滴
+     */
     EMPTY(0, "empty"),
 
-    /** 1级水滴 */
+    /**
+     * 1级水滴
+     */
     ONE(1, "one"),
 
-    /** 2级水滴 */
+    /**
+     * 2级水滴
+     */
     TWO(2, "two"),
 
-    /** 3级水滴 */
+    /**
+     * 3级水滴
+     */
     THREE(3, "three"),
 
-    /** 4级水滴 - 达到此等级时，再添加一滴水就会爆炸 */
+    /**
+     * 4级水滴 - 达到此等级时，再添加一滴水就会爆炸
+     */
     FOUR(4, "four"),
 
-    /** 爆炸状态 - 水滴已爆炸，会产生飞溅效果 */
+    /**
+     * 爆炸状态 - 水滴已爆炸，会产生飞溅效果
+     */
     BURST(5, "burst");
 
     @Getter
@@ -35,7 +47,7 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 构造水滴等级枚举值
-     * 
+     *
      * @param level          等级数值
      * @param serializedName 序列化名称，用于网络传输和渲染
      */
@@ -46,7 +58,7 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 获取序列化名称
-     * 
+     *
      * @return 状态的字符串表示
      */
     @Override
@@ -56,7 +68,7 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 判断是否可以添加水滴（非空且非爆炸状态）
-     * 
+     *
      * @return 是否可添加水滴
      */
     public boolean canAddDrop() {
@@ -65,7 +77,7 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 判断是否即将爆炸（当前为4级）
-     * 
+     *
      * @return 是否即将爆炸
      */
     public boolean willBurst() {
@@ -74,7 +86,7 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 判断是否为空状态
-     * 
+     *
      * @return 是否为空
      */
     public boolean isEmpty() {
@@ -83,7 +95,7 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 判断是否为爆炸状态
-     * 
+     *
      * @return 是否为爆炸状态
      */
     public boolean isBurst() {
@@ -92,7 +104,7 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 判断是否为有效水滴（1-4级）
-     * 
+     *
      * @return 是否为有效水滴
      */
     public boolean isValidDroplet() {
@@ -101,7 +113,7 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 获取下一级水滴状态
-     * 
+     *
      * @return 升级后的水滴等级
      */
     public DropletLevel nextLevel() {
@@ -117,7 +129,7 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 获取上一级水滴状态
-     * 
+     *
      * @return 降级后的水滴等级
      */
     public DropletLevel previousLevel() {
@@ -133,7 +145,7 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 根据等级数值获取对应的枚举值
-     * 
+     *
      * @param level 等级数值（0-5）
      * @return 对应的水滴等级枚举，超出范围返回EMPTY
      */
@@ -151,7 +163,7 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 根据序列化名称获取对应的枚举值
-     * 
+     *
      * @param name 序列化名称
      * @return 对应的水滴等级枚举，未找到返回EMPTY
      */

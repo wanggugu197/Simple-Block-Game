@@ -9,7 +9,9 @@ import org.jspecify.annotations.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
-/** 记忆键游戏按键位置枚举（8方向环形布局） */
+/**
+ * 记忆键游戏按键位置枚举（8方向环形布局）
+ */
 public enum MemoryKeyPosition implements StringRepresentable {
 
     NORTH(0, "north", 0, 0, -1),
@@ -52,23 +54,31 @@ public enum MemoryKeyPosition implements StringRepresentable {
         return serializedName;
     }
 
-    /** 根据ID获取枚举，无效时返回NORTH */
+    /**
+     * 根据ID获取枚举，无效时返回NORTH
+     */
     public static MemoryKeyPosition fromId(int id) {
         return ID_MAP.getOrDefault(id, NORTH);
     }
 
-    /** 计算相对于中心的绝对坐标 */
+    /**
+     * 计算相对于中心的绝对坐标
+     */
     public BlockPos getRelativePos(BlockPos center) {
         if (center == null) return BlockPos.ZERO;
         return center.offset(offsetX, offsetY, offsetZ);
     }
 
-    /** 获取总位置数 */
+    /**
+     * 获取总位置数
+     */
     public static int getTotalPositions() {
         return values().length;
     }
 
-    /** 获取所有位置相对于中心的坐标列表 */
+    /**
+     * 获取所有位置相对于中心的坐标列表
+     */
     public static Iterable<BlockPos> getButtonPositions(BlockPos center) {
         BlockPos[] positions = new BlockPos[values().length];
         int i = 0;

@@ -16,7 +16,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
-/** 扫雷游戏核心方块实体，存储雷区布局和游戏状态 */
+/**
+ * 扫雷游戏核心方块实体，存储雷区布局和游戏状态
+ */
 public class BlockMinesweeperCoreEntity extends BaseGameBlockEntity {
 
     private static final String KEY_DATA = "MinesweeperCoreData";

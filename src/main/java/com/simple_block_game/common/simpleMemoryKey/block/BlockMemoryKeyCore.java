@@ -25,7 +25,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import com.mojang.serialization.MapCodec;
 import lombok.NonNull;
 
-/** 记忆键游戏核心方块 */
+/**
+ * 记忆键游戏核心方块
+ */
 public class BlockMemoryKeyCore extends BaseVerticalBlock implements IGameCoreBlock {
 
     public BlockMemoryKeyCore(BlockBehaviour.Properties properties) {

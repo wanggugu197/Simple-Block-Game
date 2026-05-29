@@ -8,7 +8,9 @@ import org.jspecify.annotations.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
-/** 记忆键游戏关卡配置枚举 */
+/**
+ * 记忆键游戏关卡配置枚举
+ */
 public enum MemoryKeyLevel implements StringRepresentable {
 
     LEVEL_1(1, 3, 1000, "level_1"),
@@ -47,17 +49,23 @@ public enum MemoryKeyLevel implements StringRepresentable {
         return serializedName;
     }
 
-    /** 根据关卡编号获取枚举，无效时返回LEVEL_1 */
+    /**
+     * 根据关卡编号获取枚举，无效时返回LEVEL_1
+     */
     public static MemoryKeyLevel fromLevelNumber(int level) {
         return LEVEL_MAP.getOrDefault(level, LEVEL_1);
     }
 
-    /** 获取下一关，最后一关返回自身 */
+    /**
+     * 获取下一关，最后一关返回自身
+     */
     public MemoryKeyLevel next() {
         return this == LEVEL_6 ? LEVEL_6 : VALUES[ordinal() + 1];
     }
 
-    /** 是否为最后一关 */
+    /**
+     * 是否为最后一关
+     */
     public boolean isLastLevel() {
         return this == LEVEL_6;
     }

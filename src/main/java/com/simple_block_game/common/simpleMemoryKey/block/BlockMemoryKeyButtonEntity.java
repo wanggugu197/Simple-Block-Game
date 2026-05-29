@@ -15,7 +15,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
-/** 记忆键游戏按键方块实体 */
+/**
+ * 记忆键游戏按键方块实体
+ */
 public class BlockMemoryKeyButtonEntity extends BaseGameBlockEntity {
 
     private static final String KEY_CORE_POS_X = "CorePosX";
@@ -47,7 +49,9 @@ public class BlockMemoryKeyButtonEntity extends BaseGameBlockEntity {
         setChanged();
     }
 
-    /** 实体tick更新（服务端） */
+    /**
+     * 实体tick更新（服务端）
+     */
     public void tick() {
         if (isFlashing && flashTimer > 0) {
             flashTimer--;

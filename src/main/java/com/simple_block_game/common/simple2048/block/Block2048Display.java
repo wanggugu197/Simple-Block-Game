@@ -12,7 +12,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import com.mojang.serialization.MapCodec;
 import lombok.NonNull;
 
-/** 2048游戏显示方块 */
+/**
+ * 2048游戏显示方块
+ */
 public class Block2048Display extends BaseRotatedBlock {
 
     public Block2048Display(BlockBehaviour.Properties properties) {

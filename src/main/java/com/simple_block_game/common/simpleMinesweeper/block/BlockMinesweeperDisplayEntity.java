@@ -14,7 +14,9 @@ import net.minecraft.world.level.storage.ValueOutput;
 import lombok.Getter;
 import lombok.NonNull;
 
-/** 扫雷游戏显示方块实体，存储显示状态和核心方块位置 */
+/**
+ * 扫雷游戏显示方块实体，存储显示状态和核心方块位置
+ */
 public class BlockMinesweeperDisplayEntity extends BaseGameBlockEntity {
 
     @Getter

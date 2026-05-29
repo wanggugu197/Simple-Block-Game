@@ -8,7 +8,9 @@ import org.jspecify.annotations.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
-/** 扫雷方块状态枚举 */
+/**
+ * 扫雷方块状态枚举
+ */
 public enum MinesweeperState implements StringRepresentable {
 
     UNOPENED(0, "unopened"),
@@ -38,6 +40,7 @@ public enum MinesweeperState implements StringRepresentable {
     private static final MinesweeperState[] VALUES = values();
 
     private static final Map<String, MinesweeperState> NAME_MAP = new HashMap<>(VALUES.length);
+
     static {
         for (MinesweeperState state : VALUES) {
             NAME_MAP.put(state.serializedName, state);

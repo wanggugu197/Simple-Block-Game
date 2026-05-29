@@ -1,6 +1,8 @@
 package com.simple_block_game.common.simple2048.data;
 
-/** 2048游戏四方向枚举 */
+/**
+ * 2048游戏四方向枚举
+ */
 public enum Quadrant {
 
     NULL,

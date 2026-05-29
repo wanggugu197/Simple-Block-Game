@@ -6,7 +6,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
 
-/** 通用初始化类 */
+/**
+ * 通用初始化类
+ */
 public class CommonInit {
 
     private static IEventBus modBus;

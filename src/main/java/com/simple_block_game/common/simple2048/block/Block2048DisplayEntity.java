@@ -14,7 +14,9 @@ import net.minecraft.world.level.storage.ValueOutput;
 import lombok.Getter;
 import lombok.NonNull;
 
-/** 2048游戏显示方块实体，存储显示数值 */
+/**
+ * 2048游戏显示方块实体，存储显示数值
+ */
 public class Block2048DisplayEntity extends BaseGameBlockEntity {
 
     private static final String NBT_KEY = "DisplayValue";

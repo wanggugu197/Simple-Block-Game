@@ -22,7 +22,9 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-/** 记忆键游戏核心方块实体 */
+/**
+ * 记忆键游戏核心方块实体
+ */
 public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
 
     private static final String KEY_GAME_STATE = "GameState";
@@ -52,19 +54,27 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
     @Setter
     private int flashingIndex = -1;
 
-    /** 完整的按键序列 */
+    /**
+     * 完整的按键序列
+     */
     @Getter
     private List<Integer> sequence = new ArrayList<>();
 
-    /** 演示阶段的当前按键索引 */
+    /**
+     * 演示阶段的当前按键索引
+     */
     @Setter
     private int demoCurrentIndex = -1;
 
-    /** 演示阶段的tick计数器 */
+    /**
+     * 演示阶段的tick计数器
+     */
     @Setter
     private int demoTickCounter = 0;
 
-    /** 错误状态的tick计数器（用于显示2秒错误状态） */
+    /**
+     * 错误状态的tick计数器（用于显示2秒错误状态）
+     */
     @Setter
     private int errorTickCounter = 0;
 
@@ -221,7 +231,7 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
 
     /**
      * 处理错误状态
-     * 
+     *
      * @return true表示状态已处理，需要提前返回
      */
     private boolean handleErrorState() {
@@ -240,7 +250,7 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
 
     /**
      * 处理关卡成功状态
-     * 
+     *
      * @return true表示状态已处理，需要提前返回
      */
     private boolean handleLevelSuccessState() {

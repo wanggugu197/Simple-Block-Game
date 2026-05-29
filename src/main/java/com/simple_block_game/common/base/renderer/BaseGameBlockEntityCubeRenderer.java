@@ -48,20 +48,7 @@ public abstract class BaseGameBlockEntityCubeRenderer<T extends BaseGameBlockEnt
         poseStack.translate(0.5f, 0.5f, 0.5f);
 
         Direction facing = state.facing;
-        switch (facing) {
-            case NORTH -> {}
-            case SOUTH -> poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180.0f));
-            case EAST -> poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90.0f));
-            case WEST -> poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270.0f));
-            case UP -> {
-                poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-90.0f));
-                poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(-90.0f));
-            }
-            case DOWN -> {
-                poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(90.0f));
-                poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(-90.0f));
-            }
-        }
+        applyRotation(poseStack, facing);
 
         poseStack.scale(SCALE, SCALE, SCALE);
 
@@ -118,7 +105,24 @@ public abstract class BaseGameBlockEntityCubeRenderer<T extends BaseGameBlockEnt
         poseStack.popPose();
     }
 
-    private static void renderFace(PoseStack.Pose pose, VertexConsumer consumer) {
+    protected static void applyRotation(PoseStack poseStack, Direction facing) {
+        switch (facing) {
+            case NORTH -> {}
+            case SOUTH -> poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180.0f));
+            case EAST -> poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(90.0f));
+            case WEST -> poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(270.0f));
+            case UP -> {
+                poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-90.0f));
+                poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(-90.0f));
+            }
+            case DOWN -> {
+                poseStack.mulPose(com.mojang.math.Axis.XP.rotationDegrees(90.0f));
+                poseStack.mulPose(com.mojang.math.Axis.ZP.rotationDegrees(-90.0f));
+            }
+        }
+    }
+
+    protected static void renderFace(PoseStack.Pose pose, VertexConsumer consumer) {
         float w = 0.5f;
         float h = 0.5f;
         int color = 0xFFFFFFFF;

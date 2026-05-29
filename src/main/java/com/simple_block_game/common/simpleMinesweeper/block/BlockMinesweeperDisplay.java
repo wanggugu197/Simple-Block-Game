@@ -24,7 +24,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import com.mojang.serialization.MapCodec;
 import lombok.NonNull;
 
-/** 扫雷游戏显示方块 */
+/**
+ * 扫雷游戏显示方块
+ */
 public class BlockMinesweeperDisplay extends BaseVerticalBlock {
 
     public BlockMinesweeperDisplay(BlockBehaviour.Properties properties) {

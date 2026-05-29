@@ -10,7 +10,9 @@ import net.minecraft.world.entity.player.Player;
 import it.unimi.dsi.fastutil.floats.Float2ObjectRBTreeMap;
 import it.unimi.dsi.fastutil.floats.Float2ObjectSortedMap;
 
-/** 扫雷游戏奖励处理器 */
+/**
+ * 扫雷游戏奖励处理器
+ */
 public final class GameMinesweeperReward extends BaseGameReward {
 
     private static final Float2ObjectRBTreeMap<Identifier> REWARD_TABLE = new Float2ObjectRBTreeMap<>();
@@ -40,7 +42,7 @@ public final class GameMinesweeperReward extends BaseGameReward {
         Float2ObjectSortedMap<Identifier> subMap = REWARD_TABLE.headMap(mineContent);
         if (subMap.isEmpty()) return;
 
-        Identifier lootTableId = REWARD_TABLE.get(subMap.lastFloatKey());
+        Identifier lootTableId = REWARD_TABLE.getOrDefault(subMap.lastFloatKey(), null);
         if (lootTableId != null) {
             dropLoot(level, player, lootTableId);
         }

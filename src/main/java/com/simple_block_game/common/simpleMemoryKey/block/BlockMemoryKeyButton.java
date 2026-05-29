@@ -18,7 +18,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import com.mojang.serialization.MapCodec;
 import lombok.NonNull;
 
-/** 记忆键游戏的按键方块，支持闪烁效果和玩家输入 */
+/**
+ * 记忆键游戏的按键方块，支持闪烁效果和玩家输入
+ */
 public class BlockMemoryKeyButton extends BaseVerticalBlock {
 
     public BlockMemoryKeyButton(BlockBehaviour.Properties properties) {

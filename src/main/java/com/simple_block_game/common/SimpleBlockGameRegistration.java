@@ -20,10 +20,12 @@ import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperDisp
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperDisplayEntity;
 import com.simple_block_game.common.simpleMinesweeper.renderer.BlockMinesweeperCoreEntityRenderer;
 import com.simple_block_game.common.simpleMinesweeper.renderer.BlockMinesweeperDisplayEntityRenderer;
-import com.simple_block_game.common.simpleTenDrop.block.BlockTenDropCore;
-import com.simple_block_game.common.simpleTenDrop.block.BlockTenDropCoreEntity;
-import com.simple_block_game.common.simpleTenDrop.block.BlockTenDropDisplay;
-import com.simple_block_game.common.simpleTenDrop.block.BlockTenDropDisplayEntity;
+import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsCore;
+import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsCoreEntity;
+import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsDisplay;
+import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsDisplayEntity;
+import com.simple_block_game.common.simpleTenDrops.renderer.BlockTenDropsCoreEntityRenderer;
+import com.simple_block_game.common.simpleTenDrops.renderer.BlockTenDropsDisplayEntityRenderer;
 
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -39,7 +41,9 @@ import static com.simple_block_game.SimpleBlockGame.REGISTRYLIB;
 import static com.simple_block_game.registry.generator.ModBlockModelGeneratorHelpper.createHorizontalBlock;
 import static com.simple_block_game.registry.generator.ModBlockModelGeneratorHelpper.createVerticalBlock;
 
-/** 方块和实体注册类 */
+/**
+ * 方块和实体注册类
+ */
 public class SimpleBlockGameRegistration {
 
     public static void init() {}
@@ -170,35 +174,40 @@ public class SimpleBlockGameRegistration {
             .register();
 
     // ten drop
-    public static final BlockEntry<BlockTenDropCore> BLOCK_TEN_DROP_CORE = REGISTRYLIB
-            .block(REGISTRYLIB, "ten_drop_core", BlockTenDropCore::new)
+    public static final BlockEntry<BlockTenDropsCore> BLOCK_TEN_DROPS_CORE = REGISTRYLIB
+            .block(REGISTRYLIB, "ten_drops_core", BlockTenDropsCore::new)
             .langCn("十滴水核心方块")
-            .lang("Ten Drop Core")
-            .noBlockstate()
-            .item(item -> item.addTab(TAB_GANM.getKey()))
+            .lang("Ten Drops Core")
+            .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))
+            .item(builder -> builder.addTab(TAB_GANM.getKey())
+                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_ten_drops/ten_drops_core"))))
             .register();
-    public static final BlockEntry<BlockTenDropDisplay> BLOCK_TEN_DROP_DISPLAY = REGISTRYLIB
-            .block(REGISTRYLIB, "ten_drop_display", BlockTenDropDisplay::new)
+    public static final BlockEntry<BlockTenDropsDisplay> BLOCK_TEN_DROPS_DISPLAY = REGISTRYLIB
+            .block(REGISTRYLIB, "ten_drops_display", BlockTenDropsDisplay::new)
             .langCn("十滴水显示方块")
-            .lang("Ten Drop Display")
-            .noBlockstate()
-            .item(item -> item.addTab(TAB_GANM.getKey()))
+            .lang("Ten Drops Display")
+            .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_center"))
+            .item(builder -> builder.addTab(TAB_GANM.getKey())
+                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_ten_drops/ten_drops_display"))))
             .register();
-    public static final BlockEntry<BaseVerticalRefreshBlock> BLOCK_TEN_DROP_REFRESH = REGISTRYLIB
-            .block(REGISTRYLIB, "ten_drop_refresh", p -> BaseVerticalRefreshBlock.create(p, "ten_drop"))
+    public static final BlockEntry<BaseVerticalRefreshBlock> BLOCK_TEN_DROPS_REFRESH = REGISTRYLIB
+            .block(REGISTRYLIB, "ten_drops_refresh", p -> BaseVerticalRefreshBlock.create(p, "ten_drops"))
             .langCn("十滴水控制方块")
-            .lang("Ten Drop Refresh")
-            .noBlockstate()
-            .item(item -> item.addTab(TAB_GANM.getKey()))
+            .lang("Ten Drops Refresh")
+            .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))
+            .item(builder -> builder.addTab(TAB_GANM.getKey())
+                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("block/base/vertical_refresh"))))
             .register();
 
-    public static final BlockEntityTypeEntry<BlockTenDropCoreEntity> BLOCK_TEN_DROP_CORE_ENTITY = REGISTRYLIB
-            .blockEntity(REGISTRYLIB, "ten_drop_core_entity", (_, p, s) -> new BlockTenDropCoreEntity(p, s))
-            .validBlock(BLOCK_TEN_DROP_CORE)
+    public static final BlockEntityTypeEntry<BlockTenDropsCoreEntity> BLOCK_TEN_DROPS_CORE_ENTITY = REGISTRYLIB
+            .blockEntity(REGISTRYLIB, "ten_drops_core_entity", (_, p, s) -> new BlockTenDropsCoreEntity(p, s))
+            .validBlock(BLOCK_TEN_DROPS_CORE)
+            .renderer(() -> BlockTenDropsCoreEntityRenderer::new)
             .register();
-    public static final BlockEntityTypeEntry<BlockTenDropDisplayEntity> BLOCK_TEN_DROP_DISPLAY_ENTITY = REGISTRYLIB
-            .blockEntity(REGISTRYLIB, "ten_drop_display_entity", (_, p, s) -> new BlockTenDropDisplayEntity(p, s))
-            .validBlock(BLOCK_TEN_DROP_DISPLAY)
+    public static final BlockEntityTypeEntry<BlockTenDropsDisplayEntity> BLOCK_TEN_DROPS_DISPLAY_ENTITY = REGISTRYLIB
+            .blockEntity(REGISTRYLIB, "ten_drops_display_entity", (_, p, s) -> new BlockTenDropsDisplayEntity(p, s))
+            .validBlock(BLOCK_TEN_DROPS_DISPLAY)
+            .renderer(() -> BlockTenDropsDisplayEntityRenderer::new)
             .register();
 
     // 统一的刷新实体，绑定所有四个刷新方块
@@ -207,7 +216,7 @@ public class SimpleBlockGameRegistration {
             .validBlock(BLOCK_2048_REFRESH)
             .validBlock(BLOCK_MINESWEEPER_REFRESH)
             .validBlock(BLOCK_MEMORY_KEY_REFRESH)
-            .validBlock(BLOCK_TEN_DROP_REFRESH)
+            .validBlock(BLOCK_TEN_DROPS_REFRESH)
             .renderer(() -> BlockRefreshEntityRenderer::new)
             .register();
 

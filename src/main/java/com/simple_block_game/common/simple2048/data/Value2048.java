@@ -8,7 +8,9 @@ import org.jspecify.annotations.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
-/** 2048游戏数值枚举 */
+/**
+ * 2048游戏数值枚举
+ */
 public enum Value2048 implements StringRepresentable {
 
     ZERO(0, "0"),
@@ -30,6 +32,7 @@ public enum Value2048 implements StringRepresentable {
     SIXTY_FOUR_K(65536, "65536");
 
     private static final Map<Integer, Value2048> VALUE_MAP = new HashMap<>();
+
     static {
         for (Value2048 val : values()) {
             VALUE_MAP.put(val.value, val);

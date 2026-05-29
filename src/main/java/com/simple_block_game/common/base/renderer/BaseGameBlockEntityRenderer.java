@@ -61,7 +61,7 @@ public abstract class BaseGameBlockEntityRenderer<T extends BaseGameBlockEntity,
         poseStack.popPose();
     }
 
-    private static void applyRotation(PoseStack poseStack, Direction facing) {
+    protected static void applyRotation(PoseStack poseStack, Direction facing) {
         switch (facing) {
             case NORTH -> {}
             case SOUTH -> poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180.0f));
@@ -78,7 +78,7 @@ public abstract class BaseGameBlockEntityRenderer<T extends BaseGameBlockEntity,
         }
     }
 
-    private static void renderFace(PoseStack.Pose pose, VertexConsumer consumer) {
+    protected static void renderFace(PoseStack.Pose pose, VertexConsumer consumer) {
         float w = 0.5f;
         float h = 0.5f;
         int color = 0xFFFFFFFF;

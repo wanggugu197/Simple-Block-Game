@@ -1,4 +1,4 @@
-// 26.1.2	2026-05-30T02:24:37.600471	RegistryCore Provider for simple_block_game [, Loot Tables, Advancements, Datapack Registries, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Model Definitions - simple_block_game, Lang (Languages: en_us for mod: simple_block_game), simple_block_game, Lang (Languages: zh_cn for mod: simple_block_game)]
+// 26.1.2	2026-05-30T21:39:35.4014755	RegistryCore Provider for simple_block_game [, Loot Tables, Advancements, Datapack Registries, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Model Definitions - simple_block_game, Lang (Languages: en_us for mod: simple_block_game), simple_block_game, Lang (Languages: zh_cn for mod: simple_block_game)]
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/2048_core.json
 5a0aeac02ff4cdab29a67767b1f4ed5106ba8881 assets/simple_block_game/blockstates/2048_display.json
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/2048_refresh.json
@@ -9,6 +9,9 @@ f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/20
 5580f3bee681c26beb6ed64190dda44dcc974306 assets/simple_block_game/blockstates/minesweeper_display.json
 8eab1717f24a3cb0eddfdc1f80f1c6e1b7b550e6 assets/simple_block_game/blockstates/minesweeper_refresh.json
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/rotated_frame.json
+8eab1717f24a3cb0eddfdc1f80f1c6e1b7b550e6 assets/simple_block_game/blockstates/ten_drops_core.json
+5580f3bee681c26beb6ed64190dda44dcc974306 assets/simple_block_game/blockstates/ten_drops_display.json
+8eab1717f24a3cb0eddfdc1f80f1c6e1b7b550e6 assets/simple_block_game/blockstates/ten_drops_refresh.json
 8eab1717f24a3cb0eddfdc1f80f1c6e1b7b550e6 assets/simple_block_game/blockstates/vertical_frame.json
 7ee7a6010a970174a7d2170c2bbf9b55c8a4e9f0 assets/simple_block_game/items/2048_core.json
 74ee8e0fe3efd356d4e447bf70afe6e423a9d933 assets/simple_block_game/items/2048_display.json
@@ -21,16 +24,13 @@ dc2651e8ff26015145e3c0ff5f8b8d910b96cc55 assets/simple_block_game/items/memory_k
 dc2651e8ff26015145e3c0ff5f8b8d910b96cc55 assets/simple_block_game/items/minesweeper_refresh.json
 73067299eccbf73ff92934941e895d1dfaa82ca2 assets/simple_block_game/items/rotated_frame.json
 2601a64a7632ed4a3a2f4d7bd220ea1687786444 assets/simple_block_game/items/simple_block_game.json
-d979ffc1689242a8b04a63f581ba7d71c524e3b7 assets/simple_block_game/items/ten_drop_core.json
-f8b2b6ebaa7a6dc597ce2f22915a15ac39d41211 assets/simple_block_game/items/ten_drop_display.json
-20d27464abae6aefceb87921fbbf3fca00524df5 assets/simple_block_game/items/ten_drop_refresh.json
+36f58a531ae402af2e9054e55cecc073f477d9fd assets/simple_block_game/items/ten_drops_core.json
+c1e650fe99697840b3cd328efaa759dee09e5126 assets/simple_block_game/items/ten_drops_display.json
+dc2651e8ff26015145e3c0ff5f8b8d910b96cc55 assets/simple_block_game/items/ten_drops_refresh.json
 df8b8b5f0b5271d223927b71b249673811b29ed0 assets/simple_block_game/items/vertical_frame.json
-1138349b0eaf6790899a289449cb30974de4e12c assets/simple_block_game/lang/en_us.json
-aff98f8d1004db56abd9d7719c81a0f65e2944b1 assets/simple_block_game/lang/zh_cn.json
+0b91573849b5b9dc662317ba8a11f175b3a9c5c0 assets/simple_block_game/lang/en_us.json
+3e0d5235092f7c014cafffd98ff4c80171ffa84a assets/simple_block_game/lang/zh_cn.json
 f1c81d02493fd811a19bb67e09d0e59e500f4a36 assets/simple_block_game/models/item/simple_block_game.json
-9e3192e8c8f263cae3fa1830f68fa38766fe5586 assets/simple_block_game/models/item/ten_drop_core.json
-3101d3aa4deafba4570d49360ea7188a95a56a9f assets/simple_block_game/models/item/ten_drop_display.json
-5e12769a1e9070248f67910f3be2b169869c6041 assets/simple_block_game/models/item/ten_drop_refresh.json
 e8281b5edad1d8e31c24c70d057f8e9e59edb570 data/minecraft/advancement/recipes/combat/make_2048_core.json
 0c67c0e6906e6e6ede15400868627f5e60770643 data/minecraft/advancement/recipes/combat/make_memory_key_core.json
 5563905c19be6ae0758c270f78b8103257fafd7f data/minecraft/advancement/recipes/combat/make_minesweeper_core.json

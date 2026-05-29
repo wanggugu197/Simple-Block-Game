@@ -10,7 +10,9 @@ import net.minecraft.world.entity.player.Player;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
-/** 记忆键游戏奖励处理器 */
+/**
+ * 记忆键游戏奖励处理器
+ */
 public final class GameMemoryKeyReward extends BaseGameReward {
 
     private static final Int2ObjectOpenHashMap<Identifier> LEVEL_REWARDS = new Int2ObjectOpenHashMap<>();
@@ -40,7 +42,7 @@ public final class GameMemoryKeyReward extends BaseGameReward {
                 dropLoot(level, player, ALL_SUCCESS_REWARD);
             }
         } else {
-            Identifier tableId = LEVEL_REWARDS.get(currentLevel.getLevelNumber());
+            Identifier tableId = LEVEL_REWARDS.getOrDefault(currentLevel.getLevelNumber(), null);
             if (tableId != null) {
                 dropLoot(level, player, tableId);
             }

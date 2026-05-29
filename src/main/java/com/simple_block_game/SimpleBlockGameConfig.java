@@ -10,11 +10,13 @@ public class SimpleBlockGameConfig {
     public static final Game2048RewardConfig GAME_2048_CONFIG;
     public static final MinesweeperRewardConfig MINESWEEPER_CONFIG;
     public static final MemoryKeyRewardConfig MEMORY_KEY_CONFIG;
+    public static final TenDropRewardConfig TEN_DROP_CONFIG;
 
     static {
         GAME_2048_CONFIG = new Game2048RewardConfig();
         MINESWEEPER_CONFIG = new MinesweeperRewardConfig();
         MEMORY_KEY_CONFIG = new MemoryKeyRewardConfig();
+        TEN_DROP_CONFIG = new TenDropRewardConfig();
         initConfig();
         SPEC = BUILDER.build();
     }
@@ -22,6 +24,7 @@ public class SimpleBlockGameConfig {
     public static ModConfigSpec.BooleanValue enable2048Game;
     public static ModConfigSpec.BooleanValue enableMinesweeperGame;
     public static ModConfigSpec.BooleanValue enableMemoryKeyGame;
+    public static ModConfigSpec.BooleanValue enableTenDropGame;
 
     private static void initConfig() {
         BUILDER.push("Simple Block Game Settings");
@@ -32,12 +35,15 @@ public class SimpleBlockGameConfig {
                 .define("enable_minesweeper_game", true);
         enableMemoryKeyGame = BUILDER.comment("Enable Memory Key game")
                 .define("enable_memory_key_game", true);
+        enableTenDropGame = BUILDER.comment("Enable Ten Drop game")
+                .define("enable_ten_drop_game", true);
 
         BUILDER.pop();
 
         GAME_2048_CONFIG.init(BUILDER);
         MINESWEEPER_CONFIG.init(BUILDER);
         MEMORY_KEY_CONFIG.init(BUILDER);
+        TEN_DROP_CONFIG.init(BUILDER);
     }
 
     public static class Game2048RewardConfig {
@@ -282,6 +288,47 @@ public class SimpleBlockGameConfig {
                     .define("level_6_reward", "minecraft:chests/bastion_treasure");
             allSuccessReward = builder.comment("Loot table for all success reward")
                     .define("all_success_reward", "minecraft:chests/end_city_treasure");
+
+            builder.pop();
+        }
+    }
+
+    public static class TenDropRewardConfig {
+
+        public ModConfigSpec.ConfigValue<String> level1Reward;
+        public ModConfigSpec.ConfigValue<String> level2Reward;
+        public ModConfigSpec.ConfigValue<String> level3Reward;
+        public ModConfigSpec.ConfigValue<String> level4Reward;
+        public ModConfigSpec.ConfigValue<String> level5Reward;
+        public ModConfigSpec.ConfigValue<String> level6Reward;
+        public ModConfigSpec.ConfigValue<String> level7Reward;
+        public ModConfigSpec.ConfigValue<String> level8Reward;
+        public ModConfigSpec.ConfigValue<String> level9Reward;
+        public ModConfigSpec.ConfigValue<String> level10Reward;
+
+        public void init(ModConfigSpec.Builder builder) {
+            builder.push("Ten Drop Game");
+
+            level1Reward = builder.comment("Loot table for level 1 reward")
+                    .define("ten_drop_level_1_reward", "minecraft:chests/simple_dungeon");
+            level2Reward = builder.comment("Loot table for level 2 reward")
+                    .define("ten_drop_level_2_reward", "minecraft:chests/abandoned_mineshaft");
+            level3Reward = builder.comment("Loot table for level 3 reward")
+                    .define("ten_drop_level_3_reward", "minecraft:chests/pillager_outpost");
+            level4Reward = builder.comment("Loot table for level 4 reward")
+                    .define("ten_drop_level_4_reward", "minecraft:chests/pillager_outpost");
+            level5Reward = builder.comment("Loot table for level 5 reward")
+                    .define("ten_drop_level_5_reward", "minecraft:chests/woodland_mansion");
+            level6Reward = builder.comment("Loot table for level 6 reward")
+                    .define("ten_drop_level_6_reward", "minecraft:chests/woodland_mansion");
+            level7Reward = builder.comment("Loot table for level 7 reward")
+                    .define("ten_drop_level_7_reward", "minecraft:chests/bastion_treasure");
+            level8Reward = builder.comment("Loot table for level 8 reward")
+                    .define("ten_drop_level_8_reward", "minecraft:chests/bastion_treasure");
+            level9Reward = builder.comment("Loot table for level 9 reward")
+                    .define("ten_drop_level_9_reward", "minecraft:chests/bastion_treasure");
+            level10Reward = builder.comment("Loot table for level 10 reward")
+                    .define("ten_drop_level_10_reward", "minecraft:chests/end_city_treasure");
 
             builder.pop();
         }

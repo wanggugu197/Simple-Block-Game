@@ -8,7 +8,9 @@ import org.jspecify.annotations.NonNull;
 import java.util.HashMap;
 import java.util.Map;
 
-/** 记忆键游戏状态机枚举 */
+/**
+ * 记忆键游戏状态机枚举
+ */
 public enum MemoryKeyGameState implements StringRepresentable {
 
     IDLE(0, "idle"),
@@ -22,6 +24,7 @@ public enum MemoryKeyGameState implements StringRepresentable {
     private static final MemoryKeyGameState[] VALUES = values();
 
     private static final Map<String, MemoryKeyGameState> NAME_MAP = new HashMap<>(VALUES.length);
+
     static {
         for (MemoryKeyGameState state : VALUES) {
             NAME_MAP.put(state.serializedName, state);

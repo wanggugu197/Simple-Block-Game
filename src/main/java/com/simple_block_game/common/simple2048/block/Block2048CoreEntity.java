@@ -12,7 +12,9 @@ import net.minecraft.world.level.storage.ValueOutput;
 import lombok.Getter;
 import lombok.NonNull;
 
-/** 2048游戏核心方块实体，存储分数和最大数字 */
+/**
+ * 2048游戏核心方块实体，存储分数和最大数字
+ */
 public class Block2048CoreEntity extends BaseGameBlockEntity {
 
     private static final String KEY_SCORE = "2048_Score";

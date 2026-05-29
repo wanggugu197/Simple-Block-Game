@@ -16,11 +16,15 @@ public class SimpleBlockGameRecipe {
 
     public static void init() {}
 
-    /** 无条件解锁的TriggerInstance */
+    /**
+     * 无条件解锁的TriggerInstance
+     */
     private static final InventoryChangeTrigger.TriggerInstance UNCONDITIONAL_TRIGGER_INSTANCE = new InventoryChangeTrigger.TriggerInstance(Optional.empty(),
             InventoryChangeTrigger.TriggerInstance.Slots.ANY, List.of());
 
-    /** 封装无条件解锁的Criterion */
+    /**
+     * 封装无条件解锁的Criterion
+     */
     private static final Criterion<InventoryChangeTrigger.TriggerInstance> UNCONDITIONAL_CRITERION = CriteriaTriggers.INVENTORY_CHANGED
             .createCriterion(UNCONDITIONAL_TRIGGER_INSTANCE);
 

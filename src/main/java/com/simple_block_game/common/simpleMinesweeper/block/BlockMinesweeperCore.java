@@ -25,7 +25,9 @@ import net.minecraft.world.phys.Vec3;
 import com.mojang.serialization.MapCodec;
 import lombok.NonNull;
 
-/** 扫雷游戏核心方块 */
+/**
+ * 扫雷游戏核心方块
+ */
 public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCoreBlock {
 
     public BlockMinesweeperCore(BlockBehaviour.Properties properties) {
