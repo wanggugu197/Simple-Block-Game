@@ -147,7 +147,6 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         }
         PresetDifficulty preset = forward ? core.getPresetDifficulty().next() : core.getPresetDifficulty().prev();
         core.setPresetDifficulty(preset);
-        core.setChanged();
         player.sendOverlayMessage(Component.translatable("msg.minesweeper.difficulty_switched",
                 Component.translatable(preset.getDisplayName()), preset.getWidth(), preset.getHeight(), preset.getMineCount()));
     }
@@ -187,7 +186,6 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         BlockEntity be = level.getBlockEntity(pos);
         if (!(be instanceof BlockMinesweeperCoreEntity coreEntity)) return;
         coreEntity.initGameData();
-        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), Block.UPDATE_ALL);
     }
 
     @Override
@@ -204,16 +202,15 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
             return false;
         }
 
-        int w = core.getGridWidth(), h = core.getGridHeight();
-        if (!GameMinesweeperHelper.checkLayoutAreaIsEmpty(level, pos, w, h)) {
+        if (!checkLayoutAreaIsEmpty(level, pos, state)) {
             player.sendOverlayMessage(Component.translatable("msg.common.obstructed"));
             return false;
         }
 
-        GameMinesweeperHelper.generateLayout(level, pos, w, h);
+        GameMinesweeperHelper.generateLayout(level, pos, core);
         level.setBlock(pos, state.setValue(UNFOLDED, true), Block.UPDATE_ALL);
         player.sendOverlayMessage(Component.translatable("msg.minesweeper.layout_placed",
-                Component.translatable(core.getPresetDifficulty().getDisplayName()), w, h));
+                Component.translatable(core.getPresetDifficulty().getDisplayName()), core.getGridWidth(), core.getGridHeight()));
         return true;
     }
 
@@ -227,7 +224,6 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
 
         int w = core.getGridWidth(), h = core.getGridHeight();
         core.initGameData();
-        core.setChanged();
         GameMinesweeperHelper.resetLayout(level, pos, w, h);
         player.sendOverlayMessage(Component.translatable("msg.minesweeper.game_started",
                 Component.translatable(core.getPresetDifficulty().getDisplayName()), core.getTotalMineCount(), w, h));
@@ -239,7 +235,6 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         if (core == null) return;
         GameMinesweeperHelper.resetLayout(level, pos, core.getGridWidth(), core.getGridHeight());
         core.initGameData();
-        core.setChanged();
     }
 
     @Override
@@ -247,10 +242,10 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         BlockMinesweeperCoreEntity core = getCore(level, pos);
         if (core != null) {
             GameMinesweeperHelper.minimizeLayout(level, pos, core.getGridWidth(), core.getGridHeight());
+            core.clearGameData();
         }
         if (state.getBlock() instanceof BlockMinesweeperCore) {
             level.setBlock(pos, state.setValue(IGameCoreBlock.UNFOLDED, false), Block.UPDATE_ALL);
-            reset(level, pos);
         }
     }
 

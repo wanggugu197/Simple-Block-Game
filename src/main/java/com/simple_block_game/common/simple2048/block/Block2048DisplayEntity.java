@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.NonNull;
 
 /**
- * 2048游戏显示方块实体，存储显示数值
+ * 2048 游戏显示方块实体，存储显示数值
  */
 public class Block2048DisplayEntity extends BaseGameBlockEntity {
 
@@ -35,11 +35,11 @@ public class Block2048DisplayEntity extends BaseGameBlockEntity {
         if (newValue == null) return;
         if (value != null && value.equals(newValue)) return;
         value = newValue;
-        setChanged();
         syncToClient();
     }
 
     private void syncToClient() {
+        setChanged();
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }

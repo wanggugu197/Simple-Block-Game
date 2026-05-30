@@ -12,8 +12,7 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import lombok.NonNull;
 
 public class BlockMinesweeperCoreEntityRenderer extends BaseGameBlockEntityCubeRenderer<BlockMinesweeperCoreEntity, BlockMinesweeperCoreEntityRenderer.BlockMinesweeperCoreEntityRenderState> {
 
@@ -36,7 +35,7 @@ public class BlockMinesweeperCoreEntityRenderer extends BaseGameBlockEntityCubeR
     }
 
     @Override
-    public void extractRenderState(BlockMinesweeperCoreEntity blockEntity, BlockMinesweeperCoreEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockMinesweeperCoreEntity blockEntity, BlockMinesweeperCoreEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.unfolded = blockEntity.getBlockState().getValue(IGameCoreBlock.UNFOLDED);
         state.difficulty = blockEntity.getPresetDifficulty();

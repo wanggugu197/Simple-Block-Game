@@ -13,7 +13,7 @@ import com.mojang.serialization.MapCodec;
 import lombok.NonNull;
 
 /**
- * 2048游戏显示方块
+ * 2048 游戏显示方块
  */
 public class Block2048Display extends BaseRotatedBlock {
 

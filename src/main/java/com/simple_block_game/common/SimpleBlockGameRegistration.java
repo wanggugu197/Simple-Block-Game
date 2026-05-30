@@ -27,9 +27,11 @@ import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsDisplayEnt
 import com.simple_block_game.common.simpleTenDrops.renderer.BlockTenDropsCoreEntityRenderer;
 import com.simple_block_game.common.simpleTenDrops.renderer.BlockTenDropsDisplayEntityRenderer;
 
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 
+import com.gto.registrylib.tooltip.SubNode;
 import com.gto.registrylib.util.entry.BlockEntityTypeEntry;
 import com.gto.registrylib.util.entry.BlockEntry;
 import com.gto.registrylib.util.entry.ItemEntry;
@@ -38,8 +40,8 @@ import com.gto.registrylib.util.entry.RegistryEntry;
 import java.util.Map;
 
 import static com.simple_block_game.SimpleBlockGame.REGISTRYLIB;
-import static com.simple_block_game.registry.generator.ModBlockModelGeneratorHelpper.createHorizontalBlock;
-import static com.simple_block_game.registry.generator.ModBlockModelGeneratorHelpper.createVerticalBlock;
+import static com.simple_block_game.registry.generator.ModBlockModelGeneratorHelper.createHorizontalBlock;
+import static com.simple_block_game.registry.generator.ModBlockModelGeneratorHelper.createVerticalBlock;
 
 /**
  * 方块和实体注册类
@@ -69,7 +71,13 @@ public class SimpleBlockGameRegistration {
             .lang("2048 Core")
             .blockstate(() -> (block, prov) -> createHorizontalBlock(block, prov, "block/base/rotated_side"))
             .item(builder -> builder.addTab(TAB_GANM.getKey())
-                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple2048/2048_core_open"))))
+                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple2048/2048_core_open")))
+                    .addTooltip((collector, _) -> {
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.2048_core.1")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.2048_core.2")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.2048_core.3")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.2048_core.4")));
+                    }))
             .register();
     public static final BlockEntry<Block2048Display> BLOCK_2048_DISPLAY = REGISTRYLIB
             .block(REGISTRYLIB, "2048_display", Block2048Display::new)
@@ -91,12 +99,12 @@ public class SimpleBlockGameRegistration {
     public static final BlockEntityTypeEntry<Block2048CoreEntity> BLOCK_2048_CORE_ENTITY = REGISTRYLIB
             .blockEntity(REGISTRYLIB, "2048_core_entity", (_, p, s) -> new Block2048CoreEntity(p, s))
             .validBlock(BLOCK_2048_CORE)
-            .renderer(() -> Block2048CoreEntityRenderer::new)
+            .renderer(() -> () -> Block2048CoreEntityRenderer::new)
             .register();
     public static final BlockEntityTypeEntry<Block2048DisplayEntity> BLOCK_2048_DISPLAY_ENTITY = REGISTRYLIB
             .blockEntity(REGISTRYLIB, "2048_display_entity", (_, p, s) -> new Block2048DisplayEntity(p, s))
             .validBlock(BLOCK_2048_DISPLAY)
-            .renderer(() -> Block2048DisplayEntityRenderer::new)
+            .renderer(() -> () -> Block2048DisplayEntityRenderer::new)
             .register();
 
     // minesweeper
@@ -106,7 +114,15 @@ public class SimpleBlockGameRegistration {
             .lang("Minesweeper Core")
             .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))
             .item(builder -> builder.addTab(TAB_GANM.getKey())
-                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_minesweeper/minesweeper_core"))))
+                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_minesweeper/minesweeper_core")))
+                    .addTooltip((collector, _) -> {
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.minesweeper_core.1")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.minesweeper_core.2")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.minesweeper_core.3")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.minesweeper_core.4")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.minesweeper_core.5")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.minesweeper_core.6")));
+                    }))
             .register();
     public static final BlockEntry<BlockMinesweeperDisplay> BLOCK_MINESWEEPER_DISPLAY = REGISTRYLIB
             .block(REGISTRYLIB, "minesweeper_display", BlockMinesweeperDisplay::new)
@@ -128,12 +144,12 @@ public class SimpleBlockGameRegistration {
     public static final BlockEntityTypeEntry<BlockMinesweeperCoreEntity> BLOCK_MINESWEEPER_CORE_ENTITY = REGISTRYLIB
             .blockEntity(REGISTRYLIB, "minesweeper_core_entity", (_, p, s) -> new BlockMinesweeperCoreEntity(p, s))
             .validBlock(BLOCK_MINESWEEPER_CORE)
-            .renderer(() -> BlockMinesweeperCoreEntityRenderer::new)
+            .renderer(() -> () -> BlockMinesweeperCoreEntityRenderer::new)
             .register();
     public static final BlockEntityTypeEntry<BlockMinesweeperDisplayEntity> BLOCK_MINESWEEPER_DISPLAY_ENTITY = REGISTRYLIB
             .blockEntity(REGISTRYLIB, "minesweeper_display_entity", (_, p, s) -> new BlockMinesweeperDisplayEntity(p, s))
             .validBlock(BLOCK_MINESWEEPER_DISPLAY)
-            .renderer(() -> BlockMinesweeperDisplayEntityRenderer::new)
+            .renderer(() -> () -> BlockMinesweeperDisplayEntityRenderer::new)
             .register();
 
     // memory key
@@ -143,7 +159,13 @@ public class SimpleBlockGameRegistration {
             .lang("Memory Key Core")
             .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_center"))
             .item(builder -> builder.addTab(TAB_GANM.getKey())
-                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_memory_key/memory_key_core_all_success"))))
+                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_memory_key/memory_key_core_all_success"))).addTooltip((collector, _) -> {
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.memory_key_core.1")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.memory_key_core.2")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.memory_key_core.3")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.memory_key_core.4")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.memory_key_core.5")));
+                    }))
             .register();
     public static final BlockEntry<BlockMemoryKeyButton> BLOCK_MEMORY_KEY_BUTTON = REGISTRYLIB
             .block(REGISTRYLIB, "memory_key_button", BlockMemoryKeyButton::new)
@@ -165,12 +187,12 @@ public class SimpleBlockGameRegistration {
     public static final BlockEntityTypeEntry<BlockMemoryKeyCoreEntity> BLOCK_MEMORY_KEY_CORE_ENTITY = REGISTRYLIB
             .blockEntity(REGISTRYLIB, "memory_key_core_entity", (_, p, s) -> new BlockMemoryKeyCoreEntity(p, s))
             .validBlock(BLOCK_MEMORY_KEY_CORE)
-            .renderer(() -> BlockMemoryKeyCoreEntityRenderer::new)
+            .renderer(() -> () -> BlockMemoryKeyCoreEntityRenderer::new)
             .register();
     public static final BlockEntityTypeEntry<BlockMemoryKeyButtonEntity> BLOCK_MEMORY_KEY_BUTTON_ENTITY = REGISTRYLIB
             .blockEntity(REGISTRYLIB, "memory_key_button_entity", (_, p, s) -> new BlockMemoryKeyButtonEntity(p, s))
             .validBlock(BLOCK_MEMORY_KEY_BUTTON)
-            .renderer(() -> BlockMemoryKeyButtonEntityRenderer::new)
+            .renderer(() -> () -> BlockMemoryKeyButtonEntityRenderer::new)
             .register();
 
     // ten drop
@@ -180,7 +202,13 @@ public class SimpleBlockGameRegistration {
             .lang("Ten Drops Core")
             .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))
             .item(builder -> builder.addTab(TAB_GANM.getKey())
-                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_ten_drops/ten_drops_core"))))
+                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_ten_drops/ten_drops_core"))).addTooltip((collector, _) -> {
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.ten_drops_core.1")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.ten_drops_core.2")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.ten_drops_core.3")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.ten_drops_core.4")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.ten_drops_core.5")));
+                    }))
             .register();
     public static final BlockEntry<BlockTenDropsDisplay> BLOCK_TEN_DROPS_DISPLAY = REGISTRYLIB
             .block(REGISTRYLIB, "ten_drops_display", BlockTenDropsDisplay::new)
@@ -202,12 +230,12 @@ public class SimpleBlockGameRegistration {
     public static final BlockEntityTypeEntry<BlockTenDropsCoreEntity> BLOCK_TEN_DROPS_CORE_ENTITY = REGISTRYLIB
             .blockEntity(REGISTRYLIB, "ten_drops_core_entity", (_, p, s) -> new BlockTenDropsCoreEntity(p, s))
             .validBlock(BLOCK_TEN_DROPS_CORE)
-            .renderer(() -> BlockTenDropsCoreEntityRenderer::new)
+            .renderer(() -> () -> BlockTenDropsCoreEntityRenderer::new)
             .register();
     public static final BlockEntityTypeEntry<BlockTenDropsDisplayEntity> BLOCK_TEN_DROPS_DISPLAY_ENTITY = REGISTRYLIB
             .blockEntity(REGISTRYLIB, "ten_drops_display_entity", (_, p, s) -> new BlockTenDropsDisplayEntity(p, s))
             .validBlock(BLOCK_TEN_DROPS_DISPLAY)
-            .renderer(() -> BlockTenDropsDisplayEntityRenderer::new)
+            .renderer(() -> () -> BlockTenDropsDisplayEntityRenderer::new)
             .register();
 
     // 统一的刷新实体，绑定所有四个刷新方块
@@ -217,7 +245,7 @@ public class SimpleBlockGameRegistration {
             .validBlock(BLOCK_MINESWEEPER_REFRESH)
             .validBlock(BLOCK_MEMORY_KEY_REFRESH)
             .validBlock(BLOCK_TEN_DROPS_REFRESH)
-            .renderer(() -> BlockRefreshEntityRenderer::new)
+            .renderer(() -> () -> BlockRefreshEntityRenderer::new)
             .register();
 
     // 框架方块

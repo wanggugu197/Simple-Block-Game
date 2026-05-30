@@ -5,6 +5,7 @@ import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -31,26 +32,33 @@ public class Block2048CoreEntity extends BaseGameBlockEntity {
 
     public void addScore(int add) {
         if (add <= 0) return;
-        score = Math.max(0, score + add);
-        setChanged();
+        score = Math.min(Integer.MAX_VALUE, score + add);
+        syncToClient();
     }
 
     public void resetScore() {
         score = 0;
-        setChanged();
+        syncToClient();
     }
 
     public void setMaxNumber(int newMax) {
         if (newMax < 0) return;
         if (maxNumber != newMax) {
             maxNumber = newMax;
-            setChanged();
+            syncToClient();
         }
     }
 
     public void resetMaxNumber() {
         maxNumber = 0;
+        syncToClient();
+    }
+
+    public void syncToClient() {
         setChanged();
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        }
     }
 
     @Override

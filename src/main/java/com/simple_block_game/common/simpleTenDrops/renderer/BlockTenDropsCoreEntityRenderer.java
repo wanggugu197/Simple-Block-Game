@@ -11,8 +11,7 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import lombok.NonNull;
 
 public class BlockTenDropsCoreEntityRenderer extends BaseGameBlockEntityRenderer<BlockTenDropsCoreEntity, BlockTenDropsCoreEntityRenderer.BlockTenDropsCoreEntityRenderState> {
 
@@ -35,7 +34,7 @@ public class BlockTenDropsCoreEntityRenderer extends BaseGameBlockEntityRenderer
     }
 
     @Override
-    public void extractRenderState(BlockTenDropsCoreEntity blockEntity, BlockTenDropsCoreEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockTenDropsCoreEntity blockEntity, BlockTenDropsCoreEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.unfolded = blockEntity.getBlockState().getValue(IGameCoreBlock.UNFOLDED);
         state.waterDrops = blockEntity.getWaterDrops();

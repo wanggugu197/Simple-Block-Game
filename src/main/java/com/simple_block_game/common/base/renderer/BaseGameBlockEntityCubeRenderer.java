@@ -15,12 +15,11 @@ import net.minecraft.world.phys.Vec3;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import lombok.NonNull;
 
 public abstract class BaseGameBlockEntityCubeRenderer<T extends BaseGameBlockEntity, S extends BaseGameBlockEntityRenderState> implements BlockEntityRenderer<T, S> {
 
-    protected static final float SCALE = 1.5f;
+    protected static final float SCALE = 1.01f;
     protected static final float HALF_SIZE = 0.5f;
 
     public BaseGameBlockEntityCubeRenderer(BlockEntityRendererProvider.Context context) {}
@@ -30,7 +29,7 @@ public abstract class BaseGameBlockEntityCubeRenderer<T extends BaseGameBlockEnt
     protected abstract CubeTextures getTexturesForState(S state);
 
     @Override
-    public void extractRenderState(T blockEntity, S state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(T blockEntity, S state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.facing = blockEntity.getFacing();
     }

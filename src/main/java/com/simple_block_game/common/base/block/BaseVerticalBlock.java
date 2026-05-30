@@ -41,8 +41,7 @@ public abstract class BaseVerticalBlock extends BaseEntityBlock {
 
     @Override
     public @NonNull BlockState getStateForPlacement(@NonNull BlockPlaceContext context) {
-        Direction face = context.getClickedFace();
-        return defaultBlockState().setValue(FACING, face == Direction.DOWN ? Direction.DOWN : Direction.UP);
+        return defaultBlockState().setValue(FACING, Direction.UP);
     }
 
     @Override

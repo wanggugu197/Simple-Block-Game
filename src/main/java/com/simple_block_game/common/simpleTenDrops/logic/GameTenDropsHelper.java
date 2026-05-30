@@ -9,6 +9,7 @@ import com.simple_block_game.common.simpleTenDrops.data.DropletLevel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +33,7 @@ public final class GameTenDropsHelper {
     private GameTenDropsHelper() {}
 
     public static boolean processFlyingDroplets(ServerLevel serverLevel, BlockPos corePos, int[][] grid,
-                                                int[] eliminatedCount, int[] comboCount) {
+                                                BlockTenDropsCoreEntity coreEntity) {
         boolean hasActive = false;
 
         for (int x = 1; x <= GRID_SIZE; x++) {
@@ -43,7 +44,7 @@ public final class GameTenDropsHelper {
                 if (!(be instanceof BlockTenDropsDisplayEntity displayEntity) || !displayEntity.hasActiveDroplets()) continue;
 
                 hasActive = true;
-                processDropletMovement(serverLevel, displayEntity, displayPos, grid, corePos, eliminatedCount, comboCount);
+                processDropletMovement(serverLevel, displayEntity, displayPos, grid, corePos, coreEntity);
             }
         }
         return hasActive;
@@ -51,7 +52,7 @@ public final class GameTenDropsHelper {
 
     private static void processDropletMovement(ServerLevel serverLevel, BlockTenDropsDisplayEntity displayEntity,
                                                BlockPos displayPos, int[][] grid, BlockPos corePos,
-                                               int[] eliminatedCount, int[] comboCount) {
+                                               BlockTenDropsCoreEntity coreEntity) {
         for (Direction dir : HORIZONTAL_DIRS) {
             int distance = displayEntity.getDropDistance(dir);
             if (distance == -1) continue;
@@ -62,14 +63,14 @@ public final class GameTenDropsHelper {
             int cellSteps = (newDistance + 2) / BlockTenDropsDisplayEntity.CELL_DISTANCE;
             if (cellSteps > 0) {
                 handleDropletReachTarget(serverLevel, displayEntity, displayPos, dir, cellSteps,
-                        grid, corePos, eliminatedCount, comboCount);
+                        grid, corePos, coreEntity);
             }
         }
     }
 
     private static void handleDropletReachTarget(ServerLevel serverLevel, BlockTenDropsDisplayEntity displayEntity,
                                                  BlockPos displayPos, Direction dir, int cellSteps,
-                                                 int[][] grid, BlockPos corePos, int[] eliminatedCount, int[] comboCount) {
+                                                 int[][] grid, BlockPos corePos, BlockTenDropsCoreEntity coreEntity) {
         BlockPos targetPos = displayPos.relative(dir, cellSteps);
         BlockEntity targetBe = serverLevel.getBlockEntity(targetPos);
 
@@ -78,26 +79,33 @@ public final class GameTenDropsHelper {
             return;
         }
 
-        if (targetDisplay.getLevelValue() >= 1) {
-            targetDisplay.setLevelValue(targetDisplay.getLevelValue() + 1);
-            updateGridValue(grid, targetPos, corePos, 1);
-            displayEntity.setDropDistance(dir, -1);
+        int targetLevel = targetDisplay.getLevelValue();
 
-            if (targetDisplay.getLevelValue() >= DropletLevel.BURST.getLevel()) {
-                triggerBurst(serverLevel, targetPos, grid, corePos, eliminatedCount, comboCount);
-            }
+        if (targetLevel == 0) {
+            return;
+        }
+
+        int newLevel = targetLevel + 1;
+        targetDisplay.setLevelValue(newLevel);
+        updateGridValue(grid, targetPos, corePos, newLevel);
+        displayEntity.setDropDistance(dir, -1);
+
+        if (targetDisplay.getLevelValue() >= DropletLevel.BURST.getLevel()) {
+            triggerBurst(serverLevel, targetPos, grid, corePos, coreEntity);
         }
     }
 
     public static void triggerBurst(ServerLevel serverLevel, BlockPos displayPos, int[][] grid,
-                                    BlockPos corePos, int[] eliminatedCount, int[] comboCount) {
+                                    BlockPos corePos, BlockTenDropsCoreEntity coreEntity) {
         BlockEntity be = serverLevel.getBlockEntity(displayPos);
         if (!(be instanceof BlockTenDropsDisplayEntity displayEntity)) return;
 
         displayEntity.startBurst();
         updateGridValue(grid, displayPos, corePos, 0);
-        eliminatedCount[0]++;
-        comboCount[0]++;
+
+        if (coreEntity != null) {
+            coreEntity.addWaterDrops(1);
+        }
     }
 
     private static void updateGridValue(int[][] grid, BlockPos pos, BlockPos corePos, int value) {
@@ -108,15 +116,6 @@ public final class GameTenDropsHelper {
         }
     }
 
-    public static int checkGameState(ServerLevel serverLevel, BlockPos corePos, int[][] grid,
-                                     int waterDrops, int eliminatedCount, int comboCount, int currentLevel) {
-        if (eliminatedCount > 0) {
-            waterDrops += GameTenDropsLogic.calculateReward(eliminatedCount, comboCount, currentLevel);
-        }
-        updateDisplay(serverLevel, corePos, grid);
-        return waterDrops;
-    }
-
     public static boolean handleDisplayClick(ServerLevel serverLevel, BlockTenDropsDisplayEntity displayEntity, Player player) {
         if (displayEntity == null) return false;
 
@@ -125,7 +124,16 @@ public final class GameTenDropsHelper {
 
         BlockEntity coreEntity = serverLevel.getBlockEntity(corePos);
         if (!(coreEntity instanceof BlockTenDropsCoreEntity core)) return false;
-        if (!core.getGameState().isInteractive() || core.getWaterDrops() <= 0 || displayEntity.getDropletLevel() == DropletLevel.BURST) return false;
+
+        if (!core.getGameState().isInteractive()) {
+            player.sendOverlayMessage(Component.translatable("msg.ten_drops.invalid_click"));
+            return false;
+        }
+
+        if (displayEntity.getDropletLevel() == DropletLevel.BURST) {
+            player.sendOverlayMessage(Component.translatable("msg.ten_drops.invalid_click"));
+            return false;
+        }
 
         core.setCurrentPlayer(player);
         core.setWaterDrops(core.getWaterDrops() - 1);
@@ -220,7 +228,6 @@ public final class GameTenDropsHelper {
         if (be instanceof BlockTenDropsDisplayEntity entity) {
             entity.setCorePos(corePos);
             entity.setDropletLevel(DropletLevel.EMPTY);
-            entity.setChanged();
         }
     }
 
@@ -229,7 +236,6 @@ public final class GameTenDropsHelper {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof BlockRefreshEntity entity) {
             entity.setCorePos(corePos);
-            entity.setChanged();
         }
     }
 }

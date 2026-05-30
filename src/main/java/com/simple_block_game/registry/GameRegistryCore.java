@@ -35,13 +35,13 @@ public class GameRegistryCore extends RegistryCore {
                 }
             });
 
-    protected GameRegistryCore(String modid) {
-        super(modid);
+    protected GameRegistryCore(String modId) {
+        super(modId);
         withLangAlias("zh_cn", LANG_ZH_CN);
     }
 
-    public static GameRegistryCore create(String modid) {
-        return new GameRegistryCore(modid);
+    public static GameRegistryCore create(String modId) {
+        return new GameRegistryCore(modId);
     }
 
     @Override

@@ -3,7 +3,7 @@ package com.simple_block_game.common.simpleTenDrops.data;
 import net.minecraft.util.StringRepresentable;
 
 import lombok.Getter;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 
 /**
  * 水滴等级枚举，定义水滴的不同状态
@@ -47,9 +47,6 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 构造水滴等级枚举值
-     *
-     * @param level          等级数值
-     * @param serializedName 序列化名称，用于网络传输和渲染
      */
     DropletLevel(int level, String serializedName) {
         this.level = level;
@@ -58,8 +55,6 @@ public enum DropletLevel implements StringRepresentable {
 
     /**
      * 获取序列化名称
-     *
-     * @return 状态的字符串表示
      */
     @Override
     public @NonNull String getSerializedName() {
@@ -67,54 +62,7 @@ public enum DropletLevel implements StringRepresentable {
     }
 
     /**
-     * 判断是否可以添加水滴（非空且非爆炸状态）
-     *
-     * @return 是否可添加水滴
-     */
-    public boolean canAddDrop() {
-        return this != BURST && this != EMPTY;
-    }
-
-    /**
-     * 判断是否即将爆炸（当前为4级）
-     *
-     * @return 是否即将爆炸
-     */
-    public boolean willBurst() {
-        return this == FOUR;
-    }
-
-    /**
-     * 判断是否为空状态
-     *
-     * @return 是否为空
-     */
-    public boolean isEmpty() {
-        return this == EMPTY;
-    }
-
-    /**
-     * 判断是否为爆炸状态
-     *
-     * @return 是否为爆炸状态
-     */
-    public boolean isBurst() {
-        return this == BURST;
-    }
-
-    /**
-     * 判断是否为有效水滴（1-4级）
-     *
-     * @return 是否为有效水滴
-     */
-    public boolean isValidDroplet() {
-        return this != EMPTY && this != BURST;
-    }
-
-    /**
      * 获取下一级水滴状态
-     *
-     * @return 升级后的水滴等级
      */
     public DropletLevel nextLevel() {
         return switch (this) {
@@ -128,30 +76,10 @@ public enum DropletLevel implements StringRepresentable {
     }
 
     /**
-     * 获取上一级水滴状态
-     *
-     * @return 降级后的水滴等级
-     */
-    public DropletLevel previousLevel() {
-        return switch (this) {
-            case EMPTY -> BURST;
-            case ONE -> EMPTY;
-            case TWO -> ONE;
-            case THREE -> TWO;
-            case FOUR -> THREE;
-            case BURST -> FOUR;
-        };
-    }
-
-    /**
      * 根据等级数值获取对应的枚举值
-     *
-     * @param level 等级数值（0-5）
-     * @return 对应的水滴等级枚举，超出范围返回EMPTY
      */
     public static DropletLevel fromLevel(int level) {
         return switch (level) {
-            case 0 -> EMPTY;
             case 1 -> ONE;
             case 2 -> TWO;
             case 3 -> THREE;
@@ -159,20 +87,5 @@ public enum DropletLevel implements StringRepresentable {
             case 5 -> BURST;
             default -> EMPTY;
         };
-    }
-
-    /**
-     * 根据序列化名称获取对应的枚举值
-     *
-     * @param name 序列化名称
-     * @return 对应的水滴等级枚举，未找到返回EMPTY
-     */
-    public static DropletLevel fromSerializedName(String name) {
-        for (DropletLevel level : values()) {
-            if (level.serializedName.equals(name)) {
-                return level;
-            }
-        }
-        return EMPTY;
     }
 }

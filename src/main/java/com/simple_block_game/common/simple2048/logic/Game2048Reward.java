@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 /**
- * 2048游戏奖励处理器
+ * 2048 游戏奖励处理器
  */
 public final class Game2048Reward extends BaseGameReward {
 

@@ -2,7 +2,7 @@ package com.simple_block_game.common.simpleTenDrops.data;
 
 import net.minecraft.util.StringRepresentable;
 
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 
 /**
  * 十滴游戏状态枚举，定义游戏在不同阶段的状态
@@ -44,8 +44,6 @@ public enum TenDropsGameState implements StringRepresentable {
 
     /**
      * 构造游戏状态枚举值
-     *
-     * @param serializedName 序列化名称，用于网络传输和持久化
      */
     TenDropsGameState(String serializedName) {
         this.serializedName = serializedName;
@@ -53,8 +51,6 @@ public enum TenDropsGameState implements StringRepresentable {
 
     /**
      * 获取序列化名称
-     *
-     * @return 状态的字符串表示
      */
     @Override
     public @NonNull String getSerializedName() {
@@ -62,54 +58,14 @@ public enum TenDropsGameState implements StringRepresentable {
     }
 
     /**
-     * 判断游戏是否处于活跃状态（玩家可操作或动画进行中）
-     *
-     * @return 是否为活跃状态
-     */
-    public boolean isGameActive() {
-        return this == PLAYING || this == BURSTING;
-    }
-
-    /**
      * 判断游戏是否已结束（胜利或失败）
-     *
-     * @return 是否为结束状态
      */
     public boolean isGameEnded() {
         return this == VICTORY || this == GAME_OVER;
     }
 
     /**
-     * 判断是否为空闲状态
-     *
-     * @return 是否为空闲状态
-     */
-    public boolean isIdle() {
-        return this == IDLE;
-    }
-
-    /**
-     * 判断是否正在进行爆炸动画
-     *
-     * @return 是否为爆炸状态
-     */
-    public boolean isBursting() {
-        return this == BURSTING;
-    }
-
-    /**
-     * 判断是否正在显示奖励
-     *
-     * @return 是否为奖励状态
-     */
-    public boolean isReward() {
-        return this == REWARD;
-    }
-
-    /**
      * 判断玩家是否可以进行点击操作
-     *
-     * @return 是否可操作
      */
     public boolean isInteractive() {
         return this == PLAYING;
@@ -117,9 +73,6 @@ public enum TenDropsGameState implements StringRepresentable {
 
     /**
      * 根据序列化名称获取对应的枚举值
-     *
-     * @param name 序列化名称
-     * @return 对应的游戏状态枚举，未找到返回 IDLE
      */
     public static TenDropsGameState fromSerializedName(String name) {
         for (TenDropsGameState state : values()) {

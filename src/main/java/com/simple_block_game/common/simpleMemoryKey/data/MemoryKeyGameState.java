@@ -3,10 +3,7 @@ package com.simple_block_game.common.simpleMemoryKey.data;
 import net.minecraft.util.StringRepresentable;
 
 import lombok.Getter;
-import org.jspecify.annotations.NonNull;
-
-import java.util.HashMap;
-import java.util.Map;
+import lombok.NonNull;
 
 /**
  * 记忆键游戏状态机枚举
@@ -22,14 +19,6 @@ public enum MemoryKeyGameState implements StringRepresentable {
     GAME_OVER(6, "game_over");
 
     private static final MemoryKeyGameState[] VALUES = values();
-
-    private static final Map<String, MemoryKeyGameState> NAME_MAP = new HashMap<>(VALUES.length);
-
-    static {
-        for (MemoryKeyGameState state : VALUES) {
-            NAME_MAP.put(state.serializedName, state);
-        }
-    }
 
     @Getter
     private final int value;

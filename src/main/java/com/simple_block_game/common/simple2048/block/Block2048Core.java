@@ -120,15 +120,14 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
         Game2048Logic.MoveResult result = Game2048Logic.processMove(
                 Game2048Helper.readDisplayGrid(serverLevel, corePos, facing), direction);
 
-        Game2048Helper.writeDisplayGrid(serverLevel, corePos, facing, result.newGrid());
-
         Block2048CoreEntity coreEntity = getCoreEntity(serverLevel, corePos);
         if (coreEntity == null) return;
+        Game2048Helper.writeDisplayGrid(serverLevel, corePos, facing, result.newGrid());
 
         if (result.score() > 0) {
             int oldScore = coreEntity.getScore();
             coreEntity.addScore(result.score());
-            syncEntity(serverLevel, corePos, coreEntity);
+            syncEntity(coreEntity);
             Game2048Reward.handleScoreReward(serverLevel, player, oldScore, coreEntity.getScore());
             player.sendOverlayMessage(Component.translatable("msg.simple2048.move_score",
                     result.score(), coreEntity.getScore()));
@@ -137,7 +136,7 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
         if (result.maxNumber() != coreEntity.getMaxNumber()) {
             int oldMax = coreEntity.getMaxNumber();
             coreEntity.setMaxNumber(result.maxNumber());
-            syncEntity(serverLevel, corePos, coreEntity);
+            syncEntity(coreEntity);
             Game2048Reward.handleMaxNumberReward(serverLevel, player, oldMax, result.maxNumber());
         }
 
@@ -152,9 +151,8 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
         return be instanceof Block2048CoreEntity coreEntity ? coreEntity : null;
     }
 
-    private void syncEntity(ServerLevel level, BlockPos pos, Block2048CoreEntity coreEntity) {
-        coreEntity.setChanged();
-        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), Block.UPDATE_ALL);
+    private void syncEntity(Block2048CoreEntity coreEntity) {
+        coreEntity.syncToClient();
     }
 
     public static void reset(ServerLevel level, BlockPos pos) {
@@ -162,8 +160,6 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
         if (!(be instanceof Block2048CoreEntity coreEntity)) return;
         coreEntity.resetScore();
         coreEntity.resetMaxNumber();
-        coreEntity.setChanged();
-        level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), Block.UPDATE_ALL);
     }
 
     @Override
@@ -174,7 +170,7 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
     @Override
     public boolean unfoldGame(ServerLevel serverLevel, BlockPos pos, BlockState state, Player player) {
         if (!checkLayoutAreaIsEmpty(serverLevel, pos, state)) {
-            player.sendOverlayMessage(Component.translatable("msg.simple2048.obstructed"));
+            player.sendOverlayMessage(Component.translatable("msg.common.obstructed"));
             return false;
         }
 

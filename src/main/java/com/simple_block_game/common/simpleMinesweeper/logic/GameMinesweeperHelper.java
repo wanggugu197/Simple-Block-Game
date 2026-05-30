@@ -42,7 +42,8 @@ public final class GameMinesweeperHelper {
         return level.isEmptyBlock(corePos.offset(width + 1, 0, height + 1));
     }
 
-    public static void generateLayout(ServerLevel level, BlockPos corePos, int width, int height) {
+    public static void generateLayout(ServerLevel level, BlockPos corePos, BlockMinesweeperCoreEntity state) {
+        int width = state.getGridWidth(), height = state.getGridHeight();
         Direction coreFacing = level.getBlockState(corePos).getValue(BaseVerticalBlock.FACING);
         BlockState displayState = DISPLAY.defaultBlockState().setValue(BaseVerticalBlock.FACING, coreFacing);
         BlockState frameState = FRAME.defaultBlockState().setValue(BaseVerticalBlock.FACING, coreFacing);
@@ -187,7 +188,6 @@ public final class GameMinesweeperHelper {
         if (be instanceof BlockMinesweeperDisplayEntity entity) {
             entity.setCorePos(corePos);
             entity.setDisplayState(MinesweeperState.UNOPENED);
-            entity.setChanged();
         }
     }
 
@@ -196,7 +196,6 @@ public final class GameMinesweeperHelper {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof BlockRefreshEntity entity) {
             entity.setCorePos(corePos);
-            entity.setChanged();
         }
     }
 }

@@ -11,8 +11,7 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import lombok.NonNull;
 
 public class BlockTenDropsDisplayEntityRenderer extends BaseGameBlockEntityRenderer<BlockTenDropsDisplayEntity, BlockTenDropsDisplayEntityRenderer.BlockTenDropDisplayEntityRenderState> {
 
@@ -37,7 +36,7 @@ public class BlockTenDropsDisplayEntityRenderer extends BaseGameBlockEntityRende
     }
 
     @Override
-    public void extractRenderState(BlockTenDropsDisplayEntity blockEntity, BlockTenDropDisplayEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockTenDropsDisplayEntity blockEntity, BlockTenDropDisplayEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.dropletLevel = blockEntity.getDropletLevel();
     }

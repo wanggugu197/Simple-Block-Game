@@ -1,88 +1,88 @@
 # 添加新游戏指南
 
-## 一、概述
+本指南说明如何在 Simple Block Game 中添加一个新小游戏。目标是保持现有结构：游戏规则独立、Minecraft 交互集中、注册入口统一。
 
-本指南详细介绍如何向 Simple Block Game 项目中添加新的迷你游戏。项目采用模块化设计，遵循统一的架构模式，使添加新游戏变得简单高效。
+## 1. 命名
 
-### 1.1 前置条件
+先确定 4 个名字：
 
-- 熟悉 Java 编程语言
-- 了解 Minecraft NeoForge 开发基础
-- 掌握项目架构（参考 `docs/PROJECT_ARCHITECTURE.md`）
+| 项 | 示例 |
+| --- | --- |
+| 游戏名 | `Tetris` |
+| 包名 | `simpleTetris` |
+| 注册名 | `tetris_core`, `tetris_display`, `tetris_refresh` |
+| 类名前缀 | `BlockTetrisCore`, `GameTetrisLogic` |
 
-### 1.2 开发流程概览
+建议使用小写下划线作为注册名，使用驼峰作为 Java 类名。
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    添加新游戏开发流程                        │
-├─────────────────────────────────────────────────────────────┤
-│  1. 创建目录结构                                            │
-│       ↓                                                     │
-│  2. 定义游戏状态枚举 (XXXGameState)                          │
-│       ↓                                                     │
-│  3. 实现纯游戏逻辑 (GameXXXLogic)                           │
-│       ↓                                                     │
-│  4. 实现核心方块实体 (BlockXXXCoreEntity)                   │
-│       ↓                                                     │
-│  5. 实现核心方块 (BlockXXXCore)                            │
-│       ↓                                                     │
-│  6. 实现刷新控制方块 (BlockXXXRefresh)                      │
-│       ↓                                                     │
-│  7. 注册方块和实体                                          │
-│       ↓                                                     │
-│  8. 添加资源文件（模型、纹理、语言）                         │
-│       ↓                                                     │
-│  9. 测试与调试                                              │
-└─────────────────────────────────────────────────────────────┘
-```
+## 2. 创建目录
 
----
+在 `src/main/java/com/simple_block_game/common/` 下创建：
 
-## 二、创建目录结构
-
-在 `src/main/java/com/simple_block_game/common/` 下创建新游戏目录：
-
-```
-simpleXXX/                          # XXX为游戏名称，如 simpleTetris
-├── block/                          # 方块层
-│   ├── BlockXXXCore.java           # 核心方块
-│   ├── BlockXXXCoreEntity.java     # 核心方块实体
-│   ├── BlockXXXDisplay.java        # 显示方块（可选）
-│   ├── BlockXXXDisplayEntity.java  # 显示方块实体（可选）
-│   └── BlockXXXRefresh.java        # 刷新控制方块
-├── data/                           # 数据层
-│   ├── XXXGameState.java           # 游戏状态枚举
-│   └── XXXDifficulty.java          # 难度配置枚举（可选）
-├── logic/                          # 逻辑层
-│   ├── GameXXXLogic.java           # 纯游戏逻辑
-│   ├── GameXXXHelper.java          # Minecraft交互辅助
-│   └── GameXXXReward.java          # 奖励系统（可选）
-└── renderer/                       # 渲染器层（可选）
-    ├── BlockXXXCoreEntityRenderer.java       # 核心实体渲染器
-    └── BlockXXXDisplayEntityRenderer.java   # 显示实体渲染器（可选）
+```text
+simpleXXX/
+├── block/
+│   ├── BlockXXXCore.java
+│   ├── BlockXXXCoreEntity.java
+│   ├── BlockXXXDisplay.java              # 可选
+│   ├── BlockXXXDisplayEntity.java        # 可选
+│   ├── BlockXXXButton.java               # 可选
+│   └── BlockXXXButtonEntity.java         # 可选
+├── data/
+│   ├── XXXGameState.java                 # 可选但推荐
+│   └── XXXDifficulty.java                # 可选
+├── logic/
+│   ├── GameXXXLogic.java
+│   ├── GameXXXHelper.java
+│   └── GameXXXReward.java                # 可选
+└── renderer/
+    ├── BlockXXXCoreEntityRenderer.java
+    └── BlockXXXDisplayEntityRenderer.java
 ```
 
----
+不是所有游戏都需要显示方块或按钮方块。只保留实际需要的类。
 
-## 三、定义游戏状态枚举
+## 3. 先写纯逻辑
 
-创建 `data/XXXGameState.java`，定义游戏的状态机：
+先实现 `GameXXXLogic`，不要依赖 Minecraft API。
+
+推荐包含：
 
 ```java
-package com.simple_block_game.common.simpleXXX.data;
+public final class GameXXXLogic {
+    private GameXXXLogic() {}
 
-import net.minecraft.util.StringRepresentable;
-import org.jspecify.annotations.NonNull;
+    public static GameData initGame(...) {
+        return new GameData(...);
+    }
 
-/** XXX游戏状态枚举 */
+    public static MoveResult processInput(GameData data, PlayerInput input) {
+        // 只处理规则，不读写世界
+    }
+
+    public record GameData(...) {}
+    public record PlayerInput(...) {}
+    public record MoveResult(...) {}
+}
+```
+
+要求：
+
+- 不导入 `net.minecraft.*`
+- 输入和输出使用普通 Java 类型
+- 结果对象说明是否成功、是否结束、是否需要更新显示
+- 能单独写测试或手动调用验证
+
+## 4. 定义状态和数据
+
+简单游戏可以只用字段保存状态。流程复杂的游戏建议加 `XXXGameState`：
+
+```java
 public enum XXXGameState implements StringRepresentable {
-    
-    IDLE("idle"),               // 空闲状态（未开始）
-    PLAYING("playing"),         // 游戏进行中
-    PAUSED("paused"),           // 暂停状态（可选）
-    LEVEL_SUCCESS("level_success"), // 关卡成功
-    ALL_SUCCESS("all_success"), // 全部通关
-    GAME_OVER("game_over");     // 游戏结束
+    IDLE("idle"),
+    PLAYING("playing"),
+    SUCCESS("success"),
+    GAME_OVER("game_over");
 
     private final String serializedName;
 
@@ -91,940 +91,340 @@ public enum XXXGameState implements StringRepresentable {
     }
 
     @Override
-    public @NonNull String getSerializedName() {
+    public String getSerializedName() {
         return serializedName;
     }
 }
 ```
 
-**关键说明：**
-- 实现 `StringRepresentable` 接口用于序列化
-- `serializedName` 用于 NBT 存储和网络同步
-- 状态设计根据游戏需求调整
+状态值要能保存到 NBT，并能从存档恢复。
 
----
+## 5. 实现核心方块实体
 
-## 四、实现纯游戏逻辑
+`BlockXXXCoreEntity` 负责保存游戏数据。
 
-创建 `logic/GameXXXLogic.java`，实现与 Minecraft 无关的纯游戏逻辑：
+通常需要：
 
-```java
-package com.simple_block_game.common.simpleXXX.logic;
+- 当前状态
+- 分数、关卡、生命、步数等数据
+- 游戏规则数据，如棋盘、雷区、序列
+- `saveAdditional`
+- `loadAdditional`
+- 必要时实现 tick
+- **`syncToClient()` 方法用于状态同步**
 
-import java.util.List;
+### 5.1 状态同步要求
 
-/** XXX游戏核心逻辑（无Minecraft依赖） */
-public final class GameXXXLogic {
+所有状态修改必须通过 `syncToClient()` 方法同步到客户端，禁止直接在方块层调用 `setChanged()` 或 `sendBlockUpdated()`。
 
-    /**
-     * 处理玩家输入
-     * @param gameData 游戏数据
-     * @param input 玩家输入
-     * @return 游戏结果
-     */
-    public static GameResult processInput(GameData gameData, PlayerInput input) {
-        // 纯逻辑处理，不涉及任何Minecraft类
-        boolean isSuccess = evaluateInput(gameData, input);
-        
-        if (isSuccess) {
-            updateGameData(gameData);
-            if (isGameComplete(gameData)) {
-                return GameResult.success(true);
-            }
-            return GameResult.success(false);
-        }
-        
-        return GameResult.fail();
-    }
-
-    /**
-     * 判断游戏是否完成
-     */
-    public static boolean isGameComplete(GameData gameData) {
-        // 实现游戏完成判定逻辑
-        return false;
-    }
-
-    /**
-     * 初始化游戏数据
-     */
-    public static GameData initializeGame(int difficulty) {
-        // 创建并返回初始游戏数据
-        return new GameData();
-    }
-
-    /**
-     * 重置游戏数据
-     */
-    public static void resetGame(GameData gameData) {
-        // 重置游戏状态
-    }
-
-    // 内部类：游戏数据（纯POJO）
-    public static class GameData {
-        // 游戏状态数据字段
-    }
-
-    // 内部类：玩家输入
-    public static class PlayerInput {
-        // 输入数据字段
-    }
-
-    // 内部类：游戏结果
-    public static class GameResult {
-        private final boolean success;
-        private final boolean gameComplete;
-        
-        private GameResult(boolean success, boolean gameComplete) {
-            this.success = success;
-            this.gameComplete = gameComplete;
-        }
-        
-        public static GameResult success(boolean gameComplete) {
-            return new GameResult(true, gameComplete);
-        }
-        
-        public static GameResult fail() {
-            return new GameResult(false, false);
-        }
-        
-        public boolean isSuccess() { return success; }
-        public boolean isGameComplete() { return gameComplete; }
-    }
-}
-```
-
-**设计原则：**
-- 不导入任何 `net.minecraft` 包
-- 使用纯 Java 数据结构
-- 便于单元测试和逻辑复用
-
----
-
-## 五、实现核心方块实体
-
-创建 `block/BlockXXXCoreEntity.java`，继承 `BlockEntity`：
+示例结构：
 
 ```java
-package com.simple_block_game.common.simpleXXX.block;
+public class BlockXXXCoreEntity extends BaseGameBlockEntity {
+    private static final String DATA_KEY = "XXXData";
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
-import com.simple_block_game.common.simpleXXX.data.XXXGameState;
-import com.simple_block_game.common.simpleXXX.logic.GameXXXLogic;
-
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
-
-/** XXX游戏核心方块实体 */
-public class BlockXXXCoreEntity extends BlockEntity {
-
-    // === 常量定义 ===
-    private static final String KEY_GAME_STATE = "GameState";
-    private static final String KEY_SCORE = "Score";
-    // ... 其他数据键
-
-    // === 游戏状态字段 ===
     private XXXGameState gameState = XXXGameState.IDLE;
-    private int score = 0;
-    private GameXXXLogic.GameData gameData;
+    private int score;
 
-    // === 构造函数 ===
     public BlockXXXCoreEntity(BlockPos pos, BlockState state) {
         super(SimpleBlockGameRegistration.BLOCK_XXX_CORE_ENTITY.get(), pos, state);
-        this.gameData = GameXXXLogic.initializeGame(1);
     }
 
-    // === 状态管理 ===
-    public XXXGameState getGameState() {
-        return gameState;
+    public void reset() {
+        gameState = XXXGameState.IDLE;
+        score = 0;
+        syncToClient();  // 调用同步方法
     }
 
-    public void setGameState(XXXGameState gameState) {
-        this.gameState = gameState;
+    public void setScore(int score) {
+        this.score = score;
+        syncToClient();  // 调用同步方法
+    }
+
+    /**
+     * 同步数据到客户端
+     * 所有状态修改都必须调用此方法
+     */
+    private void syncToClient() {
         setChanged();
-        updateBlockState();
-    }
-
-    // === 游戏逻辑 ===
-    /**
-     * 游戏主循环（由 tick 调用）
-     */
-    public void tick() {
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-
-        // 根据游戏状态执行不同逻辑
-        switch (gameState) {
-            case PLAYING -> handlePlayingState(serverLevel);
-            case LEVEL_SUCCESS -> handleLevelSuccess(serverLevel);
-            case GAME_OVER -> handleGameOver(serverLevel);
-            // ... 其他状态
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
     }
 
-    /**
-     * 处理玩家输入
-     */
-    public void handlePlayerInput(int input) {
-        if (gameState != XXXGameState.PLAYING) {
-            return;
-        }
-
-        GameXXXLogic.PlayerInput playerInput = new GameXXXLogic.PlayerInput();
-        // 设置输入数据
-        
-        GameXXXLogic.GameResult result = GameXXXLogic.processInput(gameData, playerInput);
-        
-        if (result.isSuccess()) {
-            if (result.isGameComplete()) {
-                setGameState(XXXGameState.ALL_SUCCESS);
-            } else {
-                // 更新分数等
-                score += 100;
-            }
-        } else {
-            setGameState(XXXGameState.GAME_OVER);
-        }
-        
-        setChanged();
-    }
-
-    /**
-     * 初始化游戏（首次展开）
-     */
-    public void initialize() {
-        this.gameState = XXXGameState.IDLE;
-        this.score = 0;
-        this.gameData = GameXXXLogic.initializeGame(1);
-        setChanged();
-        updateBlockState();
-    }
-
-    /**
-     * 完全重置游戏
-     */
-    public void completeReset() {
-        GameXXXLogic.resetGame(gameData);
-        this.gameState = XXXGameState.IDLE;
-        this.score = 0;
-        setChanged();
-        updateBlockState();
-    }
-
-    /**
-     * 更新方块状态（同步到方块属性）
-     */
-    private void updateBlockState() {
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
-
-        BlockState state = serverLevel.getBlockState(worldPosition);
-        // 更新方块状态属性
-        serverLevel.setBlock(worldPosition, state, 3);
-        serverLevel.sendBlockUpdated(worldPosition, state, state, 3);
-    }
-
-    // === 序列化 ===
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         CompoundTag tag = new CompoundTag();
-        writeToTag(tag);
-        output.store("XXXGameData", CompoundTag.CODEC, tag);
+        tag.putString("State", gameState.getSerializedName());
+        tag.putInt("Score", score);
+        output.store(DATA_KEY, CompoundTag.CODEC, tag);
     }
 
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        CompoundTag tag = input.read("XXXGameData", CompoundTag.CODEC).orElse(new CompoundTag());
-        readFromTag(tag);
-    }
-
-    @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
-        CompoundTag tag = super.getUpdateTag(registries);
-        writeToTag(tag);
-        return tag;
-    }
-
-    @Override
-    public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        HolderLookup.Provider registries = level != null ? level.registryAccess() : net.minecraft.core.RegistryAccess.EMPTY;
-        return ClientboundBlockEntityDataPacket.create(this, (be, _) -> be.getUpdateTag(registries));
-    }
-
-    private void writeToTag(CompoundTag tag) {
-        tag.putString(KEY_GAME_STATE, gameState.getSerializedName());
-        tag.putInt(KEY_SCORE, score);
-        // ... 保存其他数据
-    }
-
-    private void readFromTag(CompoundTag tag) {
-        String gameStateStr = tag.getString(KEY_GAME_STATE).orElse(XXXGameState.IDLE.name());
-        try {
-            gameState = XXXGameState.valueOf(gameStateStr);
-        } catch (IllegalArgumentException e) {
-            gameState = XXXGameState.IDLE;
-        }
-        score = tag.getIntOr(KEY_SCORE, 0);
-        // ... 读取其他数据
-    }
-
-    // === 状态处理方法 ===
-    private void handlePlayingState(ServerLevel level) {
-        // 游戏进行中的逻辑
-    }
-
-    private void handleLevelSuccess(ServerLevel level) {
-        // 关卡成功处理
-    }
-
-    private void handleGameOver(ServerLevel level) {
-        // 游戏结束处理
+        CompoundTag tag = input.read(DATA_KEY, CompoundTag.CODEC).orElse(new CompoundTag());
+        score = tag.getIntOr("Score", 0);
     }
 }
 ```
 
----
+### 5.2 状态同步规范
 
-## 六、实现核心方块
+| 层级 | 允许调用 | 禁止调用 |
+| --- | --- | --- |
+| 实体层 (Entity) | `syncToClient()` | 直接调用 `sendBlockUpdated()` |
+| 方块层 (Block) | 调用实体的 `syncToClient()` | `setChanged()`、`sendBlockUpdated()` |
+| 逻辑层 (Helper/Logic) | 通过实体修改状态 | 任何同步方法 |
 
-创建 `block/BlockXXXCore.java`，继承基类并实现 `IGameCoreBlock` 接口：
+**核心原则**：状态同步逻辑必须统一在实体层实现，方块层只负责交互分发，不处理数据同步。
+
+## 6. 选择方块基类
+
+| 布局类型 | 使用 |
+| --- | --- |
+| 面向玩家朝向旋转 | `BaseRotatedBlock` |
+| 固定垂直平面 | `BaseVerticalBlock` |
+
+2048 使用 `BaseRotatedBlock`。扫雷、记忆键、十滴水使用垂直布局。
+
+核心方块需要实现 `IGameCoreBlock`：
 
 ```java
-package com.simple_block_game.common.simpleXXX.block;
-
-import com.simple_block_game.common.base.block.BaseVerticalBlock;
-import com.simple_block_game.common.base.block.IGameCoreBlock;
-import com.simple_block_game.common.simpleXXX.data.XXXGameState;
-import com.simple_block_game.common.simpleXXX.logic.GameXXXHelper;
-
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-
-/** XXX游戏核心方块 */
 public class BlockXXXCore extends BaseVerticalBlock implements IGameCoreBlock {
-
-    // === 方块状态属性 ===
-    public static final net.minecraft.world.level.block.state.properties.BooleanProperty UNFOLDED = 
-        net.minecraft.world.level.block.state.properties.BooleanProperty.create("unfolded");
-
-    // === 构造函数 ===
     public BlockXXXCore(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(UNFOLDED, false));
     }
 
-    // === 状态定义 ===
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(UNFOLDED);
-        super.createBlockStateDefinition(builder);
-    }
-
-    // === IGameCoreBlock 实现 ===
-    @Override
-    public boolean checkLayoutAreaIsEmpty(ServerLevel level, BlockPos pos, BlockState state) {
-        return GameXXXHelper.checkLayoutAreaIsEmpty(level, pos);
-    }
-
     @Override
     public boolean unfoldGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
-        // 生成游戏布局
+        if (!checkLayoutAreaIsEmpty(level, pos, state)) return false;
         GameXXXHelper.generateLayout(level, pos);
-        
-        // 更新方块状态为已展开
-        level.setBlock(pos, state.setValue(UNFOLDED, true), 3);
-        
-        // 初始化游戏数据
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof BlockXXXCoreEntity entity) {
-            entity.initialize();
-        }
-        
+        level.setBlock(pos, state.setValue(UNFOLDED, true), Block.UPDATE_ALL);
         return true;
-    }
-
-    @Override
-    public void startGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof BlockXXXCoreEntity entity) {
-            entity.setGameState(XXXGameState.PLAYING);
-            // 发送开始消息
-            player.sendOverlayMessage(
-                net.minecraft.network.chat.Component.translatable("msg.xxx.start")
-            );
-        }
     }
 
     @Override
     public void resetGame(ServerLevel level, BlockPos pos, BlockState state) {
-        BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof BlockXXXCoreEntity entity) {
-            entity.completeReset();
-        }
-    }
-
-    @Override
-    public void minimizeGame(ServerLevel level, BlockPos pos, BlockState state) {
-        // 移除布局方块
-        GameXXXHelper.minimizeLayout(level, pos);
-        
-        // 更新方块状态为未展开
-        level.setBlock(pos, state.setValue(UNFOLDED, false), 3);
-    }
-
-    @Override
-    public void closeGame(ServerLevel level, BlockPos pos, BlockState state) {
-        // 销毁布局
-        GameXXXHelper.destroyLayout(level, pos);
-        
-        // 掉落核心方块物品
-        if (state.getBlock() instanceof BlockXXXCore) {
-            dropAsItem(level, pos, state);
-        }
-    }
-
-    @Override
-    public boolean isGameUnfolded(BlockState state) {
-        return state.getValue(UNFOLDED);
-    }
-
-    @Override
-    public BlockEntity getGameCoreEntity(ServerLevel level, BlockPos pos) {
-        return level.getBlockEntity(pos);
-    }
-
-    // === 方块交互 ===
-    @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock())) {
-            // 清理布局
-            if (isGameUnfolded(state)) {
-                GameXXXHelper.destroyLayout((ServerLevel) level, pos);
-            }
-        }
-        super.onRemove(state, level, pos, newState, isMoving);
-    }
-
-    // === 辅助方法 ===
-    private void dropAsItem(ServerLevel level, BlockPos pos, BlockState state) {
-        // 实现掉落逻辑
-        net.minecraft.world.entity.item.ItemEntity itemEntity = new net.minecraft.world.entity.item.ItemEntity(
-            level,
-            pos.getX() + 0.5,
-            pos.getY() + 0.5,
-            pos.getZ() + 0.5,
-            new net.minecraft.world.item.ItemStack(this)
-        );
-        itemEntity.setDefaultPickUpDelay();
-        level.addFreshEntity(itemEntity);
+        GameXXXHelper.resetLayout(level, pos);
     }
 }
 ```
 
----
+至少实现：
 
-## 七、实现刷新控制方块
+- `checkLayoutAreaIsEmpty`
+- `unfoldGame`
+- `startGame`
+- `resetGame`
+- `minimizeGame`
+- `closeGame`
+- `getGameCoreEntity`
 
-创建 `block/BlockXXXRefresh.java`，继承对应的刷新基类：
+## 7. 实现 Helper
+
+`GameXXXHelper` 负责所有世界操作。
+
+建议提供：
+
+| 方法 | 作用 |
+| --- | --- |
+| `checkLayoutAreaIsEmpty` | 展开前检查空间 |
+| `generateLayout` | 放置显示方块、边框、刷新方块 |
+| `resetLayout` | 重置显示和核心实体 |
+| `minimizeLayout` | 移除布局，保留核心方块 |
+| `closeLayout` | 移除布局和核心方块 |
+| `readDisplayGrid` | 从显示方块读取状态，可选 |
+| `writeDisplayGrid` | 写入显示方块状态，可选 |
+
+生成刷新方块后，要设置 `BlockRefreshEntity#setCorePos(corePos)`，否则刷新方块找不到核心方块。
+
+## 8. 刷新控制方块
+
+当前项目的刷新方块通常直接通过注册时创建：
 
 ```java
-package com.simple_block_game.common.simpleXXX.block;
+REGISTRYLIB
+    .block(REGISTRYLIB, "xxx_refresh", p -> BaseVerticalRefreshBlock.create(p, "xxx"))
+    .register();
+```
 
-import com.simple_block_game.common.base.block.BaseVerticalRefreshBlock;
-import com.simple_block_game.common.base.block.IGameCoreBlock;
-import com.simple_block_game.common.base.block.VerticalRefreshArea;
+旋转布局使用：
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.state.BlockState;
+```java
+BaseRotatedRefreshBlock.create(p, "xxx")
+```
 
-/** XXX游戏刷新控制方块 */
-public class BlockXXXRefresh extends BaseVerticalRefreshBlock {
+如果默认刷新逻辑无法满足需求，再新增独立 `BlockXXXRefresh`。
 
-    public BlockXXXRefresh(Properties properties) {
-        super(properties);
+## 9. 实现显示方块
+
+如果游戏需要棋盘或格子显示，添加：
+
+- `BlockXXXDisplay`
+- `BlockXXXDisplayEntity`
+- `BlockXXXDisplayEntityRenderer`
+
+显示实体保存单格状态，渲染器按状态选择贴图。
+
+**显示实体也必须遵循状态同步规范**，使用 `syncToClient()` 方法：
+
+示例：
+
+```java
+public class BlockXXXDisplayEntity extends BaseGameBlockEntity {
+    private int value;
+
+    public void setValue(int value) {
+        if (this.value == value) return;
+        this.value = value;
+        syncToClient();
     }
 
-    @Override
-    protected void handleRefreshAction(ServerLevel level, BlockPos refreshPos, BlockPos corePos, 
-                                       VerticalRefreshArea area, BlockState refreshState) {
-        if (!(level.getBlockState(corePos).getBlock() instanceof IGameCoreBlock coreBlock)) {
-            return;
-        }
-
-        switch (area) {
-            case TOP_LEFT -> coreBlock.minimizeGame(level, corePos, level.getBlockState(corePos));
-            case TOP_RIGHT -> coreBlock.closeGame(level, corePos, level.getBlockState(corePos));
-            case BOTTOM -> coreBlock.resetGame(level, corePos, level.getBlockState(corePos));
+    /**
+     * 同步数据到客户端
+     */
+    private void syncToClient() {
+        setChanged();
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
     }
 }
 ```
 
----
+## 10. 添加奖励
 
-## 八、实现辅助方法
+如果游戏有奖励，创建 `GameXXXReward` 并继承 `BaseGameReward`。
 
-创建 `logic/GameXXXHelper.java`，封装 Minecraft 交互逻辑：
+推荐方式：
 
-```java
-package com.simple_block_game.common.simpleXXX.logic;
+- 奖励表配置放到 `SimpleBlockGameConfig`
+- 游戏成功、跨分数、通关等事件触发奖励
+- 奖励逻辑不要写在纯逻辑类里
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
-import com.simple_block_game.common.base.block.BlockRefreshEntity;
-import com.simple_block_game.common.simpleXXX.block.BlockXXXDisplayEntity;
+## 11. 注册方块和实体
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.state.BlockState;
-
-/** XXX游戏辅助工具类 */
-public final class GameXXXHelper {
-
-    // === 方块引用 ===
-    private static final Block CORE = SimpleBlockGameRegistration.BLOCK_XXX_CORE.get();
-    private static final Block DISPLAY = SimpleBlockGameRegistration.BLOCK_XXX_DISPLAY.get();
-    private static final Block FRAME = SimpleBlockGameRegistration.BLOCK_VERTICAL_FRAME.get();
-    private static final Block REFRESH = SimpleBlockGameRegistration.BLOCK_XXX_REFRESH.get();
-
-    private GameXXXHelper() {}
-
-    // === 布局管理 ===
-    /**
-     * 检查布局区域是否为空
-     */
-    public static boolean checkLayoutAreaIsEmpty(ServerLevel level, BlockPos corePos) {
-        // 检查所有需要放置方块的位置
-        for (BlockPos pos : getLayoutPositions(corePos)) {
-            if (!level.isEmptyBlock(pos)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * 生成游戏布局
-     */
-    public static void generateLayout(ServerLevel level, BlockPos corePos) {
-        BlockState displayState = DISPLAY.defaultBlockState();
-        BlockState frameState = FRAME.defaultBlockState();
-        BlockState refreshState = REFRESH.defaultBlockState();
-
-        // 生成显示方块
-        for (BlockPos pos : getDisplayPositions(corePos)) {
-            if (level.isEmptyBlock(pos)) {
-                level.setBlock(pos, displayState, 3);
-                // 初始化显示方块实体
-                BlockEntity be = level.getBlockEntity(pos);
-                if (be instanceof BlockXXXDisplayEntity entity) {
-                    entity.setCorePos(corePos);
-                    // 设置初始状态
-                }
-            }
-        }
-
-        // 生成边框
-        for (BlockPos pos : getFramePositions(corePos)) {
-            if (level.isEmptyBlock(pos)) {
-                level.setBlock(pos, frameState, 3);
-            }
-        }
-
-        // 生成刷新按钮
-        BlockPos refreshPos = getRefreshPos(corePos);
-        if (level.isEmptyBlock(refreshPos)) {
-            level.setBlock(refreshPos, refreshState, 3);
-            if (level.getBlockEntity(refreshPos) instanceof BlockRefreshEntity refreshEntity) {
-                refreshEntity.setCorePos(corePos);
-            }
-        }
-    }
-
-    /**
-     * 最小化布局（保留核心方块）
-     */
-    public static void minimizeLayout(ServerLevel level, BlockPos corePos) {
-        // 移除显示方块
-        for (BlockPos pos : getDisplayPositions(corePos)) {
-            if (level.getBlockState(pos).getBlock() == DISPLAY) {
-                level.removeBlock(pos, false);
-            }
-        }
-
-        // 移除边框
-        for (BlockPos pos : getFramePositions(corePos)) {
-            if (level.getBlockState(pos).getBlock() == FRAME) {
-                level.removeBlock(pos, false);
-            }
-        }
-
-        // 移除刷新按钮
-        BlockPos refreshPos = getRefreshPos(corePos);
-        if (level.getBlockState(refreshPos).getBlock() == REFRESH) {
-            level.removeBlock(refreshPos, false);
-        }
-    }
-
-    /**
-     * 销毁布局（完全移除）
-     */
-    public static void destroyLayout(ServerLevel level, BlockPos corePos) {
-        minimizeLayout(level, corePos);
-        
-        // 如果需要，也可以移除核心方块（通常由 closeGame 处理）
-    }
-
-    // === 位置计算 ===
-    private static Iterable<BlockPos> getLayoutPositions(BlockPos corePos) {
-        // 返回所有需要检查的位置
-        return () -> java.util.stream.Stream.concat(
-            getDisplayPositions(corePos).stream(),
-            java.util.stream.Stream.concat(
-                getFramePositions(corePos).stream(),
-                java.util.stream.Stream.of(getRefreshPos(corePos))
-            )
-        ).iterator();
-    }
-
-    private static Iterable<BlockPos> getDisplayPositions(BlockPos corePos) {
-        // 返回显示方块位置列表
-        BlockPos[] positions = {
-            // 根据游戏布局定义位置
-            corePos.offset(0, 0, 1),
-            corePos.offset(0, 0, -1),
-            // ...
-        };
-        return () -> java.util.Arrays.stream(positions).iterator();
-    }
-
-    private static Iterable<BlockPos> getFramePositions(BlockPos corePos) {
-        // 返回边框位置列表
-        BlockPos[] positions = {
-            // 边框位置
-        };
-        return () -> java.util.Arrays.stream(positions).iterator();
-    }
-
-    private static BlockPos getRefreshPos(BlockPos corePos) {
-        // 返回刷新按钮位置
-        return corePos.offset(2, 0, 2);
-    }
-
-    // === 游戏交互辅助 ===
-    /**
-     * 更新显示方块状态
-     */
-    public static void updateDisplay(ServerLevel level, BlockPos corePos, int displayIndex, int value) {
-        BlockPos displayPos = getDisplayPosition(corePos, displayIndex);
-        BlockEntity be = level.getBlockEntity(displayPos);
-        if (be instanceof BlockXXXDisplayEntity entity) {
-            entity.setValue(value);
-        }
-    }
-
-    private static BlockPos getDisplayPosition(BlockPos corePos, int index) {
-        // 根据索引获取显示方块位置
-        return corePos;
-    }
-}
-```
-
----
-
-## 九、注册方块和实体
-
-在 `SimpleBlockGameRegistration.java` 中添加注册代码：
+在 `SimpleBlockGameRegistration.java` 添加：
 
 ```java
-// === XXX游戏注册 ===
-
-// 核心方块
 public static final BlockEntry<BlockXXXCore> BLOCK_XXX_CORE = REGISTRYLIB
-    .block(REGISTRYLIB, "xxx_core", BlockXXXCore::new)
-    .langCn("XXX核心方块")
-    .lang("XXX Core")
-    .noBlockstate()
-    .simpleItem()
-    .register();
+        .block(REGISTRYLIB, "xxx_core", BlockXXXCore::new)
+        .langCn("XXX核心方块")
+        .lang("XXX Core")
+        .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))
+        .item(builder -> builder.addTab(TAB_GANM.getKey()))
+        .register();
 
-// 核心方块实体
 public static final BlockEntityTypeEntry<BlockXXXCoreEntity> BLOCK_XXX_CORE_ENTITY = REGISTRYLIB
-    .blockEntity(REGISTRYLIB, "xxx_core_entity", (_, p, s) -> new BlockXXXCoreEntity(p, s))
-    .validBlock(BLOCK_XXX_CORE)
-    .register();
-
-// 显示方块（如果需要）
-public static final BlockEntry<BlockXXXDisplay> BLOCK_XXX_DISPLAY = REGISTRYLIB
-    .block(REGISTRYLIB, "xxx_display", BlockXXXDisplay::new)
-    .langCn("XXX显示方块")
-    .lang("XXX Display")
-    .noBlockstate()
-    .register();
-
-// 显示方块实体（如果需要）
-public static final BlockEntityTypeEntry<BlockXXXDisplayEntity> BLOCK_XXX_DISPLAY_ENTITY = REGISTRYLIB
-    .blockEntity(REGISTRYLIB, "xxx_display_entity", (_, p, s) -> new BlockXXXDisplayEntity(p, s))
-    .validBlock(BLOCK_XXX_DISPLAY)
-    .register();
-
-// 刷新控制方块
-public static final BlockEntry<BlockXXXRefresh> BLOCK_XXX_REFRESH = REGISTRYLIB
-    .block(REGISTRYLIB, "xxx_refresh", BlockXXXRefresh::new)
-    .langCn("XXX刷新方块")
-    .lang("XXX Refresh")
-    .noBlockstate()
-    .register();
+        .blockEntity(REGISTRYLIB, "xxx_core_entity", (_, p, s) -> new BlockXXXCoreEntity(p, s))
+        .validBlock(BLOCK_XXX_CORE)
+        .renderer(() -> () -> BlockXXXCoreEntityRenderer::new)
+        .register();
 ```
 
----
+如果有显示方块，也注册显示方块和显示实体。
 
-## 十、添加资源文件
+如果有刷新方块，别忘了把它加入共享刷新实体：
 
-### 10.1 语言文件
-
-在 `src/main/resources/assets/simple_block_game/lang/` 下创建/更新语言文件：
-
-**中文 (`zh_cn.json`)：**
-```json
-{
-  "block.simple_block_game.xxx_core": "XXX核心方块",
-  "block.simple_block_game.xxx_display": "XXX显示方块",
-  "block.simple_block_game.xxx_refresh": "XXX刷新方块",
-  "msg.xxx.start": "游戏开始！",
-  "msg.xxx.game_over": "游戏结束！",
-  "msg.xxx.success": "恭喜通关！"
-}
+```java
+public static final BlockEntityTypeEntry<BlockRefreshEntity> BLOCK_REFRESH_ENTITY = REGISTRYLIB
+        .blockEntity(REGISTRYLIB, "refresh_entity", BlockRefreshEntity::new)
+        .validBlock(BLOCK_XXX_REFRESH)
+        .register();
 ```
 
-**英文 (`en_us.json`)：**
-```json
-{
-  "block.simple_block_game.xxx_core": "XXX Core",
-  "block.simple_block_game.xxx_display": "XXX Display",
-  "block.simple_block_game.xxx_refresh": "XXX Refresh",
-  "msg.xxx.start": "Game Start!",
-  "msg.xxx.game_over": "Game Over!",
-  "msg.xxx.success": "Congratulations!"
-}
+实际代码中已有多个 `.validBlock(...)`，在链上追加新的刷新方块即可。
+
+## 12. 添加配置
+
+在 `SimpleBlockGameConfig.java` 添加：
+
+- 游戏启用开关，如 `enableXXXGame`
+- 奖励配置，如 `level1Reward`
+- 尺寸、难度、生命等可调参数
+
+核心方块交互入口应检查启用开关：
+
+```java
+if (!SimpleBlockGameConfig.enableXXXGame.get()) return InteractionResult.PASS;
 ```
 
-### 10.2 方块模型和纹理
+## 13. 添加配方
 
-创建模型文件和纹理文件：
+在 `SimpleBlockGameRecipe.java` 添加核心方块配方：
 
+```java
+prov.shaped(RecipeCategory.COMBAT, BLOCK_XXX_CORE)
+        .pattern("QQQ")
+        .pattern("QIQ")
+        .pattern("QQQ")
+        .define('Q', Items.QUARTZ_PILLAR)
+        .define('I', Items.REDSTONE_BLOCK)
+        .unlockedBy("unlocked", UNCONDITIONAL_CRITERION)
+        .save(prov, "make_xxx_core");
 ```
+
+## 14. 添加资源
+
+常用资源位置：
+
+```text
 src/main/resources/assets/simple_block_game/
-├── blockstates/
-│   └── xxx_core.json
-├── models/
-│   ├── block/
-│   │   ├── xxx_core.json
-│   │   ├── xxx_display.json
-│   │   └── xxx_refresh.json
-│   └── item/
-│       └── xxx_core.json
-└── textures/
-    └── block/
-        ├── xxx_core.png
-        ├── xxx_display.png
-        └── xxx_refresh.png
+├── models/item/simple_xxx/
+├── textures/block/simple_xxx/
+└── textures/item/
 ```
 
-### 10.3 配方注册（可选）
+如果使用数据生成，确认注册时设置了：
 
-在 `SimpleBlockGameRecipe.java` 中添加合成配方：
+- `langCn`
+- `lang`
+- `blockstate`
+- `item`
+- `model`
 
-```java
-// XXX核心方块配方
-RECIPES.add(ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, BLOCK_XXX_CORE.get())
-    .pattern("ABA")
-    .pattern("BCB")
-    .pattern("ABA")
-    .define('A', Blocks.IRON_BLOCK)
-    .define('B', Blocks.GLASS)
-    .define('C', Items.REDSTONE)
-    .unlockedBy("has_redstone", has(Items.REDSTONE))
-    .build());
-```
+## 15. 添加渲染器
 
----
-
-## 十一、实现渲染器（可选）
-
-创建 `renderer/BlockXXXCoreEntityRenderer.java`，继承渲染器基类：
+渲染器继承项目已有基类，核心是按实体状态返回贴图：
 
 ```java
-package com.simple_block_game.common.simpleXXX.renderer;
-
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderer;
-import com.simple_block_game.common.simpleXXX.block.BlockXXXCoreEntity;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-
-/** XXX游戏核心实体渲染器 */
-public class BlockXXXCoreEntityRenderer extends BaseGameBlockEntityRenderer<BlockXXXCoreEntity> {
-
-    public BlockXXXCoreEntityRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
-    }
-
-    @Override
-    protected void renderGameContent(BlockXXXCoreEntity entity, float partialTick, 
-                                     PoseStack poseStack, MultiBufferSource bufferSource, 
-                                     int packedLight, int packedOverlay) {
-        // 渲染游戏特定内容
-        // 例如：渲染分数、状态指示器等
-        
-        // 应用旋转
-        applyRotation(poseStack, entity);
-        
-        // 渲染逻辑
-        // ...
-    }
+protected Identifier getTextureForState(BlockXXXCoreEntityRenderState state) {
+    return SimpleBlockGame.getId("textures/block/simple_xxx/xxx_core.png");
 }
 ```
 
-**渲染器基类功能：**
-- 提供通用的旋转处理方法 `applyRotation()`
-- 处理方块朝向的渲染适配
-- 统一渲染上下文管理
+实体状态读取放在 `extractRenderState`。
 
-**注册渲染器：**
+## 16. 测试清单
 
-在 `ClientInit.java` 中注册：
-```java
-// XXX游戏渲染器注册
-RenderingRegistry.registerBlockEntityRenderer(
-    SimpleBlockGameRegistration.BLOCK_XXX_CORE_ENTITY.get(),
-    context -> new BlockXXXCoreEntityRenderer(context)
-);
-```
+实现后至少检查：
 
----
+- 核心方块能放置和显示物品模型。
+- 点击核心方块能展开布局。
+- 展开前会阻止覆盖已有方块。
+- 刷新方块能重置、最小化、关闭。
+- 显示实体能保存和读取状态。
+- 退出世界再进入后数据正常。
+- 奖励只在预期时机发放。
+- 客户端渲染贴图正常。
+- 配方数据生成正常。
 
-## 十二、添加奖励系统（可选）
+### 16.1 状态同步检查
 
-创建 `logic/GameXXXReward.java`：
+- 所有状态修改都调用了 `syncToClient()` 方法。
+- 方块层没有直接调用 `setChanged()` 或 `sendBlockUpdated()`。
+- 客户端能实时看到服务端的状态变化（如分数更新、按钮闪烁）。
 
-```java
-package com.simple_block_game.common.simpleXXX.logic;
+## 17. 推荐开发顺序
 
-import com.simple_block_game.common.base.reward.BaseGameReward;
-
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.player.Player;
-
-/** XXX游戏奖励系统 */
-public final class GameXXXReward extends BaseGameReward {
-
-    /**
-     * 处理游戏奖励
-     * @param level 服务端世界
-     * @param player 玩家
-     * @param success 是否成功通关
-     */
-    public static void handleReward(ServerLevel level, Player player, boolean success) {
-        if (success) {
-            // 通关奖励：更好的战利品
-            dropLoot(level, player.position(), getSuccessLootTable());
-        } else {
-            // 失败奖励：基础战利品
-            dropLoot(level, player.position(), getFailureLootTable());
-        }
-    }
-
-    private static net.minecraft.resources.ResourceLocation getSuccessLootTable() {
-        return new net.minecraft.resources.ResourceLocation("simple_block_game", "game/xxx_success");
-    }
-
-    private static net.minecraft.resources.ResourceLocation getFailureLootTable() {
-        return new net.minecraft.resources.ResourceLocation("simple_block_game", "game/xxx_failure");
-    }
-}
-```
-
----
-
-## 十二、测试与调试
-
-### 12.1 测试清单
-
-| 测试项 | 说明 |
-|--------|------|
-| 方块放置 | 核心方块能否正常放置 |
-| 布局展开 | 点击核心方块能否展开游戏布局 |
-| 游戏开始 | 游戏能否正常开始 |
-| 玩家交互 | 玩家输入能否正确响应 |
-| 状态流转 | 状态机是否正常工作 |
-| 刷新控制 | 三个控制区域功能是否正常 |
-| 存档加载 | 游戏数据能否正确保存和加载 |
-| 奖励掉落 | 通关/失败时奖励是否正常掉落 |
-
-### 12.2 调试技巧
-
-1. **日志输出**：使用 `LOGGER.info()` 输出关键状态
-2. **调试模式**：在游戏中使用 `/debug` 命令
-3. **断点调试**：使用 IDE 连接 Minecraft 调试器
-4. **测试世界**：创建专门的测试世界进行测试
-
----
-
-## 十三、参考示例
-
-参考现有游戏模块的实现：
-
-| 游戏 | 路径 | 说明 |
-|------|------|------|
-| 2048 | `common/simple2048/` | 旋转布局，滑动交互 |
-| 扫雷 | `common/simpleMinesweeper/` | 垂直布局，点击翻开 |
-| 记忆键 | `common/simpleMemoryKey/` | 垂直布局，序列输入 |
-
----
-
-## 十四、常见问题
-
-### Q1: 如何选择继承基类？
-
-- **垂直布局游戏**（扫雷、记忆键）：继承 `BaseVerticalBlock`
-- **旋转布局游戏**（2048）：继承 `BaseRotatedBlock`
-
-### Q2: 为什么要分离纯逻辑和交互代码？
-
-- 纯逻辑代码可独立测试
-- 便于移植到其他平台
-- 代码结构更清晰
-
-### Q3: 如何处理多语言？
-
-使用 `LangHandler.addLang()` 在 `CommonInit.java` 中注册语言键。
-
-### Q4: 方块更新标志 `updateFlags` 应该用多少？
-
-项目中统一使用 `3`（`NOTIFY_NEIGHBORS | NOTIFY_LISTENERS`）。
-
----
-
-*文档版本: 1.2*  
-*最后更新: 2026-05-29*  
-*参考文档: `docs/PROJECT_ARCHITECTURE.md`*
+1. 写 `GameXXXLogic`。
+2. 写 `BlockXXXCoreEntity`。
+3. 写 `GameXXXHelper` 的布局生成和清理。
+4. 写 `BlockXXXCore` 的生命周期。
+5. 注册核心方块和实体。
+6. 添加显示方块和渲染器。
+7. 添加奖励、配方、资源。
+8. 运行数据生成和客户端测试。

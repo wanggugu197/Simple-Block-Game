@@ -54,6 +54,14 @@ public class SimpleBlockGameRecipe {
                     .define('I', Items.REDSTONE_BLOCK)
                     .unlockedBy("unlocked", UNCONDITIONAL_CRITERION)
                     .save(prov, "make_memory_key_core");
+            prov.shaped(RecipeCategory.COMBAT, BLOCK_TEN_DROPS_CORE)
+                    .pattern("QQQ")
+                    .pattern("QIQ")
+                    .pattern("QQQ")
+                    .define('Q', Items.QUARTZ_PILLAR)
+                    .define('I', Items.WATER_BUCKET)
+                    .unlockedBy("unlocked", UNCONDITIONAL_CRITERION)
+                    .save(prov, "make_ten_drops_core");
         });
     }
 }

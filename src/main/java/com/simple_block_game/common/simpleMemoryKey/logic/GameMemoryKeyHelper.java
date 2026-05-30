@@ -148,14 +148,14 @@ public final class GameMemoryKeyHelper {
         int expectedButtonId = coreEntity.getSequence().get(currentIndex);
 
         if (buttonId != expectedButtonId) {
-            handleWrongInput(level, corePos, coreEntity, player);
+            handleWrongInput(level, coreEntity, player);
             return;
         }
 
-        handleCorrectInput(level, corePos, coreEntity, player);
+        handleCorrectInput(level, coreEntity, player);
     }
 
-    private static void handleCorrectInput(ServerLevel level, BlockPos corePos, BlockMemoryKeyCoreEntity coreEntity, net.minecraft.world.entity.player.Player player) {
+    private static void handleCorrectInput(ServerLevel level, BlockMemoryKeyCoreEntity coreEntity, net.minecraft.world.entity.player.Player player) {
         int currentIndex = coreEntity.getCurrentSequenceIndex();
         int sequenceLength = GameMemoryKeyLogic.getSequenceLengthForLevel(coreEntity.getCurrentLevel());
 
@@ -172,12 +172,9 @@ public final class GameMemoryKeyHelper {
                 player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.level_complete", coreEntity.getCurrentLevel().getLevelNumber()));
             }
         }
-
-        coreEntity.setChanged();
-        level.sendBlockUpdated(corePos, level.getBlockState(corePos), level.getBlockState(corePos), Block.UPDATE_ALL);
     }
 
-    private static void handleWrongInput(ServerLevel level, BlockPos corePos, BlockMemoryKeyCoreEntity coreEntity, net.minecraft.world.entity.player.Player player) {
+    private static void handleWrongInput(ServerLevel level, BlockMemoryKeyCoreEntity coreEntity, net.minecraft.world.entity.player.Player player) {
         coreEntity.loseLife();
 
         if (coreEntity.getRemainingLives() <= 0) {
@@ -188,9 +185,6 @@ public final class GameMemoryKeyHelper {
             coreEntity.setGameState(MemoryKeyGameState.ERROR);
             player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.wrong_input", coreEntity.getRemainingLives()));
         }
-
-        coreEntity.setChanged();
-        level.sendBlockUpdated(corePos, level.getBlockState(corePos), level.getBlockState(corePos), Block.UPDATE_ALL);
     }
 
     private static void placeButtonBlock(ServerLevel level, BlockPos buttonPos, BlockPos corePos, MemoryKeyPosition pos) {
@@ -202,7 +196,6 @@ public final class GameMemoryKeyHelper {
             buttonEntity.setCorePos(corePos);
             buttonEntity.setPosition(pos);
             buttonEntity.setFlashing(false);
-            buttonEntity.setChanged();
         }
     }
 

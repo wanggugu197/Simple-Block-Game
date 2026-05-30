@@ -8,6 +8,7 @@ import com.simple_block_game.common.simpleMinesweeper.logic.GameMinesweeperLogic
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -72,7 +73,14 @@ public class BlockMinesweeperCoreEntity extends BaseGameBlockEntity {
         flagCount = 0;
         mineGrid = new boolean[height][width];
         gameOver = false;
-        setChanged();
+        syncToClient();
+    }
+
+    public void clearGameData() {
+        mineGrid = null;
+        flagCount = 0;
+        gameOver = false;
+        syncToClient();
     }
 
     public void setMineGrid(int startX, int startZ) {
@@ -85,7 +93,7 @@ public class BlockMinesweeperCoreEntity extends BaseGameBlockEntity {
         width = Math.max(1, preset.getWidth());
         height = Math.max(1, preset.getHeight());
         mineCount = Math.max(1, preset.getMineCount());
-        setChanged();
+        syncToClient();
     }
 
     public void adjustSize(boolean isXAxis, boolean increase) {
@@ -98,7 +106,7 @@ public class BlockMinesweeperCoreEntity extends BaseGameBlockEntity {
             height = Mth.clamp(increase ? height + 1 : height - 1, 9, 256);
         }
         mineCount = (int) Mth.clamp(width * height * content, width * height * 0.1f, width * height * 0.4f);
-        setChanged();
+        syncToClient();
     }
 
     public void adjustMineCount(boolean add) {
@@ -108,7 +116,7 @@ public class BlockMinesweeperCoreEntity extends BaseGameBlockEntity {
         mineCount = Mth.clamp(add ? mineCount + increment : mineCount - increment,
                 Math.max(1, (int) (width * height * 0.1f)),
                 Math.min(width * height - 1, (int) (width * height * 0.4f)));
-        setChanged();
+        syncToClient();
     }
 
     public float getMineContent() {
@@ -117,7 +125,14 @@ public class BlockMinesweeperCoreEntity extends BaseGameBlockEntity {
 
     public void setCurrentFlagCount(int count) {
         flagCount = count;
+        syncToClient();
+    }
+
+    private void syncToClient() {
         setChanged();
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        }
     }
 
     @Override

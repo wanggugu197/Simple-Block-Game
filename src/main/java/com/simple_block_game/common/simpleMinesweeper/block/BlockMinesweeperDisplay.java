@@ -122,7 +122,6 @@ public class BlockMinesweeperDisplay extends BaseVerticalBlock {
         if (result.success()) {
             GameMinesweeperHelper.writeDisplayGrid(level, corePos, result.displayGrid());
             core.setCurrentFlagCount(result.flagCount());
-            core.setChanged();
         }
         if (result.gameWin()) win(level, core, player);
     }

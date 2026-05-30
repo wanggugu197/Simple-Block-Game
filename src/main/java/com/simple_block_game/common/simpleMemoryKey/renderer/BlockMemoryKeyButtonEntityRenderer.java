@@ -11,8 +11,7 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import lombok.NonNull;
 
 /**
  * 记忆键游戏按键方块实体渲染器
@@ -39,7 +38,7 @@ public class BlockMemoryKeyButtonEntityRenderer extends BaseGameBlockEntityRende
     }
 
     @Override
-    public void extractRenderState(BlockMemoryKeyButtonEntity blockEntity, BlockMemoryKeyButtonEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(BlockMemoryKeyButtonEntity blockEntity, BlockMemoryKeyButtonEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.position = blockEntity.getPosition();
         state.flashing = blockEntity.isFlashing();

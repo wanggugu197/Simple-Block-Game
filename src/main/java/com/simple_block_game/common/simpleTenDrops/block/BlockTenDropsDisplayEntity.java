@@ -13,7 +13,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 
 public class BlockTenDropsDisplayEntity extends BaseGameBlockEntity {
 

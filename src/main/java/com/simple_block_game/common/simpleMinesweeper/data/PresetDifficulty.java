@@ -3,7 +3,7 @@ package com.simple_block_game.common.simpleMinesweeper.data;
 import net.minecraft.util.StringRepresentable;
 
 import lombok.Getter;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 
 /**
  * 扫雷预设难度枚举

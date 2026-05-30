@@ -130,6 +130,8 @@ public final class Game2048Helper {
     }
 
     public static void writeDisplayGrid(ServerLevel level, BlockPos corePos, Direction facing, int[][] grid) {
+        if (Game2048Logic.isInvalidGrid(grid)) return;
+
         Direction.Axis axis = getAxis(facing);
         int dir = getDirection(facing);
 

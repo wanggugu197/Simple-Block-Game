@@ -15,19 +15,18 @@ import net.minecraft.world.phys.Vec3;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import lombok.NonNull;
 
 public abstract class BaseGameBlockEntityRenderer<T extends BaseGameBlockEntity, S extends BaseGameBlockEntityRenderState> implements BlockEntityRenderer<T, S> {
 
-    protected static final float OFFSET = 0.2f;
+    protected static final float OFFSET = 0.01f;
 
     protected BaseGameBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
 
     protected abstract Identifier getTextureForState(S state);
 
     @Override
-    public void extractRenderState(T blockEntity, S state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(T blockEntity, S state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.facing = blockEntity.getFacing();
     }

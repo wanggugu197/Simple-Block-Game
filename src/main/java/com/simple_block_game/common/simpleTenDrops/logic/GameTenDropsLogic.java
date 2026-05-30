@@ -31,9 +31,11 @@ public final class GameTenDropsLogic {
 
     private static LevelConfig getLevelConfig(int level) {
         return switch (level) {
-            case 1, 2, 3 -> new LevelConfig(0.50, new double[] { 0.15, 0.25, 0.35, 0.25 }, 3, 3, true);
-            case 4, 5, 6, 7 -> new LevelConfig(0.80, new double[] { 0.25, 0.40, 0.25, 0.10 }, 4, 4, true);
-            default -> new LevelConfig(0.40, new double[] { 0.40, 0.40, 0.15, 0.05 }, 6, 5, false);
+            case 1, 2 -> new LevelConfig(0.50, new double[] { 0.15, 0.25, 0.35, 0.25 }, 3, 3, true);
+            case 3, 4 -> new LevelConfig(0.80, new double[] { 0.25, 0.40, 0.25, 0.10 }, 4, 4, true);
+            case 5, 6 -> new LevelConfig(0.60, new double[] { 0.30, 0.45, 0.20, 0.05 }, 5, 4, true);
+            case 7, 8 -> new LevelConfig(0.40, new double[] { 0.40, 0.40, 0.15, 0.05 }, 6, 5, false);
+            default -> new LevelConfig(0.45, new double[] { 0.50, 0.38, 0.10, 0.02 }, 6, 6, false);
         };
     }
 
@@ -105,11 +107,6 @@ public final class GameTenDropsLogic {
             }
         }
         return false;
-    }
-
-    public static int calculateReward(int eliminatedCount, int comboCount, int currentLevel) {
-        LevelConfig config = getLevelConfig(currentLevel);
-        return Math.max(0, comboCount - config.rewardThreshold + 1) + eliminatedCount / config.kValue;
     }
 
     public static boolean isVictory(int[][] grid) {

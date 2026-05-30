@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": "minecraft:water_bucket",
+    "Q": "minecraft:quartz_pillar"
+  },
+  "pattern": [
+    "QQQ",
+    "QIQ",
+    "QQQ"
+  ],
+  "result": {
+    "id": "simple_block_game:ten_drops_core"
+  }
+}

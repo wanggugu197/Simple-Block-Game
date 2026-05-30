@@ -50,36 +50,4 @@ public enum TenDropsDirection {
     public static TenDropsDirection[] allDirections() {
         return values();
     }
-
-    /**
-     * 获取反方向
-     *
-     * @return 当前方向的相反方向
-     */
-    public TenDropsDirection getOpposite() {
-        return switch (this) {
-            case NORTH -> SOUTH;
-            case SOUTH -> NORTH;
-            case EAST -> WEST;
-            case WEST -> EAST;
-        };
-    }
-
-    /**
-     * 判断是否为水平方向（东或西）
-     *
-     * @return 是否为水平方向
-     */
-    public boolean isHorizontal() {
-        return this == EAST || this == WEST;
-    }
-
-    /**
-     * 判断是否为垂直方向（北或南）
-     *
-     * @return 是否为垂直方向
-     */
-    public boolean isVertical() {
-        return this == NORTH || this == SOUTH;
-    }
 }

@@ -3,7 +3,7 @@ package com.simple_block_game.common.simpleMinesweeper.data;
 import net.minecraft.util.StringRepresentable;
 
 import lombok.Getter;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,7 +70,6 @@ public enum MinesweeperState implements StringRepresentable {
             case -9 -> BOMB;
             case -5 -> OPEN_EMPTY;
             case -1 -> FLAGGED;
-            case 0 -> UNOPENED;
             default -> UNOPENED;
         };
     }

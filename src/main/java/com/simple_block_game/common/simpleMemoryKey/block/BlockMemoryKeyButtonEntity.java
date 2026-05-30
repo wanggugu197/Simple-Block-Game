@@ -46,7 +46,7 @@ public class BlockMemoryKeyButtonEntity extends BaseGameBlockEntity {
     public void setPosition(MemoryKeyPosition position) {
         if (position == null) return;
         this.position = position;
-        setChanged();
+        syncToClient();
     }
 
     /**

@@ -38,18 +38,17 @@ public class BlockMinesweeperDisplayEntity extends BaseGameBlockEntity {
         if (newState == null) return;
         if (state != null && state.equals(newState)) return;
         state = newState;
-        setChanged();
         syncToClient();
     }
 
     public void setCorePos(BlockPos newCorePos) {
         if (newCorePos == corePos) return;
         corePos = newCorePos;
-        setChanged();
         syncToClient();
     }
 
     private void syncToClient() {
+        setChanged();
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }

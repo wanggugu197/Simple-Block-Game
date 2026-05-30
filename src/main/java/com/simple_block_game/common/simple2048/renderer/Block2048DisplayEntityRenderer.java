@@ -11,8 +11,7 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
-import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
+import lombok.NonNull;
 
 /**
  * 2048显示方块实体渲染器
@@ -37,7 +36,7 @@ public class Block2048DisplayEntityRenderer extends BaseGameBlockEntityRenderer<
     }
 
     @Override
-    public void extractRenderState(Block2048DisplayEntity blockEntity, Block2048DisplayEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.@Nullable CrumblingOverlay breakProgress) {
+    public void extractRenderState(Block2048DisplayEntity blockEntity, Block2048DisplayEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.displayValue = blockEntity.getValue();
     }

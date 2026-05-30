@@ -3,7 +3,7 @@ package com.simple_block_game.common.base.block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import com.mojang.serialization.MapCodec;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 
 /**
  * 垂直固定框架方块

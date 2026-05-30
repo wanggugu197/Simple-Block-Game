@@ -2,13 +2,12 @@ package com.simple_block_game.common.simple2048.logic;
 
 import com.simple_block_game.common.simple2048.data.Quadrant;
 
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class Game2048Logic {
 
     public static final int GRID_SIZE = 4;
-    private static final Random RANDOM = ThreadLocalRandom.current();
+    private static final double SPAWN_TWO_CHANCE = 0.9D;
 
     public record MoveResult(int[][] newGrid, int score, int maxNumber, boolean moved, boolean gameOver) {}
 
@@ -21,22 +20,23 @@ public final class Game2048Logic {
         return grid;
     }
 
-    public static boolean isValidGrid(int[][] grid) {
-        if (grid == null) return false;
-        if (grid.length != GRID_SIZE) return false;
+    public static boolean isInvalidGrid(int[][] grid) {
+        if (grid == null) return true;
+        if (grid.length != GRID_SIZE) return true;
         for (int[] row : grid) {
-            if (row == null || row.length != GRID_SIZE) return false;
+            if (row == null || row.length != GRID_SIZE) return true;
         }
-        return true;
+        return false;
     }
 
     public static MoveResult processMove(int[][] originalGrid, Quadrant direction) {
-        if (!isValidGrid(originalGrid) || direction == null || direction == Quadrant.NULL) {
-            int[][] empty = initGrid();
-            return new MoveResult(empty, 0, 0, false, true);
-        }
+        if (isInvalidGrid(originalGrid)) return new MoveResult(initGrid(), 0, 0, false, false);
 
         int[][] grid = copy(originalGrid);
+        if (direction == null || direction == Quadrant.NULL) {
+            return new MoveResult(grid, 0, findMax(grid), false, canNotMove(grid));
+        }
+
         boolean moved = false;
         int score = 0;
         int maxNumber = findMax(grid);
@@ -58,7 +58,7 @@ public final class Game2048Logic {
             maxNumber = Math.max(maxNumber, findMax(finalGrid));
         }
 
-        boolean gameOver = !canMove(finalGrid);
+        boolean gameOver = canNotMove(finalGrid);
         return new MoveResult(finalGrid, score, maxNumber, moved, gameOver);
     }
 
@@ -131,13 +131,14 @@ public final class Game2048Logic {
         for (int[] row : grid) for (int num : row) if (num == 0) emptyCount++;
         if (emptyCount == 0) return;
 
-        int target = RANDOM.nextInt(emptyCount);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int target = random.nextInt(emptyCount);
         int count = 0;
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 if (grid[i][j] == 0) {
                     if (count == target) {
-                        grid[i][j] = RANDOM.nextDouble() < 0.9 ? 2 : 4;
+                        grid[i][j] = random.nextDouble() < SPAWN_TWO_CHANCE ? 2 : 4;
                         return;
                     }
                     count++;
@@ -146,15 +147,15 @@ public final class Game2048Logic {
         }
     }
 
-    private static boolean canMove(int[][] grid) {
+    private static boolean canNotMove(int[][] grid) {
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
-                if (grid[i][j] == 0) return true;
-                if (i < GRID_SIZE - 1 && grid[i][j] == grid[i + 1][j]) return true;
-                if (j < GRID_SIZE - 1 && grid[i][j] == grid[i][j + 1]) return true;
+                if (grid[i][j] == 0) return false;
+                if (i < GRID_SIZE - 1 && grid[i][j] == grid[i + 1][j]) return false;
+                if (j < GRID_SIZE - 1 && grid[i][j] == grid[i][j + 1]) return false;
             }
         }
-        return false;
+        return true;
     }
 
     private static int findMax(int[][] grid) {

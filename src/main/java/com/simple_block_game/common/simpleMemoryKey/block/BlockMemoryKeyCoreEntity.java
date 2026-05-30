@@ -84,13 +84,11 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
 
     public void setGameState(MemoryKeyGameState gameState) {
         this.gameState = gameState;
-        setChanged();
         syncToClient();
     }
 
     public void setRemainingLives(int remainingLives) {
         this.remainingLives = remainingLives;
-        setChanged();
         syncToClient();
     }
 
@@ -98,6 +96,7 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
      * 同步数据到客户端
      */
     private void syncToClient() {
+        setChanged();
         if (level != null && !level.isClientSide()) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
         }
@@ -116,7 +115,7 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
                     .filter(v -> v >= 0)
                     .toList());
         }
-        setChanged();
+        syncToClient();
     }
 
     /**
@@ -128,11 +127,6 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
         }
     }
 
-    /**
-     * 进入下一关
-     * <p>
-     * 关卡递增，但保持序列数据不变。
-     */
     public void nextLevel() {
         currentLevel = currentLevel.next();
         currentSequenceIndex = 0;
@@ -141,7 +135,6 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
         demoTickCounter = 0;
         errorTickCounter = 0;
         startDemonstration();
-        setChanged();
         syncToClient();
     }
 
@@ -170,7 +163,6 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
         this.demoTickCounter = 0;
         this.errorTickCounter = 0;
 
-        setChanged();
         syncToClient();
     }
 
@@ -211,16 +203,14 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
 
         // 处理错误状态（显示2秒后重新开始演示）
         if (gameState == MemoryKeyGameState.ERROR) {
-            if (handleErrorState()) {
-                return;
-            }
+            handleErrorState();
+            return;
         }
 
         // 处理关卡成功状态（显示1秒后进入下一关演示或通关）
         if (gameState == MemoryKeyGameState.LEVEL_SUCCESS) {
-            if (handleLevelSuccessState()) {
-                return;
-            }
+            handleLevelSuccessState();
+            return;
         }
 
         // 处理演示阶段
@@ -231,12 +221,9 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
 
     /**
      * 处理错误状态
-     *
-     * @return true表示状态已处理，需要提前返回
      */
-    private boolean handleErrorState() {
+    private void handleErrorState() {
         errorTickCounter++;
-
         if (errorTickCounter >= ERROR_STATE_DURATION_TICKS) {
             errorTickCounter = 0;
             // 重置当前关卡，开始重新演示
@@ -245,17 +232,13 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
             startDemonstration();
             setGameState(MemoryKeyGameState.DEMONSTRATING);
         }
-        return true;
     }
 
     /**
      * 处理关卡成功状态
-     *
-     * @return true表示状态已处理，需要提前返回
      */
-    private boolean handleLevelSuccessState() {
+    private void handleLevelSuccessState() {
         errorTickCounter++;
-
         if (errorTickCounter >= LEVEL_SUCCESS_DURATION_TICKS) {
             errorTickCounter = 0;
             if (GameMemoryKeyLogic.isAllLevelsComplete(currentLevel)) {
@@ -265,7 +248,6 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
                 setGameState(MemoryKeyGameState.DEMONSTRATING);
             }
         }
-        return true;
     }
 
     /**
@@ -291,13 +273,12 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
         // 按键间隔：SEQUENCE_INTERVAL_TICKS = 30tick = 1.5秒
         if (demoTickCounter >= GameMemoryKeyHelper.SEQUENCE_INTERVAL_TICKS) {
             // 触发当前按键闪烁
+            if (demoCurrentIndex == -1) demoCurrentIndex++;
             int buttonId = sequence.get(demoCurrentIndex);
             flashingIndex = demoCurrentIndex;
             GameMemoryKeyHelper.triggerButtonFlash(serverLevel, worldPosition, buttonId);
-
             demoCurrentIndex++;
             demoTickCounter = 0;
-            setChanged();
             syncToClient();
         }
     }

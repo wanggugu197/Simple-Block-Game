@@ -12,7 +12,7 @@ import com.mojang.math.Quadrant;
 import static net.minecraft.client.data.models.BlockModelGenerators.plainVariant;
 import static net.minecraft.core.Direction.UP;
 
-public class ModBlockModelGeneratorHelpper {
+public class ModBlockModelGeneratorHelper {
 
     public static void createVerticalBlock(Block block, RegistryLibBlockModelGenerator prov, String id) {
         MultiVariant model = plainVariant(prov.modLoc(id));

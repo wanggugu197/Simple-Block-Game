@@ -9,6 +9,7 @@ import com.simple_block_game.common.simpleTenDrops.logic.GameTenDropsReward;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
@@ -18,8 +19,8 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
-import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 
@@ -44,46 +45,33 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
     @Setter
     private Player currentPlayer;
 
-    private int eliminatedCount = 0;
-    private int comboCount = 0;
-
     public BlockTenDropsCoreEntity(BlockPos pos, BlockState state) {
         super(SimpleBlockGameRegistration.BLOCK_TEN_DROPS_CORE_ENTITY.get(), pos, state);
     }
 
     public void setGameState(TenDropsGameState gameState) {
         this.gameState = gameState;
-        syncChanges();
+        syncToClient();
     }
 
     public void setWaterDrops(int waterDrops) {
         this.waterDrops = Math.max(0, waterDrops);
-        syncChanges();
+        syncToClient();
+    }
+
+    public void addWaterDrops(int amount) {
+        waterDrops += amount;
+        syncToClient();
     }
 
     public void tick() {
         if (!(level instanceof ServerLevel serverLevel) || gameState.isGameEnded() || gameState != TenDropsGameState.BURSTING) return;
-
-        int[] eliminatedRef = { eliminatedCount };
-        int[] comboRef = { comboCount };
-        boolean hasActiveDroplets = GameTenDropsHelper.processFlyingDroplets(serverLevel, worldPosition, grid, eliminatedRef, comboRef);
-
-        eliminatedCount = eliminatedRef[0];
-        comboCount = comboRef[0];
-
+        boolean hasActiveDroplets = GameTenDropsHelper.processFlyingDroplets(serverLevel, worldPosition, grid, this);
         if (!hasActiveDroplets) checkGameStateAfterBurst(serverLevel);
     }
 
     private void checkGameStateAfterBurst(ServerLevel serverLevel) {
-        if (eliminatedCount > 0) {
-            waterDrops = GameTenDropsHelper.checkGameState(serverLevel, worldPosition, grid, waterDrops, eliminatedCount, comboCount, currentLevel);
-        } else {
-            GameTenDropsHelper.updateDisplay(serverLevel, worldPosition, grid);
-        }
-
-        eliminatedCount = 0;
-        comboCount = 0;
-
+        GameTenDropsHelper.updateDisplay(serverLevel, worldPosition, grid);
         if (GameTenDropsLogic.isVictory(grid)) {
             handleVictory(serverLevel);
         } else {
@@ -93,37 +81,42 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
 
     public void triggerGameOver() {
         if (!(level instanceof ServerLevel serverLevel)) return;
-
         if (GameTenDropsLogic.isVictory(grid)) {
             handleVictory(serverLevel);
         } else {
             setGameState(TenDropsGameState.GAME_OVER);
             GameTenDropsHelper.updateDisplay(serverLevel, worldPosition, grid);
+            if (currentPlayer != null) {
+                currentPlayer.sendOverlayMessage(Component.translatable("msg.ten_drops.game_over"));
+            }
         }
     }
 
     private void handleVictory(ServerLevel serverLevel) {
         GameTenDropsReward.handleLevelReward(serverLevel, currentPlayer, currentLevel);
         if (currentLevel >= 10) {
+            if (currentPlayer != null) {
+                currentPlayer.sendOverlayMessage(Component.translatable("msg.ten_drops.total_complete"));
+            }
             setGameState(TenDropsGameState.VICTORY);
         } else {
             currentLevel++;
+            if (currentPlayer != null) {
+                currentPlayer.sendOverlayMessage(Component.translatable("msg.ten_drops.level_up", currentLevel));
+            }
             nextLevel();
         }
     }
 
     public void nextLevel() {
         if (gameState.isGameEnded()) return;
-
         this.grid = GameTenDropsLogic.generateLevelGrid(currentLevel);
         this.waterDrops = GameTenDropsLogic.INITIAL_WATER_DROPS;
-
         if (level instanceof ServerLevel serverLevel) {
             GameTenDropsHelper.updateDisplay(serverLevel, worldPosition, grid);
         }
-
         this.gameState = TenDropsGameState.PLAYING;
-        syncChanges();
+        syncToClient();
     }
 
     public void initialize() {
@@ -131,12 +124,10 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
         this.currentLevel = 1;
         this.waterDrops = GameTenDropsLogic.INITIAL_WATER_DROPS;
         this.grid = GameTenDropsLogic.initGrid();
-
         if (level instanceof ServerLevel serverLevel) {
             GameTenDropsHelper.updateDisplay(serverLevel, worldPosition, grid);
         }
-
-        syncChanges();
+        syncToClient();
     }
 
     public void completeReset() {
@@ -144,21 +135,16 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
         this.waterDrops = GameTenDropsLogic.INITIAL_WATER_DROPS;
         this.grid = GameTenDropsLogic.initGrid();
         this.gameState = TenDropsGameState.PLAYING;
-
         if (level instanceof ServerLevel serverLevel) {
             GameTenDropsHelper.updateDisplay(serverLevel, worldPosition, grid);
         }
-
-        syncChanges();
+        syncToClient();
     }
 
     public void handleBurstFromDisplay(BlockPos displayPos) {
         if (displayPos == null || !(level instanceof ServerLevel serverLevel) || gameState != TenDropsGameState.PLAYING) return;
 
         setGameState(TenDropsGameState.BURSTING);
-
-        eliminatedCount = 1;
-        comboCount = 1;
 
         int gridX = displayPos.getX() - worldPosition.getX() - 1;
         int gridY = displayPos.getZ() - worldPosition.getZ() - 1;
@@ -168,10 +154,11 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
         if (be instanceof BlockTenDropsDisplayEntity displayEntity) displayEntity.startBurst();
     }
 
-    private void syncChanges() {
+    private void syncToClient() {
         setChanged();
-        if (!(level instanceof ServerLevel serverLevel)) return;
-        serverLevel.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
+        }
     }
 
     @Override

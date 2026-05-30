@@ -13,11 +13,10 @@ public enum Quadrant {
 
     public int getRotationCount() {
         return switch (this) {
-            case LEFT -> 0;
+            case LEFT, NULL -> 0;
             case UP -> 1;
             case RIGHT -> 2;
             case DOWN -> 3;
-            default -> 0;
         };
     }
 }

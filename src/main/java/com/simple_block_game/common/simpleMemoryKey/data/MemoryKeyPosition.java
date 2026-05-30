@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.util.StringRepresentable;
 
 import lombok.Getter;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,14 +14,14 @@ import java.util.Map;
  */
 public enum MemoryKeyPosition implements StringRepresentable {
 
-    NORTH(0, "north", 0, 0, -1),
-    SOUTH(1, "south", 0, 0, 1),
-    EAST(2, "east", 1, 0, 0),
-    WEST(3, "west", -1, 0, 0),
-    NORTH_EAST(4, "north_east", 1, 0, -1),
-    NORTH_WEST(5, "north_west", -1, 0, -1),
-    SOUTH_EAST(6, "south_east", 1, 0, 1),
-    SOUTH_WEST(7, "south_west", -1, 0, 1);
+    NORTH(0, "north", 0, -1),
+    SOUTH(1, "south", 0, 1),
+    EAST(2, "east", 1, 0),
+    WEST(3, "west", -1, 0),
+    NORTH_EAST(4, "north_east", 1, -1),
+    NORTH_WEST(5, "north_west", -1, -1),
+    SOUTH_EAST(6, "south_east", 1, 1),
+    SOUTH_WEST(7, "south_west", -1, 1);
 
     private static final Map<Integer, MemoryKeyPosition> ID_MAP = new HashMap<>();
 
@@ -37,15 +37,12 @@ public enum MemoryKeyPosition implements StringRepresentable {
     @Getter
     private final int offsetX;      // X偏移
     @Getter
-    private final int offsetY;      // Y偏移(始终为0)
-    @Getter
     private final int offsetZ;      // Z偏移
 
-    MemoryKeyPosition(int id, String serializedName, int offsetX, int offsetY, int offsetZ) {
+    MemoryKeyPosition(int id, String serializedName, int offsetX, int offsetZ) {
         this.id = id;
         this.serializedName = serializedName;
         this.offsetX = offsetX;
-        this.offsetY = offsetY;
         this.offsetZ = offsetZ;
     }
 
@@ -66,7 +63,7 @@ public enum MemoryKeyPosition implements StringRepresentable {
      */
     public BlockPos getRelativePos(BlockPos center) {
         if (center == null) return BlockPos.ZERO;
-        return center.offset(offsetX, offsetY, offsetZ);
+        return center.offset(offsetX, 0, offsetZ);
     }
 
     /**

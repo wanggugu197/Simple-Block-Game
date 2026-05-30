@@ -1,4 +1,4 @@
-// 26.1.2	2026-05-30T21:39:35.4014755	RegistryCore Provider for simple_block_game [, Loot Tables, Advancements, Datapack Registries, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Model Definitions - simple_block_game, Lang (Languages: en_us for mod: simple_block_game), simple_block_game, Lang (Languages: zh_cn for mod: simple_block_game)]
+// 26.1.2	2026-05-31T15:39:23.2103818	RegistryCore Provider for simple_block_game [, Loot Tables, Advancements, Datapack Registries, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Model Definitions - simple_block_game, Lang (Languages: en_us for mod: simple_block_game), simple_block_game, Lang (Languages: zh_cn for mod: simple_block_game)]
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/2048_core.json
 5a0aeac02ff4cdab29a67767b1f4ed5106ba8881 assets/simple_block_game/blockstates/2048_display.json
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/2048_refresh.json
@@ -28,12 +28,14 @@ dc2651e8ff26015145e3c0ff5f8b8d910b96cc55 assets/simple_block_game/items/mineswee
 c1e650fe99697840b3cd328efaa759dee09e5126 assets/simple_block_game/items/ten_drops_display.json
 dc2651e8ff26015145e3c0ff5f8b8d910b96cc55 assets/simple_block_game/items/ten_drops_refresh.json
 df8b8b5f0b5271d223927b71b249673811b29ed0 assets/simple_block_game/items/vertical_frame.json
-0b91573849b5b9dc662317ba8a11f175b3a9c5c0 assets/simple_block_game/lang/en_us.json
-3e0d5235092f7c014cafffd98ff4c80171ffa84a assets/simple_block_game/lang/zh_cn.json
+c1952139162ce22b115bb4df898bac4cc471ce54 assets/simple_block_game/lang/en_us.json
+6e051c4c0b0fdf41a5fd2d6761a3d27200959410 assets/simple_block_game/lang/zh_cn.json
 f1c81d02493fd811a19bb67e09d0e59e500f4a36 assets/simple_block_game/models/item/simple_block_game.json
 e8281b5edad1d8e31c24c70d057f8e9e59edb570 data/minecraft/advancement/recipes/combat/make_2048_core.json
 0c67c0e6906e6e6ede15400868627f5e60770643 data/minecraft/advancement/recipes/combat/make_memory_key_core.json
 5563905c19be6ae0758c270f78b8103257fafd7f data/minecraft/advancement/recipes/combat/make_minesweeper_core.json
+b049cf60d1545bddb443d4c770625c10e20da090 data/minecraft/advancement/recipes/combat/make_ten_drops_core.json
 54f85d09590b2d47ded97ddaa772d4fd485fc21b data/minecraft/recipe/make_2048_core.json
 a6eb24b07211d0c3f45481ad66d6bab194ea895e data/minecraft/recipe/make_memory_key_core.json
 df15bfb974c68e7313099e49d4a399a3707e12ff data/minecraft/recipe/make_minesweeper_core.json
+b8a5a63a06e275dec8e6b6808f84a73c1b0e823f data/minecraft/recipe/make_ten_drops_core.json

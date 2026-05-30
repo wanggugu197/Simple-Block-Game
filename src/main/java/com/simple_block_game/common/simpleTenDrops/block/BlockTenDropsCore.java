@@ -66,7 +66,7 @@ public class BlockTenDropsCore extends BaseVerticalBlock implements IGameCoreBlo
 
         if (!state.getValue(UNFOLDED)) {
             if (!checkLayoutAreaIsEmpty(serverLevel, pos, state)) {
-                player.sendOverlayMessage(Component.translatable("msg.ten_drops.obstructed"));
+                player.sendOverlayMessage(Component.translatable("msg.common.obstructed"));
                 return InteractionResult.PASS;
             }
             unfoldGame(serverLevel, pos, state, player);
@@ -95,7 +95,7 @@ public class BlockTenDropsCore extends BaseVerticalBlock implements IGameCoreBlo
     public void startGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
         getCoreEntity(level, pos).ifPresent(entity -> {
             entity.setGameState(TenDropsGameState.PLAYING);
-            player.sendSystemMessage(Component.translatable("msg.ten_drops.start"));
+            player.sendOverlayMessage(Component.translatable("msg.ten_drops.start"));
         });
     }
 

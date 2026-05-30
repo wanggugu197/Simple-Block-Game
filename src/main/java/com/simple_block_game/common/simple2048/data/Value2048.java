@@ -3,7 +3,7 @@ package com.simple_block_game.common.simple2048.data;
 import net.minecraft.util.StringRepresentable;
 
 import lombok.Getter;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
