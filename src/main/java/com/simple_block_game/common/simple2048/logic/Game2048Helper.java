@@ -61,6 +61,9 @@ public final class Game2048Helper {
                 if (level.isEmptyBlock(pos)) {
                     level.setBlock(pos, state, Block.UPDATE_ALL);
                     if (i == REFRESH_OFFSET && j == REFRESH_OFFSET) refreshPos = pos;
+                    if (i >= 1 && i <= GRID_SIZE && j >= 1 && j <= GRID_SIZE) {
+                        Block2048Display.setCorePos(level, pos, corePos);
+                    }
                 }
             }
         }

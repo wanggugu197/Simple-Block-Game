@@ -32,8 +32,7 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
 
     public BlockMinesweeperCore(BlockBehaviour.Properties properties) {
         super(properties);
-        this.registerDefaultState(this.stateDefinition.any()
-                .setValue(UNFOLDED, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(UNFOLDED, false));
     }
 
     private static final MapCodec<BlockMinesweeperCore> CODEC = simpleCodec(BlockMinesweeperCore::new);

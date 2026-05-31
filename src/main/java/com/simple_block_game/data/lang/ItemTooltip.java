@@ -17,7 +17,7 @@ public class ItemTooltip {
         addLang("tooltip.minesweeper_core.2", "开始前可点击顶部角落切换难度", "Before starting, click top corners to change difficulty.");
         addLang("tooltip.minesweeper_core.3", "自定义模式下可调整尺寸和雷数", "Custom mode allows size and mine-count changes.");
         addLang("tooltip.minesweeper_core.4", "点击格子翻开", "Click a cell to reveal it.");
-        addLang("tooltip.minesweeper_core.5", "副操作点击格子插旗或取消旗帜", "Secondary-use click a cell to place or remove a flag.");
+        addLang("tooltip.minesweeper_core.5", "Shift点击格子插旗或取消旗帜", "Shift click a cell to place or remove a flag.");
         addLang("tooltip.minesweeper_core.6", "避开所有雷并完成扫雷即可获胜", "Clear the board without hitting mines to win.");
 
         // Memory Key
@@ -33,5 +33,12 @@ public class ItemTooltip {
         addLang("tooltip.ten_drops_core.3", "水滴爆裂后会向四个方向传播并触发连锁", "Bursting droplets spread in four directions and trigger chains.");
         addLang("tooltip.ten_drops_core.4", "清空全部水滴获胜", "Clear all droplets to win.");
         addLang("tooltip.ten_drops_core.5", "次数耗尽则失败", "Running out of moves means failure.");
+
+        // Sudoku
+        addLang("tooltip.sudoku_core.1", "点击核心方块顶部中心区域展开或开始", "Click the center of the core block top face to unfold or start.");
+        addLang("tooltip.sudoku_core.2", "开始前可点击顶部角落切换难度", "Before starting, click top corners to change difficulty.");
+        addLang("tooltip.sudoku_core.3", "点击右上角可开启/关闭对角线模式", "Click the top-right corner to enable/disable diagonal mode.");
+        addLang("tooltip.sudoku_core.4", "点击数字格子可填写或清除数字", "Click number cells to fill or clear digits.");
+        addLang("tooltip.sudoku_core.5", "完成数独即可获胜", "Complete the sudoku to win.");
     }
 }

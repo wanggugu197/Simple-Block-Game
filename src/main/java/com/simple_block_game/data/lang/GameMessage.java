@@ -73,5 +73,23 @@ public class GameMessage {
         addLang("msg.ten_drops.minimized", "十滴水布局已最小化！", "Ten Drop layout minimized!");
         addLang("msg.ten_drops.closed", "十滴水布局已关闭！", "Ten Drop layout closed!");
         addLang("msg.ten_drops.reset", "十滴水游戏已重置！", "Ten Drop game reset!");
+
+        // ========== Game Sudoku ==========
+        addLang("msg.sudoku.game_started", "数独游戏已开始！", "Sudoku Game Started!");
+        addLang("msg.sudoku.complete", "恭喜！数独完成！", "Congratulations! Sudoku Complete!");
+        addLang("msg.sudoku.difficulty_switched", "难度已切换为%s！", "Difficulty switched to %s!");
+        addLang("msg.sudoku.diagonal_enabled", "对角线模式已开启！", "Diagonal mode enabled!");
+        addLang("msg.sudoku.diagonal_disabled", "对角线模式已关闭！", "Diagonal mode disabled!");
+
+        addLang("msg.sudoku.difficulty.easy", "简单", "Easy");
+        addLang("msg.sudoku.difficulty.medium", "中等", "Medium");
+        addLang("msg.sudoku.difficulty.hard", "困难", "Hard");
+        addLang("msg.sudoku.difficulty.expert", "专家", "Expert");
+
+        addLang("msg.sudoku.core_not_found", "未找到数独核心方块！", "Sudoku Core block not found!");
+        addLang("msg.sudoku.core_invalid", "无效的数独核心方块！", "Invalid Sudoku Core block!");
+        addLang("msg.sudoku.minimized", "数独布局已最小化！", "Sudoku layout minimized!");
+        addLang("msg.sudoku.closed", "数独布局已关闭！", "Sudoku layout closed!");
+        addLang("msg.sudoku.reset", "数独游戏已重置！", "Sudoku game reset!");
     }
 }

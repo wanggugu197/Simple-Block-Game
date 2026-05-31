@@ -1,10 +1,10 @@
 package com.simple_block_game.common.simpleTenDrops.renderer;
 
 import com.simple_block_game.SimpleBlockGame;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderState;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderer;
+import com.simple_block_game.common.base.renderer.GameBlockEntityRenderState;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsDisplayEntity;
 import com.simple_block_game.common.simpleTenDrops.data.DropletLevel;
+import com.simple_block_game.util.renderer.BaseBlockEntityRenderer;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
@@ -13,9 +13,9 @@ import net.minecraft.world.phys.Vec3;
 
 import lombok.NonNull;
 
-public class BlockTenDropsDisplayEntityRenderer extends BaseGameBlockEntityRenderer<BlockTenDropsDisplayEntity, BlockTenDropsDisplayEntityRenderer.BlockTenDropDisplayEntityRenderState> {
+public class BlockTenDropsDisplayEntityRenderer extends BaseBlockEntityRenderer<BlockTenDropsDisplayEntity, BlockTenDropsDisplayEntityRenderer.BlockTenDropDisplayEntityRenderState> {
 
-    public static class BlockTenDropDisplayEntityRenderState extends BaseGameBlockEntityRenderState {
+    public static class BlockTenDropDisplayEntityRenderState extends GameBlockEntityRenderState {
 
         public DropletLevel dropletLevel = DropletLevel.EMPTY;
     }

@@ -20,6 +20,12 @@ import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperDisp
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperDisplayEntity;
 import com.simple_block_game.common.simpleMinesweeper.renderer.BlockMinesweeperCoreEntityRenderer;
 import com.simple_block_game.common.simpleMinesweeper.renderer.BlockMinesweeperDisplayEntityRenderer;
+import com.simple_block_game.common.simpleSudoku.block.BlockSudokuCore;
+import com.simple_block_game.common.simpleSudoku.block.BlockSudokuCoreEntity;
+import com.simple_block_game.common.simpleSudoku.block.BlockSudokuDisplay;
+import com.simple_block_game.common.simpleSudoku.block.BlockSudokuDisplayEntity;
+import com.simple_block_game.common.simpleSudoku.renderer.BlockSudokuCoreEntityRenderer;
+import com.simple_block_game.common.simpleSudoku.renderer.BlockSudokuDisplayEntityRenderer;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsCore;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsCoreEntity;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsDisplay;
@@ -40,8 +46,8 @@ import com.gto.registrylib.util.entry.RegistryEntry;
 import java.util.Map;
 
 import static com.simple_block_game.SimpleBlockGame.REGISTRYLIB;
-import static com.simple_block_game.registry.generator.ModBlockModelGeneratorHelper.createHorizontalBlock;
-import static com.simple_block_game.registry.generator.ModBlockModelGeneratorHelper.createVerticalBlock;
+import static com.simple_block_game.util.generator.ModBlockModelGeneratorHelper.createHorizontalBlock;
+import static com.simple_block_game.util.generator.ModBlockModelGeneratorHelper.createVerticalBlock;
 
 /**
  * 方块和实体注册类
@@ -238,6 +244,48 @@ public class SimpleBlockGameRegistration {
             .renderer(() -> () -> BlockTenDropsDisplayEntityRenderer::new)
             .register();
 
+    // sudoku
+    public static final BlockEntry<BlockSudokuCore> BLOCK_SUDOKU_CORE = REGISTRYLIB
+            .block(REGISTRYLIB, "sudoku_core", BlockSudokuCore::new)
+            .langCn("数独核心方块")
+            .lang("Sudoku Core")
+            .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))
+            .item(builder -> builder.addTab(TAB_GANM.getKey())
+                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_sudoku/sudoku_core")))
+                    .addTooltip((collector, _) -> {
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.sudoku_core.1")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.sudoku_core.2")));
+                        collector.node(new SubNode.Basic(Component.translatable("tooltip.sudoku_core.3")));
+                    }))
+            .register();
+    public static final BlockEntry<BlockSudokuDisplay> BLOCK_SUDOKU_DISPLAY = REGISTRYLIB
+            .block(REGISTRYLIB, "sudoku_display", BlockSudokuDisplay::new)
+            .langCn("数独显示方块")
+            .lang("Sudoku Display")
+            .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_center"))
+            .item(builder -> builder.addTab(TAB_GANM.getKey())
+                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_sudoku/sudoku_display"))))
+            .register();
+    public static final BlockEntry<BaseVerticalRefreshBlock> BLOCK_SUDOKU_REFRESH = REGISTRYLIB
+            .block(REGISTRYLIB, "sudoku_refresh", p -> BaseVerticalRefreshBlock.create(p, "sudoku"))
+            .langCn("数独控制方块")
+            .lang("Sudoku Refresh")
+            .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))
+            .item(builder -> builder.addTab(TAB_GANM.getKey())
+                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("block/base/vertical_refresh"))))
+            .register();
+
+    public static final BlockEntityTypeEntry<BlockSudokuCoreEntity> BLOCK_SUDOKU_CORE_ENTITY = REGISTRYLIB
+            .blockEntity(REGISTRYLIB, "sudoku_core_entity", (_, p, s) -> new BlockSudokuCoreEntity(p, s))
+            .validBlock(BLOCK_SUDOKU_CORE)
+            .renderer(() -> () -> BlockSudokuCoreEntityRenderer::new)
+            .register();
+    public static final BlockEntityTypeEntry<BlockSudokuDisplayEntity> BLOCK_SUDOKU_DISPLAY_ENTITY = REGISTRYLIB
+            .blockEntity(REGISTRYLIB, "sudoku_display_entity", (_, p, s) -> new BlockSudokuDisplayEntity(p, s))
+            .validBlock(BLOCK_SUDOKU_DISPLAY)
+            .renderer(() -> () -> BlockSudokuDisplayEntityRenderer::new)
+            .register();
+
     // 统一的刷新实体，绑定所有四个刷新方块
     public static final BlockEntityTypeEntry<BlockRefreshEntity> BLOCK_REFRESH_ENTITY = REGISTRYLIB
             .blockEntity(REGISTRYLIB, "refresh_entity", BlockRefreshEntity::new)
@@ -245,6 +293,7 @@ public class SimpleBlockGameRegistration {
             .validBlock(BLOCK_MINESWEEPER_REFRESH)
             .validBlock(BLOCK_MEMORY_KEY_REFRESH)
             .validBlock(BLOCK_TEN_DROPS_REFRESH)
+            .validBlock(BLOCK_SUDOKU_REFRESH)
             .renderer(() -> () -> BlockRefreshEntityRenderer::new)
             .register();
 

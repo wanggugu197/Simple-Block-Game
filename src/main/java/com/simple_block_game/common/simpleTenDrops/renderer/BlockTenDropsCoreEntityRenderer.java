@@ -2,9 +2,9 @@ package com.simple_block_game.common.simpleTenDrops.renderer;
 
 import com.simple_block_game.SimpleBlockGame;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderState;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderer;
+import com.simple_block_game.common.base.renderer.GameBlockEntityRenderState;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsCoreEntity;
+import com.simple_block_game.util.renderer.BaseBlockEntityRenderer;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
@@ -13,9 +13,9 @@ import net.minecraft.world.phys.Vec3;
 
 import lombok.NonNull;
 
-public class BlockTenDropsCoreEntityRenderer extends BaseGameBlockEntityRenderer<BlockTenDropsCoreEntity, BlockTenDropsCoreEntityRenderer.BlockTenDropsCoreEntityRenderState> {
+public class BlockTenDropsCoreEntityRenderer extends BaseBlockEntityRenderer<BlockTenDropsCoreEntity, BlockTenDropsCoreEntityRenderer.BlockTenDropsCoreEntityRenderState> {
 
-    public static class BlockTenDropsCoreEntityRenderState extends BaseGameBlockEntityRenderState {
+    public static class BlockTenDropsCoreEntityRenderState extends GameBlockEntityRenderState {
 
         public boolean unfolded = false;
         public int waterDrops = 0;

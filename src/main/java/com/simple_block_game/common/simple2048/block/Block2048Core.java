@@ -83,7 +83,7 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
         return uv.x >= CENTER_MIN && uv.x <= CENTER_MAX && uv.y >= CENTER_MIN && uv.y <= CENTER_MAX;
     }
 
-    private Quadrant getQuadrant(BlockState state, BlockHitResult hit) {
+    public Quadrant getQuadrant(BlockState state, BlockHitResult hit) {
         Direction facing = state.getValue(FACING);
         if (hit.getDirection() != facing) return Quadrant.NULL;
 
@@ -112,8 +112,8 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
         };
     }
 
-    private void handleGameMove(ServerLevel serverLevel, BlockPos corePos, BlockState coreState,
-                                Player player, Quadrant direction) {
+    public void handleGameMove(ServerLevel serverLevel, BlockPos corePos, BlockState coreState,
+                               Player player, Quadrant direction) {
         if (direction == Quadrant.NULL) return;
 
         Direction facing = coreState.getValue(FACING);

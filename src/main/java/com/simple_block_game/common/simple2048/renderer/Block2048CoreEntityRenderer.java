@@ -2,9 +2,9 @@ package com.simple_block_game.common.simple2048.renderer;
 
 import com.simple_block_game.SimpleBlockGame;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderState;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderer;
+import com.simple_block_game.common.base.renderer.GameBlockEntityRenderState;
 import com.simple_block_game.common.simple2048.block.Block2048CoreEntity;
+import com.simple_block_game.util.renderer.BaseBlockEntityRenderer;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
@@ -17,9 +17,9 @@ import lombok.NonNull;
  * 2048核心方块实体渲染器
  * 继承基类，负责根据展开状态选择对应的材质
  */
-public class Block2048CoreEntityRenderer extends BaseGameBlockEntityRenderer<Block2048CoreEntity, Block2048CoreEntityRenderer.Block2048CoreEntityRenderState> {
+public class Block2048CoreEntityRenderer extends BaseBlockEntityRenderer<Block2048CoreEntity, Block2048CoreEntityRenderer.Block2048CoreEntityRenderState> {
 
-    public static class Block2048CoreEntityRenderState extends BaseGameBlockEntityRenderState {
+    public static class Block2048CoreEntityRenderState extends GameBlockEntityRenderState {
 
         public boolean unfolded = false;
     }

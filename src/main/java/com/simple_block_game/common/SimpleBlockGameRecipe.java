@@ -62,6 +62,14 @@ public class SimpleBlockGameRecipe {
                     .define('I', Items.WATER_BUCKET)
                     .unlockedBy("unlocked", UNCONDITIONAL_CRITERION)
                     .save(prov, "make_ten_drops_core");
+            prov.shaped(RecipeCategory.COMBAT, BLOCK_SUDOKU_CORE)
+                    .pattern("QQQ")
+                    .pattern("QIQ")
+                    .pattern("QQQ")
+                    .define('Q', Items.QUARTZ_PILLAR)
+                    .define('I', Items.BOOK)
+                    .unlockedBy("unlocked", UNCONDITIONAL_CRITERION)
+                    .save(prov, "make_sudoku_core");
         });
     }
 }

@@ -1,4 +1,4 @@
-package com.simple_block_game.registry.generator;
+package com.simple_block_game.util.generator;
 
 import net.minecraft.client.data.models.MultiVariant;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;

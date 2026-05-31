@@ -4,32 +4,13 @@ import com.simple_block_game.SimpleBlockGameConfig;
 import com.simple_block_game.common.base.reward.BaseGameReward;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyLevel;
 
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
-
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 /**
  * 记忆键游戏奖励处理器
  */
 public final class GameMemoryKeyReward extends BaseGameReward {
-
-    private static final Int2ObjectOpenHashMap<Identifier> LEVEL_REWARDS = new Int2ObjectOpenHashMap<>();
-    private static final Identifier ALL_SUCCESS_REWARD;
-
-    static {
-        var config = SimpleBlockGameConfig.MEMORY_KEY_CONFIG;
-
-        LEVEL_REWARDS.put(1, id(config.level1Reward.get()));
-        LEVEL_REWARDS.put(2, id(config.level2Reward.get()));
-        LEVEL_REWARDS.put(3, id(config.level3Reward.get()));
-        LEVEL_REWARDS.put(4, id(config.level4Reward.get()));
-        LEVEL_REWARDS.put(5, id(config.level5Reward.get()));
-        LEVEL_REWARDS.put(6, id(config.level6Reward.get()));
-
-        ALL_SUCCESS_REWARD = id(config.allSuccessReward.get());
-    }
 
     private GameMemoryKeyReward() {}
 
@@ -38,14 +19,18 @@ public final class GameMemoryKeyReward extends BaseGameReward {
         if (player.isDeadOrDying()) return;
 
         if (isSuccess) {
-            if (ALL_SUCCESS_REWARD != null) {
-                dropLoot(level, player, ALL_SUCCESS_REWARD);
-            }
+            String reward = SimpleBlockGameConfig.MEMORY_KEY_CONFIG.allSuccessReward.get();
+            dropLoot(level, player, id(reward));
         } else {
-            Identifier tableId = LEVEL_REWARDS.getOrDefault(currentLevel.getLevelNumber(), null);
-            if (tableId != null) {
-                dropLoot(level, player, tableId);
-            }
+            String reward = switch (currentLevel) {
+                case LEVEL_1 -> SimpleBlockGameConfig.MEMORY_KEY_CONFIG.level1Reward.get();
+                case LEVEL_2 -> SimpleBlockGameConfig.MEMORY_KEY_CONFIG.level2Reward.get();
+                case LEVEL_3 -> SimpleBlockGameConfig.MEMORY_KEY_CONFIG.level3Reward.get();
+                case LEVEL_4 -> SimpleBlockGameConfig.MEMORY_KEY_CONFIG.level4Reward.get();
+                case LEVEL_5 -> SimpleBlockGameConfig.MEMORY_KEY_CONFIG.level5Reward.get();
+                case LEVEL_6 -> SimpleBlockGameConfig.MEMORY_KEY_CONFIG.level6Reward.get();
+            };
+            dropLoot(level, player, id(reward));
         }
     }
 }

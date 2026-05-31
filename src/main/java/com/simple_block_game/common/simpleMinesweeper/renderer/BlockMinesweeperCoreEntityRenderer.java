@@ -2,10 +2,10 @@ package com.simple_block_game.common.simpleMinesweeper.renderer;
 
 import com.simple_block_game.SimpleBlockGame;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityCubeRenderer;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderState;
+import com.simple_block_game.common.base.renderer.GameBlockEntityRenderState;
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperCoreEntity;
 import com.simple_block_game.common.simpleMinesweeper.data.PresetDifficulty;
+import com.simple_block_game.util.renderer.BaseBlockEntityCubeRenderer;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
@@ -14,9 +14,9 @@ import net.minecraft.world.phys.Vec3;
 
 import lombok.NonNull;
 
-public class BlockMinesweeperCoreEntityRenderer extends BaseGameBlockEntityCubeRenderer<BlockMinesweeperCoreEntity, BlockMinesweeperCoreEntityRenderer.BlockMinesweeperCoreEntityRenderState> {
+public class BlockMinesweeperCoreEntityRenderer extends BaseBlockEntityCubeRenderer<BlockMinesweeperCoreEntity, BlockMinesweeperCoreEntityRenderer.BlockMinesweeperCoreEntityRenderState> {
 
-    public static class BlockMinesweeperCoreEntityRenderState extends BaseGameBlockEntityRenderState {
+    public static class BlockMinesweeperCoreEntityRenderState extends GameBlockEntityRenderState {
 
         public boolean unfolded = false;
         public PresetDifficulty difficulty = PresetDifficulty.EASY;

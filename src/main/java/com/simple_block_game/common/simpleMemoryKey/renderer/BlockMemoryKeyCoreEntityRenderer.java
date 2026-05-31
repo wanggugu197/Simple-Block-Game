@@ -2,10 +2,10 @@ package com.simple_block_game.common.simpleMemoryKey.renderer;
 
 import com.simple_block_game.SimpleBlockGame;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderState;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderer;
+import com.simple_block_game.common.base.renderer.GameBlockEntityRenderState;
 import com.simple_block_game.common.simpleMemoryKey.block.BlockMemoryKeyCoreEntity;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyGameState;
+import com.simple_block_game.util.renderer.BaseBlockEntityRenderer;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
@@ -18,9 +18,9 @@ import lombok.NonNull;
  * 记忆键游戏核心方块实体渲染器
  * 根据游戏状态和生命值选择对应的材质
  */
-public class BlockMemoryKeyCoreEntityRenderer extends BaseGameBlockEntityRenderer<BlockMemoryKeyCoreEntity, BlockMemoryKeyCoreEntityRenderer.BlockMemoryKeyCoreEntityRenderState> {
+public class BlockMemoryKeyCoreEntityRenderer extends BaseBlockEntityRenderer<BlockMemoryKeyCoreEntity, BlockMemoryKeyCoreEntityRenderer.BlockMemoryKeyCoreEntityRenderState> {
 
-    public static class BlockMemoryKeyCoreEntityRenderState extends BaseGameBlockEntityRenderState {
+    public static class BlockMemoryKeyCoreEntityRenderState extends GameBlockEntityRenderState {
 
         public boolean unfolded = false;
         public MemoryKeyGameState gameState = MemoryKeyGameState.IDLE;

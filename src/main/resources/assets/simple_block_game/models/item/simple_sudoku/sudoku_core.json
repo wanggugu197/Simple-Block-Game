@@ -1,0 +1,6 @@
+{
+  "parent": "simple_block_game:block/base/vertical_base",
+  "textures": {
+    "overlay_top": "simple_block_game:block/simple_sudoku/sudoku_core_easy_normal"
+  }
+}

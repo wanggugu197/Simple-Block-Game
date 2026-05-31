@@ -1,10 +1,10 @@
 package com.simple_block_game.common.simpleMemoryKey.renderer;
 
 import com.simple_block_game.SimpleBlockGame;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderState;
-import com.simple_block_game.common.base.renderer.BaseGameBlockEntityRenderer;
+import com.simple_block_game.common.base.renderer.GameBlockEntityRenderState;
 import com.simple_block_game.common.simpleMemoryKey.block.BlockMemoryKeyButtonEntity;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyPosition;
+import com.simple_block_game.util.renderer.BaseBlockEntityRenderer;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
@@ -17,9 +17,9 @@ import lombok.NonNull;
  * 记忆键游戏按键方块实体渲染器
  * 根据按键位置和闪烁状态选择对应的材质
  */
-public class BlockMemoryKeyButtonEntityRenderer extends BaseGameBlockEntityRenderer<BlockMemoryKeyButtonEntity, BlockMemoryKeyButtonEntityRenderer.BlockMemoryKeyButtonEntityRenderState> {
+public class BlockMemoryKeyButtonEntityRenderer extends BaseBlockEntityRenderer<BlockMemoryKeyButtonEntity, BlockMemoryKeyButtonEntityRenderer.BlockMemoryKeyButtonEntityRenderState> {
 
-    public static class BlockMemoryKeyButtonEntityRenderState extends BaseGameBlockEntityRenderState {
+    public static class BlockMemoryKeyButtonEntityRenderState extends GameBlockEntityRenderState {
 
         public MemoryKeyPosition position = MemoryKeyPosition.NORTH;
         public boolean flashing = false;

@@ -11,12 +11,14 @@ public class SimpleBlockGameConfig {
     public static final MinesweeperRewardConfig MINESWEEPER_CONFIG;
     public static final MemoryKeyRewardConfig MEMORY_KEY_CONFIG;
     public static final TenDropRewardConfig TEN_DROP_CONFIG;
+    public static final SudokuRewardConfig SUDOKU_CONFIG;
 
     static {
         GAME_2048_CONFIG = new Game2048RewardConfig();
         MINESWEEPER_CONFIG = new MinesweeperRewardConfig();
         MEMORY_KEY_CONFIG = new MemoryKeyRewardConfig();
         TEN_DROP_CONFIG = new TenDropRewardConfig();
+        SUDOKU_CONFIG = new SudokuRewardConfig();
         initConfig();
         SPEC = BUILDER.build();
     }
@@ -25,6 +27,7 @@ public class SimpleBlockGameConfig {
     public static ModConfigSpec.BooleanValue enableMinesweeperGame;
     public static ModConfigSpec.BooleanValue enableMemoryKeyGame;
     public static ModConfigSpec.BooleanValue enableTenDropGame;
+    public static ModConfigSpec.BooleanValue enableSudokuGame;
 
     private static void initConfig() {
         BUILDER.push("Simple Block Game Settings");
@@ -37,6 +40,8 @@ public class SimpleBlockGameConfig {
                 .define("enable_memory_key_game", true);
         enableTenDropGame = BUILDER.comment("Enable Ten Drop game")
                 .define("enable_ten_drop_game", true);
+        enableSudokuGame = BUILDER.comment("Enable Sudoku game")
+                .define("enable_sudoku_game", true);
 
         BUILDER.pop();
 
@@ -44,6 +49,7 @@ public class SimpleBlockGameConfig {
         MINESWEEPER_CONFIG.init(BUILDER);
         MEMORY_KEY_CONFIG.init(BUILDER);
         TEN_DROP_CONFIG.init(BUILDER);
+        SUDOKU_CONFIG.init(BUILDER);
     }
 
     public static class Game2048RewardConfig {
@@ -157,10 +163,6 @@ public class SimpleBlockGameConfig {
                     .defineInRange("score_threshold_14", 50000, 0, Integer.MAX_VALUE);
             scoreReward14 = builder.comment("Loot table for score reward tier 14")
                     .define("score_reward_14", "minecraft:chests/end_city_treasure");
-
-            builder.pop();
-
-            builder.push("2048 Game Max Number Rewards");
 
             maxReward1024 = builder.comment("Loot table for max number 1024")
                     .define("max_reward_1024", "minecraft:chests/simple_dungeon");
@@ -329,6 +331,29 @@ public class SimpleBlockGameConfig {
                     .define("ten_drop_level_9_reward", "minecraft:chests/bastion_treasure");
             level10Reward = builder.comment("Loot table for level 10 reward")
                     .define("ten_drop_level_10_reward", "minecraft:chests/end_city_treasure");
+
+            builder.pop();
+        }
+    }
+
+    public static class SudokuRewardConfig {
+
+        public ModConfigSpec.ConfigValue<String> easyReward;
+        public ModConfigSpec.ConfigValue<String> mediumReward;
+        public ModConfigSpec.ConfigValue<String> hardReward;
+        public ModConfigSpec.ConfigValue<String> expertReward;
+
+        public void init(ModConfigSpec.Builder builder) {
+            builder.push("Sudoku Game");
+
+            easyReward = builder.comment("Loot table for completing easy difficulty sudoku")
+                    .define("sudoku_easy_reward", "minecraft:chests/simple_dungeon");
+            mediumReward = builder.comment("Loot table for completing medium difficulty sudoku")
+                    .define("sudoku_medium_reward", "minecraft:chests/abandoned_mineshaft");
+            hardReward = builder.comment("Loot table for completing hard difficulty sudoku")
+                    .define("sudoku_hard_reward", "minecraft:chests/pillager_outpost");
+            expertReward = builder.comment("Loot table for completing expert difficulty sudoku")
+                    .define("sudoku_expert_reward", "minecraft:chests/bastion_treasure");
 
             builder.pop();
         }
