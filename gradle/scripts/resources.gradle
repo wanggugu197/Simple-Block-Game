@@ -32,12 +32,15 @@ tasks.matching { it.name.startsWith('prepare') }.configureEach {
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var neoVersion = libs.versions.neoForge.get()
     neoVersion = neoVersion.substring(0, neoVersion.lastIndexOf('.'))
+    var configurationVersion = forge.versions.configuration.get()
+    configurationVersion = configurationVersion.substring(0, configurationVersion.lastIndexOf('-'))
     var replaceProperties = [
             version             : version_toml,
             mod_id              : mod_id,
-            minecraft_version   : minecraft_version_range,
+            minecraft_version   : "[1.21,)",
             loader_version      : libs.versions.loader.get(),
             neo_version         : neoVersion,
+            configuration_version : configurationVersion,
             mod_license         : mod_license,
             mod_name            : mod_name,
             mod_description     : mod_description,
@@ -54,16 +57,3 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 sourceSets.main.resources.srcDir generateModMetadata
 // To avoid having to run "generateModMetadata" manually, make it run on every project reload
 neoForge.ideSyncTask generateModMetadata
-
-// Set custom duplicates strategy for processResources task
-tasks.named('processResources').configure {
-    // 默认策略：保留第一个遇到的文件（跳过重复）
-    duplicatesStrategy = 'EXCLUDE'
-    // 对lang文件使用不同的策略：让生成目录的文件覆盖主资源目录
-    eachFile { file ->
-        if (file.path.contains('/lang/') || file.name.endsWith('.json') && file.path.contains('lang')) {
-            // 对于lang文件，设置为INCLUDE以便后续处理
-            // 实际覆盖通过目录顺序实现
-        }
-    }
-}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "I": {
+      "item": "minecraft:tnt"
+    },
+    "Q": {
+      "item": "minecraft:quartz_pillar"
+    }
+  },
+  "pattern": [
+    "QQQ",
+    "QIQ",
+    "QQQ"
+  ],
+  "result": {
+    "count": 1,
+    "id": "simple_block_game:minesweeper_core"
+  }
+}

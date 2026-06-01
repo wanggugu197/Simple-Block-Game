@@ -3,8 +3,8 @@ package com.simple_block_game.common.base.reward;
 import com.simple_block_game.SimpleBlockGame;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -19,11 +19,11 @@ import java.util.Objects;
 
 public abstract class BaseGameReward {
 
-    protected static Identifier id(String path) {
+    protected static ResourceLocation id(String path) {
         return SimpleBlockGame.parseRL(path);
     }
 
-    protected static void dropLoot(ServerLevel level, Player player, Identifier tableId) {
+    protected static void dropLoot(ServerLevel level, Player player, ResourceLocation tableId) {
         if (level == null || player == null || tableId == null) return;
         if (player.isDeadOrDying()) return;
 
@@ -39,7 +39,7 @@ public abstract class BaseGameReward {
 
         table.getRandomItems(params, level.getRandom().nextLong(), stack -> {
             if (!stack.isEmpty()) {
-                Objects.requireNonNull(player.spawnAtLocation(level, stack)).setNoPickUpDelay();
+                Objects.requireNonNull(player.spawnAtLocation(stack)).setNoPickUpDelay();
             }
         });
         level.playSound(null, player.blockPosition(), SoundEvents.CHEST_OPEN, SoundSource.PLAYERS, 0.8F, 1.0F);

@@ -126,12 +126,12 @@ public final class GameTenDropsHelper {
         if (!(coreEntity instanceof BlockTenDropsCoreEntity core)) return false;
 
         if (!core.getGameState().isInteractive()) {
-            player.sendOverlayMessage(Component.translatable("msg.ten_drops.invalid_click"));
+            player.displayClientMessage(Component.translatable("msg.ten_drops.invalid_click"), true);
             return false;
         }
 
         if (displayEntity.getDropletLevel() == DropletLevel.BURST) {
-            player.sendOverlayMessage(Component.translatable("msg.ten_drops.invalid_click"));
+            player.displayClientMessage(Component.translatable("msg.ten_drops.invalid_click"), true);
             return false;
         }
 

@@ -391,7 +391,7 @@ src/main/resources/assets/simple_block_game/
 渲染器继承项目已有基类，核心是按实体状态返回贴图：
 
 ```java
-protected Identifier getTextureForState(BlockXXXCoreEntityRenderState state) {
+protected ResourceLocation getTextureForState(BlockXXXCoreEntityRenderState state) {
     return SimpleBlockGame.getId("textures/block/simple_xxx/xxx_core.png");
 }
 ```

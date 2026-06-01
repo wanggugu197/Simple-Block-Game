@@ -62,24 +62,24 @@ public class BlockMinesweeperDisplay extends BaseVerticalBlock {
 
         BlockPos corePos = display.getCorePos();
         if (corePos == null) {
-            player.sendOverlayMessage(Component.translatable("msg.minesweeper.position_error"));
+            player.displayClientMessage(Component.translatable("msg.minesweeper.position_error"), true);
             return InteractionResult.FAIL;
         }
 
         BlockMinesweeperCoreEntity core = getCoreEntity(serverLevel, corePos);
         if (core == null) {
-            player.sendOverlayMessage(Component.translatable("msg.minesweeper.core_not_found"));
+            player.displayClientMessage(Component.translatable("msg.minesweeper.core_not_found"), true);
             return InteractionResult.FAIL;
         }
 
         int[] rel = getRelativePos(corePos, pos);
         if (!isValidPos(core, rel[0], rel[1])) {
-            player.sendOverlayMessage(Component.translatable("msg.minesweeper.invalid_position"));
+            player.displayClientMessage(Component.translatable("msg.minesweeper.invalid_position"), true);
             return InteractionResult.FAIL;
         }
 
         if (core.isGameOver()) {
-            player.sendOverlayMessage(Component.translatable("msg.minesweeper.game_is_over"));
+            player.displayClientMessage(Component.translatable("msg.minesweeper.game_is_over"), true);
             return InteractionResult.FAIL;
         }
 
@@ -155,13 +155,13 @@ public class BlockMinesweeperDisplay extends BaseVerticalBlock {
     private void lose(ServerLevel level, BlockPos corePos, BlockMinesweeperCoreEntity core, Player player) {
         core.setGameOver(true);
         GameMinesweeperHelper.generateExplosions(level, corePos, core);
-        player.sendOverlayMessage(Component.translatable("msg.minesweeper.game_over"));
+        player.displayClientMessage(Component.translatable("msg.minesweeper.game_over"), true);
     }
 
     private static void win(ServerLevel level, BlockMinesweeperCoreEntity core, Player player) {
         core.setGameOver(true);
         GameMinesweeperReward.handleReward(level, player, core.getMineContent());
-        player.sendOverlayMessage(Component.translatable("msg.minesweeper.game_win"));
+        player.displayClientMessage(Component.translatable("msg.minesweeper.game_win"), true);
     }
 
     public static void setDisplayState(BlockGetter level, BlockPos pos, MinesweeperState newState) {

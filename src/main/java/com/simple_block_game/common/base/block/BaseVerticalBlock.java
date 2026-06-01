@@ -2,11 +2,11 @@ package com.simple_block_game.common.base.block;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -60,7 +60,7 @@ public abstract class BaseVerticalBlock extends BaseEntityBlock {
     }
 
     @Override
-    public void onBlockExploded(@NonNull BlockState state, @NonNull ServerLevel level, @NonNull BlockPos blockPos, @NonNull Explosion explosion) {}
+    public void onBlockExploded(@NonNull BlockState state, @NonNull Level level, @NonNull BlockPos blockPos, @NonNull Explosion explosion) {}
 
     @Override
     public boolean canBeReplaced(@NonNull BlockState state, @NonNull BlockPlaceContext context) {

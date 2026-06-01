@@ -8,12 +8,11 @@ import com.simple_block_game.common.simpleMemoryKey.logic.GameMemoryKeyHelper;
 import com.simple_block_game.common.simpleMemoryKey.logic.GameMemoryKeyLogic;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -284,8 +283,8 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NonNull ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.saveAdditional(pTag, pRegistries);
         CompoundTag tag = new CompoundTag();
         tag.putInt(KEY_GAME_STATE, gameState.getValue());
         tag.putInt(KEY_CURRENT_LEVEL, currentLevel.getLevelNumber());
@@ -293,22 +292,22 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
         tag.putInt(KEY_CURRENT_SEQUENCE_INDEX, currentSequenceIndex);
         tag.putInt(KEY_FLASHING_INDEX, flashingIndex);
         tag.putIntArray(KEY_SEQUENCE_DATA, sequence.stream().mapToInt(Integer::intValue).toArray());
-        output.store("MemoryKeyData", CompoundTag.CODEC, tag);
+        pTag.put("MemoryKeyData", tag);
     }
 
     @Override
-    protected void loadAdditional(@NonNull ValueInput input) {
-        super.loadAdditional(input);
-        CompoundTag tag = input.read("MemoryKeyData", CompoundTag.CODEC).orElse(new CompoundTag());
-        gameState = MemoryKeyGameState.fromInt(tag.getIntOr(KEY_GAME_STATE, 0));
-        currentLevel = MemoryKeyLevel.fromLevelNumber(tag.getIntOr(KEY_CURRENT_LEVEL, 1));
-        remainingLives = tag.getIntOr(KEY_REMAINING_LIVES, INITIAL_LIVES);
-        currentSequenceIndex = tag.getIntOr(KEY_CURRENT_SEQUENCE_INDEX, 0);
-        flashingIndex = tag.getIntOr(KEY_FLASHING_INDEX, -1);
+    protected void loadAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.loadAdditional(pTag, pRegistries);
+        CompoundTag tag = pTag.contains("MemoryKeyData") ? pTag.getCompound("MemoryKeyData") : new CompoundTag();
+        gameState = MemoryKeyGameState.fromInt(tag.contains(KEY_GAME_STATE) ? tag.getInt(KEY_GAME_STATE) : 0);
+        currentLevel = MemoryKeyLevel.fromLevelNumber(tag.contains(KEY_CURRENT_LEVEL) ? tag.getInt(KEY_CURRENT_LEVEL) : 1);
+        remainingLives = tag.contains(KEY_REMAINING_LIVES) ? tag.getInt(KEY_REMAINING_LIVES) : INITIAL_LIVES;
+        currentSequenceIndex = tag.contains(KEY_CURRENT_SEQUENCE_INDEX) ? tag.getInt(KEY_CURRENT_SEQUENCE_INDEX) : 0;
+        flashingIndex = tag.contains(KEY_FLASHING_INDEX) ? tag.getInt(KEY_FLASHING_INDEX) : -1;
 
-        tag.getIntArray(KEY_SEQUENCE_DATA).ifPresent(arr -> {
+        if (tag.contains(KEY_SEQUENCE_DATA)) {
             sequence.clear();
-            for (int value : arr) sequence.add(value);
-        });
+            for (int value : tag.getIntArray(KEY_SEQUENCE_DATA)) sequence.add(value);
+        }
     }
 }

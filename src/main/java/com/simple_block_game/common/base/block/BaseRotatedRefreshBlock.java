@@ -75,34 +75,34 @@ public class BaseRotatedRefreshBlock extends BaseRotatedBlock {
 
         BlockEntity be = serverLevel.getBlockEntity(pos);
         if (!(be instanceof BlockRefreshEntity refreshEntity)) {
-            player.sendOverlayMessage(Component.translatable("msg.common.refresh_entity_error"));
+            player.displayClientMessage(Component.translatable("msg.common.refresh_entity_error"), true);
             return InteractionResult.FAIL;
         }
 
         BlockPos corePos = refreshEntity.getCorePos();
         if (corePos == null) {
-            player.sendOverlayMessage(Component.translatable(coreNotFoundKey));
+            player.displayClientMessage(Component.translatable(coreNotFoundKey), true);
             return InteractionResult.FAIL;
         }
 
         BlockState coreState = serverLevel.getBlockState(corePos);
         if (!(coreState.getBlock() instanceof IGameCoreBlock coreBlock)) {
-            player.sendOverlayMessage(Component.translatable(coreInvalidKey));
+            player.displayClientMessage(Component.translatable(coreInvalidKey), true);
             return InteractionResult.FAIL;
         }
 
         switch (clickArea) {
             case LEFT_TOP -> {
                 coreBlock.minimizeGame(serverLevel, corePos, coreState);
-                player.sendOverlayMessage(Component.translatable(minimizedKey));
+                player.displayClientMessage(Component.translatable(minimizedKey), true);
             }
             case RIGHT_TOP -> {
                 coreBlock.closeGame(serverLevel, corePos, coreState);
-                player.sendOverlayMessage(Component.translatable(closedKey));
+                player.displayClientMessage(Component.translatable(closedKey), true);
             }
             case BOTTOM -> {
                 coreBlock.resetGame(serverLevel, corePos, coreState);
-                player.sendOverlayMessage(Component.translatable(resetKey));
+                player.displayClientMessage(Component.translatable(resetKey), true);
             }
         }
         return InteractionResult.SUCCESS;

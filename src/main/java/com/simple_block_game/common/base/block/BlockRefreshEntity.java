@@ -3,15 +3,13 @@ package com.simple_block_game.common.base.block;
 import com.simple_block_game.common.SimpleBlockGameRegistration;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.NonNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -32,7 +30,7 @@ public class BlockRefreshEntity extends BaseGameBlockEntity {
         super(SimpleBlockGameRegistration.BLOCK_REFRESH_ENTITY.get(), pos, state);
     }
 
-    @Nullable
+    @NonNull
     public BlockPos getCorePos() {
         return corePos;
     }
@@ -47,28 +45,32 @@ public class BlockRefreshEntity extends BaseGameBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NonNull ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.saveAdditional(pTag, pRegistries);
         CompoundTag customTag = new CompoundTag();
-        if (corePos != null) {
-            customTag.putInt(NBT_KEY_CORE_POS_X, corePos.getX());
-            customTag.putInt(NBT_KEY_CORE_POS_Y, corePos.getY());
-            customTag.putInt(NBT_KEY_CORE_POS_Z, corePos.getZ());
+        if (this.corePos != null) {
+            customTag.putInt(NBT_KEY_CORE_POS_X, this.corePos.getX());
+            customTag.putInt(NBT_KEY_CORE_POS_Y, this.corePos.getY());
+            customTag.putInt(NBT_KEY_CORE_POS_Z, this.corePos.getZ());
         }
-        output.store(KEY_REFRESH_DATA, CompoundTag.CODEC, customTag);
+        pTag.put(KEY_REFRESH_DATA, customTag);
     }
 
     @Override
-    protected void loadAdditional(@NonNull ValueInput input) {
-        super.loadAdditional(input);
-        CompoundTag customTag = input.read(KEY_REFRESH_DATA, CompoundTag.CODEC).orElse(new CompoundTag());
-        if (customTag.contains(NBT_KEY_CORE_POS_X) && customTag.contains(NBT_KEY_CORE_POS_Y) && customTag.contains(NBT_KEY_CORE_POS_Z)) {
-            corePos = new BlockPos(
-                    customTag.getIntOr(NBT_KEY_CORE_POS_X, 0),
-                    customTag.getIntOr(NBT_KEY_CORE_POS_Y, 0),
-                    customTag.getIntOr(NBT_KEY_CORE_POS_Z, 0));
+    protected void loadAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.loadAdditional(pTag, pRegistries);
+        if (pTag.contains(KEY_REFRESH_DATA, CompoundTag.TAG_COMPOUND)) {
+            CompoundTag customTag = pTag.getCompound(KEY_REFRESH_DATA);
+            if (customTag.contains(NBT_KEY_CORE_POS_X) && customTag.contains(NBT_KEY_CORE_POS_Y) && customTag.contains(NBT_KEY_CORE_POS_Z)) {
+                this.corePos = new BlockPos(
+                        customTag.getInt(NBT_KEY_CORE_POS_X),
+                        customTag.getInt(NBT_KEY_CORE_POS_Y),
+                        customTag.getInt(NBT_KEY_CORE_POS_Z));
+            } else {
+                this.corePos = null;
+            }
         } else {
-            corePos = null;
+            this.corePos = null;
         }
     }
 }

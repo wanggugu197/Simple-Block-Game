@@ -135,7 +135,7 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
     }
 
     private void sendError(Player player) {
-        player.sendOverlayMessage(Component.translatable("msg.common.entity_error"));
+        player.displayClientMessage(Component.translatable("msg.common.entity_error"), true);
     }
 
     private void switchDifficulty(ServerLevel level, BlockPos pos, Player player, boolean forward) {
@@ -146,8 +146,8 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         }
         PresetDifficulty preset = forward ? core.getPresetDifficulty().next() : core.getPresetDifficulty().prev();
         core.setPresetDifficulty(preset);
-        player.sendOverlayMessage(Component.translatable("msg.minesweeper.difficulty_switched",
-                Component.translatable(preset.getDisplayName()), preset.getWidth(), preset.getHeight(), preset.getMineCount()));
+        player.displayClientMessage(Component.translatable("msg.minesweeper.difficulty_switched",
+                Component.translatable(preset.getDisplayName()), preset.getWidth(), preset.getHeight(), preset.getMineCount()), true);
     }
 
     private void adjustMineCount(ServerLevel level, BlockPos pos, Player player, boolean add) {
@@ -157,8 +157,8 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
             return;
         }
         core.adjustMineCount(add);
-        player.sendOverlayMessage(Component.translatable("msg.minesweeper.custom_mine",
-                core.getGridWidth(), core.getGridHeight(), core.getTotalMineCount()));
+        player.displayClientMessage(Component.translatable("msg.minesweeper.custom_mine",
+                core.getGridWidth(), core.getGridHeight(), core.getTotalMineCount()), true);
     }
 
     private void adjustSize(ServerLevel level, BlockPos pos, Player player, boolean isX, boolean inc) {
@@ -168,8 +168,8 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
             return;
         }
         core.adjustSize(isX, inc);
-        player.sendOverlayMessage(Component.translatable("msg.minesweeper.custom_size",
-                core.getGridWidth(), core.getGridHeight(), core.getTotalMineCount()));
+        player.displayClientMessage(Component.translatable("msg.minesweeper.custom_size",
+                core.getGridWidth(), core.getGridHeight(), core.getTotalMineCount()), true);
     }
 
     private enum ClickArea {
@@ -202,14 +202,14 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         }
 
         if (!checkLayoutAreaIsEmpty(level, pos, state)) {
-            player.sendOverlayMessage(Component.translatable("msg.common.obstructed"));
+            player.displayClientMessage(Component.translatable("msg.common.obstructed"), true);
             return false;
         }
 
         GameMinesweeperHelper.generateLayout(level, pos, core);
         level.setBlock(pos, state.setValue(UNFOLDED, true), Block.UPDATE_ALL);
-        player.sendOverlayMessage(Component.translatable("msg.minesweeper.layout_placed",
-                Component.translatable(core.getPresetDifficulty().getDisplayName()), core.getGridWidth(), core.getGridHeight()));
+        player.displayClientMessage(Component.translatable("msg.minesweeper.layout_placed",
+                Component.translatable(core.getPresetDifficulty().getDisplayName()), core.getGridWidth(), core.getGridHeight()), true);
         return true;
     }
 
@@ -224,8 +224,8 @@ public class BlockMinesweeperCore extends BaseVerticalBlock implements IGameCore
         int w = core.getGridWidth(), h = core.getGridHeight();
         core.initGameData();
         GameMinesweeperHelper.resetLayout(level, pos, w, h);
-        player.sendOverlayMessage(Component.translatable("msg.minesweeper.game_started",
-                Component.translatable(core.getPresetDifficulty().getDisplayName()), core.getTotalMineCount(), w, h));
+        player.displayClientMessage(Component.translatable("msg.minesweeper.game_started",
+                Component.translatable(core.getPresetDifficulty().getDisplayName()), core.getTotalMineCount(), w, h), true);
     }
 
     @Override

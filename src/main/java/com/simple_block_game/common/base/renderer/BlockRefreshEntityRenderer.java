@@ -5,23 +5,18 @@ import com.simple_block_game.common.base.block.BlockRefreshEntity;
 import com.simple_block_game.util.renderer.BaseBlockEntityRenderer;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
-public class BlockRefreshEntityRenderer extends BaseBlockEntityRenderer<BlockRefreshEntity, GameBlockEntityRenderState> {
+public class BlockRefreshEntityRenderer extends BaseBlockEntityRenderer<BlockRefreshEntity> {
 
-    private static final Identifier TEXTURE_REFRESH = SimpleBlockGame.getId("textures/block/base_refresh.png");
+    private static final ResourceLocation TEXTURE_REFRESH = SimpleBlockGame.getId("textures/block/base_refresh.png");
 
     public BlockRefreshEntityRenderer(BlockEntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
-    public GameBlockEntityRenderState createRenderState() {
-        return new GameBlockEntityRenderState();
-    }
-
-    @Override
-    protected Identifier getTextureForState(GameBlockEntityRenderState state) {
+    protected ResourceLocation getTexture(BlockRefreshEntity blockEntity) {
         return TEXTURE_REFRESH;
     }
 }

@@ -51,7 +51,7 @@ public class BlockTenDropsCore extends BaseVerticalBlock implements IGameCoreBlo
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NonNull BlockState state, @NonNull BlockEntityType<T> type) {
         if (level.isClientSide()) return null;
-        return (_, _, _, entity) -> {
+        return (l, p, s, entity) -> {
             if (entity instanceof BlockTenDropsCoreEntity coreEntity) coreEntity.tick();
         };
     }
@@ -66,11 +66,11 @@ public class BlockTenDropsCore extends BaseVerticalBlock implements IGameCoreBlo
 
         if (!state.getValue(UNFOLDED)) {
             if (!checkLayoutAreaIsEmpty(serverLevel, pos, state)) {
-                player.sendOverlayMessage(Component.translatable("msg.common.obstructed"));
+                player.displayClientMessage(Component.translatable("msg.common.obstructed"), true);
                 return InteractionResult.PASS;
             }
             unfoldGame(serverLevel, pos, state, player);
-            player.sendOverlayMessage(Component.translatable("msg.ten_drops.game_started"));
+            player.displayClientMessage(Component.translatable("msg.ten_drops.game_started"), true);
         }
 
         return InteractionResult.SUCCESS;
@@ -95,7 +95,7 @@ public class BlockTenDropsCore extends BaseVerticalBlock implements IGameCoreBlo
     public void startGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
         getCoreEntity(level, pos).ifPresent(entity -> {
             entity.setGameState(TenDropsGameState.PLAYING);
-            player.sendOverlayMessage(Component.translatable("msg.ten_drops.start"));
+            player.displayClientMessage(Component.translatable("msg.ten_drops.start"), true);
         });
     }
 

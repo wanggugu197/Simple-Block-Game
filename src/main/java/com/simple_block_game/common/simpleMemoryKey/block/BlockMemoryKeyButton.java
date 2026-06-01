@@ -43,7 +43,7 @@ public class BlockMemoryKeyButton extends BaseVerticalBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NonNull BlockState state, @NonNull BlockEntityType<T> type) {
         if (level.isClientSide()) return null;
 
-        return (_, _, _, entity) -> {
+        return (l, p, s, entity) -> {
             if (entity instanceof BlockMemoryKeyButtonEntity buttonEntity) {
                 buttonEntity.tick();
             }

@@ -1,47 +1,39 @@
 package com.simple_block_game.util.renderer;
 
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
-import com.simple_block_game.common.base.renderer.GameBlockEntityRenderState;
 
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.state.level.CameraRenderState;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.Identifier;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.resources.ResourceLocation;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import lombok.NonNull;
 
-public abstract class BaseBlockEntityRenderer<T extends BaseGameBlockEntity, S extends GameBlockEntityRenderState> implements BlockEntityRenderer<T, S> {
+public abstract class BaseBlockEntityRenderer<T extends BaseGameBlockEntity> implements BlockEntityRenderer<T> {
 
     protected static final float OFFSET = 0.002f;
 
     protected BaseBlockEntityRenderer(BlockEntityRendererProvider.Context context) {}
 
-    protected abstract Identifier getTextureForState(S state);
+    protected abstract ResourceLocation getTexture(T blockEntity);
 
     @Override
-    public void extractRenderState(T blockEntity, S state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
-        BlockEntityRenderer.super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
-        state.facing = blockEntity.getFacing();
-    }
-
-    @Override
-    public void submit(S state, PoseStack poseStack, @NonNull SubmitNodeCollector collector, @NonNull CameraRenderState camera) {
+    public void render(T blockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         poseStack.pushPose();
 
-        Identifier texture = getTextureForState(state);
+        ResourceLocation texture = getTexture(blockEntity);
         if (texture == null) {
             poseStack.popPose();
             return;
         }
-        setupTransformation(poseStack, state.facing);
-        submitTexture(poseStack, collector, texture);
+
+        Direction facing = blockEntity.getFacing();
+        setupTransformation(poseStack, facing);
+
+        VertexConsumer consumer = buffer.getBuffer(ModRenderTypes.style(texture));
+        renderFace(poseStack.last(), consumer, packedLight, packedOverlay);
 
         poseStack.popPose();
     }
@@ -63,17 +55,6 @@ public abstract class BaseBlockEntityRenderer<T extends BaseGameBlockEntity, S e
         };
     }
 
-    protected void submitTexture(PoseStack poseStack, @NonNull SubmitNodeCollector collector, Identifier texture) {
-        collector.submitCustomGeometry(poseStack, ModRenderTypes.style(texture), BaseBlockEntityRenderer::renderFace);
-    }
-
-    protected void submitTextureWithLayerOffset(PoseStack poseStack, @NonNull SubmitNodeCollector collector, Identifier texture, int layerIndex) {
-        poseStack.pushPose();
-        poseStack.translate(0, 0, layerIndex * OFFSET);
-        submitTexture(poseStack, collector, texture);
-        poseStack.popPose();
-    }
-
     protected static void applyRotation(PoseStack poseStack, Direction facing) {
         switch (facing) {
             case NORTH -> poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(180.0f));
@@ -91,19 +72,17 @@ public abstract class BaseBlockEntityRenderer<T extends BaseGameBlockEntity, S e
         }
     }
 
-    protected static void renderFace(PoseStack.Pose pose, VertexConsumer consumer) {
+    protected static void renderFace(PoseStack.Pose pose, VertexConsumer consumer, int packedLight, int packedOverlay) {
         float w = 0.5f;
         float h = 0.5f;
         int color = 0xFFFFFFFF;
-        int light = 0x00F000F0;
-        int overlay = OverlayTexture.NO_OVERLAY;
         float nx = 1.0f;
         float ny = 1.0f;
         float nz = 1.0f;
 
-        consumer.addVertex(pose, -w, -h, 0.0f).setColor(color).setUv(0.0f, 1.0f).setOverlay(overlay).setLight(light).setNormal(nx, ny, nz);
-        consumer.addVertex(pose, w, -h, 0.0f).setColor(color).setUv(1.0f, 1.0f).setOverlay(overlay).setLight(light).setNormal(nx, ny, nz);
-        consumer.addVertex(pose, w, h, 0.0f).setColor(color).setUv(1.0f, 0.0f).setOverlay(overlay).setLight(light).setNormal(nx, ny, nz);
-        consumer.addVertex(pose, -w, h, 0.0f).setColor(color).setUv(0.0f, 0.0f).setOverlay(overlay).setLight(light).setNormal(nx, ny, nz);
+        consumer.addVertex(pose, -w, -h, 0.0f).setColor(color).setUv(0.0f, 1.0f).setOverlay(packedOverlay).setLight(packedLight).setNormal(nx, ny, nz);
+        consumer.addVertex(pose, w, -h, 0.0f).setColor(color).setUv(1.0f, 1.0f).setOverlay(packedOverlay).setLight(packedLight).setNormal(nx, ny, nz);
+        consumer.addVertex(pose, w, h, 0.0f).setColor(color).setUv(1.0f, 0.0f).setOverlay(packedOverlay).setLight(packedLight).setNormal(nx, ny, nz);
+        consumer.addVertex(pose, -w, h, 0.0f).setColor(color).setUv(0.0f, 0.0f).setOverlay(packedOverlay).setLight(packedLight).setNormal(nx, ny, nz);
     }
 }

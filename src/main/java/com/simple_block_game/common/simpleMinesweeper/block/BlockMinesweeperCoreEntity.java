@@ -6,12 +6,11 @@ import com.simple_block_game.common.simpleMinesweeper.data.PresetDifficulty;
 import com.simple_block_game.common.simpleMinesweeper.logic.GameMinesweeperLogic;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -136,8 +135,8 @@ public class BlockMinesweeperCoreEntity extends BaseGameBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NonNull ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.saveAdditional(pTag, pRegistries);
         CompoundTag tag = new CompoundTag();
         tag.putInt(KEY_MINE_COUNT, mineCount);
         tag.putInt(KEY_FLAG_COUNT, flagCount);
@@ -157,31 +156,31 @@ public class BlockMinesweeperCoreEntity extends BaseGameBlockEntity {
             gridTag.putString(KEY_GRID_DATA, sb.toString());
             tag.put(KEY_MINE_GRID, gridTag);
         }
-        output.store(KEY_DATA, CompoundTag.CODEC, tag);
+        pTag.put(KEY_DATA, tag);
     }
 
     @Override
-    protected void loadAdditional(@NonNull ValueInput input) {
-        super.loadAdditional(input);
-        CompoundTag tag = input.read(KEY_DATA, CompoundTag.CODEC).orElse(new CompoundTag());
-        mineCount = tag.getIntOr(KEY_MINE_COUNT, 10);
-        flagCount = tag.getIntOr(KEY_FLAG_COUNT, 0);
+    protected void loadAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.loadAdditional(pTag, pRegistries);
+        CompoundTag tag = pTag.contains(KEY_DATA) ? pTag.getCompound(KEY_DATA) : new CompoundTag();
+        mineCount = tag.contains(KEY_MINE_COUNT) ? tag.getInt(KEY_MINE_COUNT) : 10;
+        flagCount = tag.contains(KEY_FLAG_COUNT) ? tag.getInt(KEY_FLAG_COUNT) : 0;
 
         try {
-            preset = PresetDifficulty.valueOf(tag.getStringOr(KEY_PRESET, "EASY"));
+            preset = PresetDifficulty.valueOf(tag.contains(KEY_PRESET) ? tag.getString(KEY_PRESET) : "EASY");
         } catch (IllegalArgumentException e) {
             preset = PresetDifficulty.EASY;
         }
 
-        width = tag.getIntOr(KEY_WIDTH, 9);
-        height = tag.getIntOr(KEY_HEIGHT, 9);
-        gameOver = tag.getBooleanOr(KEY_GAME_OVER, false);
+        width = tag.contains(KEY_WIDTH) ? tag.getInt(KEY_WIDTH) : 9;
+        height = tag.contains(KEY_HEIGHT) ? tag.getInt(KEY_HEIGHT) : 9;
+        gameOver = tag.getBoolean(KEY_GAME_OVER);
 
         if (tag.contains(KEY_MINE_GRID)) {
-            CompoundTag gridTag = tag.getCompoundOrEmpty(KEY_MINE_GRID);
-            int w = gridTag.getIntOr(KEY_GRID_WIDTH, 0);
-            int h = gridTag.getIntOr(KEY_GRID_HEIGHT, 0);
-            String data = gridTag.getStringOr(KEY_GRID_DATA, "");
+            CompoundTag gridTag = tag.getCompound(KEY_MINE_GRID);
+            int w = gridTag.contains(KEY_GRID_WIDTH) ? gridTag.getInt(KEY_GRID_WIDTH) : 0;
+            int h = gridTag.contains(KEY_GRID_HEIGHT) ? gridTag.getInt(KEY_GRID_HEIGHT) : 0;
+            String data = gridTag.contains(KEY_GRID_DATA) ? gridTag.getString(KEY_GRID_DATA) : "";
 
             if (data.length() == w * h && w > 0 && h > 0) {
                 mineGrid = new boolean[h][w];

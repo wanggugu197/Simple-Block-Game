@@ -6,6 +6,18 @@ neoForge {
     // Specify NeoForge version
     version = libs.versions.neoForge.get()
 
+    parchment {
+        minecraftVersion = libs.versions.minecraft.get()
+        mappingsVersion = libs.versions.parchment.get()
+    }
+
+    // This line is optional. Access Transformers are automatically detected
+    accessTransformers {
+        var file = project.file('src/main/resources/META-INF/accesstransformer.cfg')
+        from(file)
+        publish(file)
+    }
+
     addModdingDependenciesTo(sourceSets.test)
 //    addModdingDependenciesTo(sourceSets.extra)
 
@@ -74,12 +86,12 @@ neoForge {
         }
 
         data {
-            serverData()
-            clientData()
+            data()
             sourceSet = sourceSets.main
             ideName = "Data Generation"
 
             gameDirectory.set(file('run/data'))
+            // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
             programArguments.addAll('--mod', project.mod_id)
             programArguments.addAll('--all')
             programArguments.addAll('--output', file('src/generated/resources/').getAbsolutePath())

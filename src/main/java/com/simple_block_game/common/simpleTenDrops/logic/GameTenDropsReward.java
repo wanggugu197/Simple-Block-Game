@@ -3,7 +3,7 @@ package com.simple_block_game.common.simpleTenDrops.logic;
 import com.simple_block_game.SimpleBlockGameConfig;
 import com.simple_block_game.common.base.reward.BaseGameReward;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 
@@ -13,7 +13,7 @@ public final class GameTenDropsReward extends BaseGameReward {
 
     private GameTenDropsReward() {}
 
-    private static final Int2ObjectOpenHashMap<Identifier> LEVEL_REWARDS = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectOpenHashMap<ResourceLocation> LEVEL_REWARDS = new Int2ObjectOpenHashMap<>();
 
     static {
         var config = SimpleBlockGameConfig.TEN_DROP_CONFIG;

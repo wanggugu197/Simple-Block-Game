@@ -165,11 +165,11 @@ public final class GameMemoryKeyHelper {
         if (newIndex >= sequenceLength) {
             if (GameMemoryKeyLogic.isAllLevelsComplete(coreEntity.getCurrentLevel())) {
                 coreEntity.setGameState(MemoryKeyGameState.ALL_SUCCESS);
-                player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.all_levels_complete"));
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.all_levels_complete"), true);
                 GameMemoryKeyReward.handleReward(level, player, coreEntity.getCurrentLevel(), true);
             } else {
                 coreEntity.setGameState(MemoryKeyGameState.LEVEL_SUCCESS);
-                player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.level_complete", coreEntity.getCurrentLevel().getLevelNumber()));
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.level_complete", coreEntity.getCurrentLevel().getLevelNumber()), true);
             }
         }
     }
@@ -179,11 +179,11 @@ public final class GameMemoryKeyHelper {
 
         if (coreEntity.getRemainingLives() <= 0) {
             coreEntity.setGameState(MemoryKeyGameState.GAME_OVER);
-            player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.game_over", coreEntity.getCurrentLevel().getLevelNumber()));
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.game_over", coreEntity.getCurrentLevel().getLevelNumber()), true);
             GameMemoryKeyReward.handleReward(level, player, coreEntity.getCurrentLevel(), false);
         } else {
             coreEntity.setGameState(MemoryKeyGameState.ERROR);
-            player.sendOverlayMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.wrong_input", coreEntity.getRemainingLives()));
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.wrong_input", coreEntity.getRemainingLives()), true);
         }
     }
 

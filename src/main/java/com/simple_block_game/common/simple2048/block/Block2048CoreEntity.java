@@ -4,11 +4,10 @@ import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -62,19 +61,19 @@ public class Block2048CoreEntity extends BaseGameBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NonNull ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.saveAdditional(pTag, pRegistries);
         CompoundTag tag = new CompoundTag();
         tag.putInt(KEY_SCORE, score);
         tag.putInt(KEY_MAX, maxNumber);
-        output.store("2048Data", CompoundTag.CODEC, tag);
+        pTag.put("2048Data", tag);
     }
 
     @Override
-    protected void loadAdditional(@NonNull ValueInput input) {
-        super.loadAdditional(input);
-        CompoundTag tag = input.read("2048Data", CompoundTag.CODEC).orElse(new CompoundTag());
-        score = tag.getIntOr(KEY_SCORE, 0);
-        maxNumber = tag.getIntOr(KEY_MAX, 0);
+    protected void loadAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.loadAdditional(pTag, pRegistries);
+        CompoundTag tag = pTag.contains("2048Data") ? pTag.getCompound("2048Data") : new CompoundTag();
+        score = tag.contains(KEY_SCORE) ? tag.getInt(KEY_SCORE) : 0;
+        maxNumber = tag.contains(KEY_MAX) ? tag.getInt(KEY_MAX) : 0;
     }
 }

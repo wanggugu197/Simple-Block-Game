@@ -4,11 +4,10 @@ import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -47,19 +46,19 @@ public class BlockSudokuDisplayEntity extends BaseGameBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NonNull ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.saveAdditional(pTag, pRegistries);
         CompoundTag tag = new CompoundTag();
         tag.putInt(KEY_VALUE, value);
         tag.putBoolean(KEY_IS_INITIAL, isInitial);
-        output.store(DATA_KEY, CompoundTag.CODEC, tag);
+        pTag.put(DATA_KEY, tag);
     }
 
     @Override
-    protected void loadAdditional(@NonNull ValueInput input) {
-        super.loadAdditional(input);
-        CompoundTag tag = input.read(DATA_KEY, CompoundTag.CODEC).orElse(new CompoundTag());
-        value = tag.getIntOr(KEY_VALUE, 0);
-        isInitial = tag.getBooleanOr(KEY_IS_INITIAL, false);
+    protected void loadAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.loadAdditional(pTag, pRegistries);
+        CompoundTag tag = pTag.contains(DATA_KEY) ? pTag.getCompound(DATA_KEY) : new CompoundTag();
+        value = tag.contains(KEY_VALUE) ? tag.getInt(KEY_VALUE) : 0;
+        isInitial = tag.getBoolean(KEY_IS_INITIAL);
     }
 }

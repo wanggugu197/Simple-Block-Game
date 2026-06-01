@@ -5,11 +5,10 @@ import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simple2048.data.Value2048;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -58,8 +57,8 @@ public class Block2048DisplayEntity extends BaseGameBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NonNull ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.saveAdditional(pTag, pRegistries);
         CompoundTag tag = new CompoundTag();
         tag.putInt(NBT_KEY_VALUE, value.getValue());
         if (corePos != null) {
@@ -67,16 +66,16 @@ public class Block2048DisplayEntity extends BaseGameBlockEntity {
             tag.putInt(NBT_KEY_CORE_Y, corePos.getY());
             tag.putInt(NBT_KEY_CORE_Z, corePos.getZ());
         }
-        output.store("2048DisplayData", CompoundTag.CODEC, tag);
+        pTag.put("2048DisplayData", tag);
     }
 
     @Override
-    protected void loadAdditional(@NonNull ValueInput input) {
-        super.loadAdditional(input);
-        CompoundTag tag = input.read("2048DisplayData", CompoundTag.CODEC).orElse(new CompoundTag());
-        value = Value2048.fromInt(tag.getIntOr(NBT_KEY_VALUE, 0));
+    protected void loadAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.loadAdditional(pTag, pRegistries);
+        CompoundTag tag = pTag.contains("2048DisplayData") ? pTag.getCompound("2048DisplayData") : new CompoundTag();
+        value = Value2048.fromInt(tag.contains(NBT_KEY_VALUE) ? tag.getInt(NBT_KEY_VALUE) : 0);
         if (tag.contains(NBT_KEY_CORE_X) && tag.contains(NBT_KEY_CORE_Y) && tag.contains(NBT_KEY_CORE_Z)) {
-            corePos = new BlockPos(tag.getIntOr(NBT_KEY_CORE_X, 0), tag.getIntOr(NBT_KEY_CORE_Y, 0), tag.getIntOr(NBT_KEY_CORE_Z, 0));
+            corePos = new BlockPos(tag.getInt(NBT_KEY_CORE_X), tag.getInt(NBT_KEY_CORE_Y), tag.getInt(NBT_KEY_CORE_Z));
         }
     }
 }

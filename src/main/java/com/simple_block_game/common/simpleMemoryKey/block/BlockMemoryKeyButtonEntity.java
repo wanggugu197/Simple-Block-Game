@@ -5,11 +5,10 @@ import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyPosition;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -109,8 +108,8 @@ public class BlockMemoryKeyButtonEntity extends BaseGameBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NonNull ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.saveAdditional(pTag, pRegistries);
         CompoundTag tag = new CompoundTag();
         if (corePos != null) {
             tag.putInt(KEY_CORE_POS_X, corePos.getX());
@@ -121,20 +120,20 @@ public class BlockMemoryKeyButtonEntity extends BaseGameBlockEntity {
             tag.putInt(KEY_POSITION_ID, position.getId());
         }
         tag.putBoolean(KEY_IS_FLASHING, isFlashing);
-        output.store("MemoryKeyButtonData", CompoundTag.CODEC, tag);
+        pTag.put("MemoryKeyButtonData", tag);
     }
 
     @Override
-    protected void loadAdditional(@NonNull ValueInput input) {
-        super.loadAdditional(input);
-        CompoundTag tag = input.read("MemoryKeyButtonData", CompoundTag.CODEC).orElse(new CompoundTag());
+    protected void loadAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.loadAdditional(pTag, pRegistries);
+        CompoundTag tag = pTag.contains("MemoryKeyButtonData") ? pTag.getCompound("MemoryKeyButtonData") : new CompoundTag();
         if (tag.contains(KEY_CORE_POS_X)) {
-            setCorePos(new BlockPos(tag.getIntOr(KEY_CORE_POS_X, 0),
-                    tag.getIntOr(KEY_CORE_POS_Y, 0), tag.getIntOr(KEY_CORE_POS_Z, 0)));
+            setCorePos(new BlockPos(tag.getInt(KEY_CORE_POS_X),
+                    tag.getInt(KEY_CORE_POS_Y), tag.getInt(KEY_CORE_POS_Z)));
         }
         if (tag.contains(KEY_POSITION_ID)) {
-            setPosition(MemoryKeyPosition.fromId(tag.getIntOr(KEY_POSITION_ID, 0)));
+            setPosition(MemoryKeyPosition.fromId(tag.getInt(KEY_POSITION_ID)));
         }
-        setFlashing(tag.getBooleanOr(KEY_IS_FLASHING, false));
+        setFlashing(tag.getBoolean(KEY_IS_FLASHING));
     }
 }

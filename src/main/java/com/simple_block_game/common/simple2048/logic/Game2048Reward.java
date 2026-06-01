@@ -3,7 +3,7 @@ package com.simple_block_game.common.simple2048.logic;
 import com.simple_block_game.SimpleBlockGameConfig;
 import com.simple_block_game.common.base.reward.BaseGameReward;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 
@@ -14,8 +14,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
  */
 public final class Game2048Reward extends BaseGameReward {
 
-    private static final Int2ObjectOpenHashMap<Identifier> SCORE_REWARDS = new Int2ObjectOpenHashMap<>();
-    private static final Int2ObjectOpenHashMap<Identifier> MAX_REWARDS = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectOpenHashMap<ResourceLocation> SCORE_REWARDS = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectOpenHashMap<ResourceLocation> MAX_REWARDS = new Int2ObjectOpenHashMap<>();
 
     static {
         var config = SimpleBlockGameConfig.GAME_2048_CONFIG;
@@ -50,7 +50,7 @@ public final class Game2048Reward extends BaseGameReward {
         if (oldScore >= newScore) return;
         SCORE_REWARDS.keySet().forEach(threshold -> {
             if (threshold > oldScore && threshold <= newScore) {
-                Identifier tableId = SCORE_REWARDS.getOrDefault(threshold, null);
+                ResourceLocation tableId = SCORE_REWARDS.getOrDefault(threshold, null);
                 if (tableId != null) dropLoot(level, player, tableId);
             }
         });
@@ -60,7 +60,7 @@ public final class Game2048Reward extends BaseGameReward {
         if (oldMax >= newMax) return;
         MAX_REWARDS.keySet().forEach(threshold -> {
             if (threshold > oldMax && threshold <= newMax) {
-                Identifier tableId = MAX_REWARDS.getOrDefault(threshold, null);
+                ResourceLocation tableId = MAX_REWARDS.getOrDefault(threshold, null);
                 if (tableId != null) dropLoot(level, player, tableId);
             }
         });

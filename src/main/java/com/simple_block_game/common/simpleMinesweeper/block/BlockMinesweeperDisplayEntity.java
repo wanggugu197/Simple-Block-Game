@@ -5,11 +5,10 @@ import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simpleMinesweeper.data.MinesweeperState;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -55,8 +54,8 @@ public class BlockMinesweeperDisplayEntity extends BaseGameBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NonNull ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.saveAdditional(pTag, pRegistries);
         CompoundTag tag = new CompoundTag();
         tag.putString(KEY_STATE, state.getSerializedName());
         if (corePos != null) {
@@ -64,18 +63,18 @@ public class BlockMinesweeperDisplayEntity extends BaseGameBlockEntity {
             tag.putInt(KEY_CORE_Y, corePos.getY());
             tag.putInt(KEY_CORE_Z, corePos.getZ());
         }
-        output.store(KEY_DATA, CompoundTag.CODEC, tag);
+        pTag.put(KEY_DATA, tag);
     }
 
     @Override
-    protected void loadAdditional(@NonNull ValueInput input) {
-        super.loadAdditional(input);
-        CompoundTag tag = input.read(KEY_DATA, CompoundTag.CODEC).orElse(new CompoundTag());
+    protected void loadAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.loadAdditional(pTag, pRegistries);
+        CompoundTag tag = pTag.contains(KEY_DATA) ? pTag.getCompound(KEY_DATA) : new CompoundTag();
 
-        state = MinesweeperState.fromSerializedName(tag.getStringOr(KEY_STATE, "unopened"));
+        state = MinesweeperState.fromSerializedName(tag.contains(KEY_STATE) ? tag.getString(KEY_STATE) : "unopened");
 
         if (tag.contains(KEY_CORE_X) && tag.contains(KEY_CORE_Y) && tag.contains(KEY_CORE_Z)) {
-            corePos = new BlockPos(tag.getIntOr(KEY_CORE_X, 0), tag.getIntOr(KEY_CORE_Y, 0), tag.getIntOr(KEY_CORE_Z, 0));
+            corePos = new BlockPos(tag.getInt(KEY_CORE_X), tag.getInt(KEY_CORE_Y), tag.getInt(KEY_CORE_Z));
         } else {
             corePos = null;
         }

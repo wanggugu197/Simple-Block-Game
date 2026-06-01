@@ -58,7 +58,7 @@ public class BlockMemoryKeyCore extends BaseVerticalBlock implements IGameCoreBl
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NonNull BlockState state, @NonNull BlockEntityType<T> type) {
         if (level.isClientSide()) return null;
 
-        return (_, _, _, entity) -> {
+        return (l, p, s, entity) -> {
             if (entity instanceof BlockMemoryKeyCoreEntity coreEntity) {
                 coreEntity.tick();
             }
@@ -102,7 +102,7 @@ public class BlockMemoryKeyCore extends BaseVerticalBlock implements IGameCoreBl
     @Override
     public boolean unfoldGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
         if (!checkLayoutAreaIsEmpty(level, pos, state)) {
-            player.sendOverlayMessage(Component.translatable("msg.common.obstructed"));
+            player.displayClientMessage(Component.translatable("msg.common.obstructed"), true);
             return false;
         }
         GameMemoryKeyHelper.generateLayout(level, pos);
@@ -112,7 +112,7 @@ public class BlockMemoryKeyCore extends BaseVerticalBlock implements IGameCoreBl
             core.initialize();
             syncBlockState(level, pos);
         }
-        player.sendOverlayMessage(Component.translatable("msg.memory_key.game_ready"));
+        player.displayClientMessage(Component.translatable("msg.memory_key.game_ready"), true);
         return true;
     }
 
@@ -120,12 +120,12 @@ public class BlockMemoryKeyCore extends BaseVerticalBlock implements IGameCoreBl
     public void startGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
         BlockMemoryKeyCoreEntity core = getCore(level, pos);
         if (core == null) {
-            player.sendOverlayMessage(Component.translatable("msg.common.entity_error"));
+            player.displayClientMessage(Component.translatable("msg.common.entity_error"), true);
             return;
         }
 
         GameMemoryKeyHelper.startGame(level, pos, core);
-        player.sendOverlayMessage(Component.translatable("msg.memory_key.watch_sequence"));
+        player.displayClientMessage(Component.translatable("msg.memory_key.watch_sequence"), true);
     }
 
     @Override

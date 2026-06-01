@@ -1,10 +1,11 @@
 [versions]
-minecraft = "26.1.2"
-neoForge = "26.1.2.65-beta"
+minecraft = "1.21.1"
+neoForge = "21.1.206"
 loader = "4"
+parchment = "2024.11.17" # https://parchmentmc.org/docs/getting-started
 spotless = "8.1.0"
-modDevGradle = "2.0.140"
-lombok = "9.2.0"
+modDevGradle = "2.0.86"
+lombok = "8.13.1"
 
 
 [plugins]

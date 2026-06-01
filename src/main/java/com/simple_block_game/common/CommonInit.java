@@ -1,6 +1,6 @@
 package com.simple_block_game.common;
 
-import com.simple_block_game.data.lang.LangHandler;
+import com.simple_block_game.datagen.Datagen;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -17,12 +17,13 @@ public class CommonInit {
         CommonInit.modBus = modBus;
         SimpleBlockGameRegistration.init();
         SimpleBlockGameRecipe.init();
-        LangHandler.init();
         modBus.addListener(CommonInit::commonSetup);
         modBus.addListener(CommonInit::modConstruct);
     }
 
     private static void commonSetup(FMLCommonSetupEvent event) {}
 
-    private static void modConstruct(FMLConstructModEvent event) {}
+    private static void modConstruct(FMLConstructModEvent event) {
+        Datagen.init();
+    }
 }

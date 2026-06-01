@@ -6,11 +6,10 @@ import com.simple_block_game.common.simpleTenDrops.data.DropletLevel;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
 import lombok.NonNull;
@@ -98,8 +97,8 @@ public class BlockTenDropsDisplayEntity extends BaseGameBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NonNull ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.saveAdditional(pTag, pRegistries);
         CompoundTag tag = new CompoundTag();
 
         tag.putInt(KEY_LEVEL, dropletLevel.getLevel());
@@ -113,19 +112,19 @@ public class BlockTenDropsDisplayEntity extends BaseGameBlockEntity {
         tag.putInt(KEY_DROP_EAST, dropEast);
         tag.putInt(KEY_DROP_WEST, dropWest);
 
-        output.store(KEY_DATA, CompoundTag.CODEC, tag);
+        pTag.put(KEY_DATA, tag);
     }
 
     @Override
-    protected void loadAdditional(@NonNull ValueInput input) {
-        super.loadAdditional(input);
-        CompoundTag tag = input.read(KEY_DATA, CompoundTag.CODEC).orElse(new CompoundTag());
+    protected void loadAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.loadAdditional(pTag, pRegistries);
+        CompoundTag tag = pTag.contains(KEY_DATA) ? pTag.getCompound(KEY_DATA) : new CompoundTag();
 
-        dropletLevel = DropletLevel.fromLevel(tag.getIntOr(KEY_LEVEL, 0));
-        corePos = tag.contains(KEY_CORE_X) && tag.contains(KEY_CORE_Y) && tag.contains(KEY_CORE_Z) ? new BlockPos(tag.getIntOr(KEY_CORE_X, 0), tag.getIntOr(KEY_CORE_Y, 0), tag.getIntOr(KEY_CORE_Z, 0)) : null;
-        dropNorth = tag.getIntOr(KEY_DROP_NORTH, -1);
-        dropSouth = tag.getIntOr(KEY_DROP_SOUTH, -1);
-        dropEast = tag.getIntOr(KEY_DROP_EAST, -1);
-        dropWest = tag.getIntOr(KEY_DROP_WEST, -1);
+        dropletLevel = DropletLevel.fromLevel(tag.contains(KEY_LEVEL) ? tag.getInt(KEY_LEVEL) : 0);
+        corePos = tag.contains(KEY_CORE_X) && tag.contains(KEY_CORE_Y) && tag.contains(KEY_CORE_Z) ? new BlockPos(tag.getInt(KEY_CORE_X), tag.getInt(KEY_CORE_Y), tag.getInt(KEY_CORE_Z)) : null;
+        dropNorth = tag.contains(KEY_DROP_NORTH) ? tag.getInt(KEY_DROP_NORTH) : -1;
+        dropSouth = tag.contains(KEY_DROP_SOUTH) ? tag.getInt(KEY_DROP_SOUTH) : -1;
+        dropEast = tag.contains(KEY_DROP_EAST) ? tag.getInt(KEY_DROP_EAST) : -1;
+        dropWest = tag.contains(KEY_DROP_WEST) ? tag.getInt(KEY_DROP_WEST) : -1;
     }
 }

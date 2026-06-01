@@ -3,7 +3,7 @@ package com.simple_block_game.common.simpleMinesweeper.logic;
 import com.simple_block_game.SimpleBlockGameConfig;
 import com.simple_block_game.common.base.reward.BaseGameReward;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Player;
 
@@ -15,7 +15,7 @@ import it.unimi.dsi.fastutil.floats.Float2ObjectSortedMap;
  */
 public final class GameMinesweeperReward extends BaseGameReward {
 
-    private static final Float2ObjectRBTreeMap<Identifier> REWARD_TABLE = new Float2ObjectRBTreeMap<>();
+    private static final Float2ObjectRBTreeMap<ResourceLocation> REWARD_TABLE = new Float2ObjectRBTreeMap<>();
 
     static {
         var config = SimpleBlockGameConfig.MINESWEEPER_CONFIG;
@@ -39,10 +39,10 @@ public final class GameMinesweeperReward extends BaseGameReward {
         if (player.isDeadOrDying()) return;
         if (mineContent <= 0 || mineContent > 1.0f) return;
 
-        Float2ObjectSortedMap<Identifier> subMap = REWARD_TABLE.headMap(mineContent);
+        Float2ObjectSortedMap<ResourceLocation> subMap = REWARD_TABLE.headMap(mineContent);
         if (subMap.isEmpty()) return;
 
-        Identifier lootTableId = REWARD_TABLE.getOrDefault(subMap.lastFloatKey(), null);
+        ResourceLocation lootTableId = REWARD_TABLE.getOrDefault(subMap.lastFloatKey(), null);
         if (lootTableId != null) {
             dropLoot(level, player, lootTableId);
         }

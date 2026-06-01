@@ -8,6 +8,7 @@ import com.simple_block_game.common.simpleTenDrops.logic.GameTenDropsLogic;
 import com.simple_block_game.common.simpleTenDrops.logic.GameTenDropsReward;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -15,14 +16,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
 
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
-
-import java.util.Optional;
 
 import static com.simple_block_game.common.simpleTenDrops.logic.GameTenDropsLogic.GRID_SIZE;
 
@@ -87,7 +84,7 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
             setGameState(TenDropsGameState.GAME_OVER);
             GameTenDropsHelper.updateDisplay(serverLevel, worldPosition, grid);
             if (currentPlayer != null) {
-                currentPlayer.sendOverlayMessage(Component.translatable("msg.ten_drops.game_over"));
+                currentPlayer.displayClientMessage(Component.translatable("msg.ten_drops.game_over"), true);
             }
         }
     }
@@ -96,13 +93,13 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
         GameTenDropsReward.handleLevelReward(serverLevel, currentPlayer, currentLevel);
         if (currentLevel >= 10) {
             if (currentPlayer != null) {
-                currentPlayer.sendOverlayMessage(Component.translatable("msg.ten_drops.total_complete"));
+                currentPlayer.displayClientMessage(Component.translatable("msg.ten_drops.total_complete"), true);
             }
             setGameState(TenDropsGameState.VICTORY);
         } else {
             currentLevel++;
             if (currentPlayer != null) {
-                currentPlayer.sendOverlayMessage(Component.translatable("msg.ten_drops.level_up", currentLevel));
+                currentPlayer.displayClientMessage(Component.translatable("msg.ten_drops.level_up", currentLevel), true);
             }
             nextLevel();
         }
@@ -162,8 +159,8 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@NonNull ValueOutput output) {
-        super.saveAdditional(output);
+    protected void saveAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.saveAdditional(pTag, pRegistries);
         CompoundTag tag = new CompoundTag();
 
         tag.putString(KEY_GAME_STATE, gameState.getSerializedName());
@@ -174,23 +171,25 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
         for (int i = 0; i < GRID_SIZE; i++) gridTag.putIntArray("Row" + i, grid[i]);
         tag.put(KEY_GRID_DATA, gridTag);
 
-        output.store(KEY_DATA, CompoundTag.CODEC, tag);
+        pTag.put(KEY_DATA, tag);
     }
 
     @Override
-    protected void loadAdditional(@NonNull ValueInput input) {
-        super.loadAdditional(input);
-        CompoundTag tag = input.read(KEY_DATA, CompoundTag.CODEC).orElse(new CompoundTag());
+    protected void loadAdditional(@NonNull CompoundTag pTag, HolderLookup.@NonNull Provider pRegistries) {
+        super.loadAdditional(pTag, pRegistries);
+        CompoundTag tag = pTag.contains(KEY_DATA) ? pTag.getCompound(KEY_DATA) : new CompoundTag();
 
-        gameState = TenDropsGameState.fromSerializedName(tag.getStringOr(KEY_GAME_STATE, "idle"));
-        waterDrops = tag.getIntOr(KEY_WATER_DROPS, GameTenDropsLogic.INITIAL_WATER_DROPS);
-        currentLevel = tag.getIntOr(KEY_CURRENT_LEVEL, 1);
+        gameState = TenDropsGameState.fromSerializedName(tag.contains(KEY_GAME_STATE) ? tag.getString(KEY_GAME_STATE) : "idle");
+        waterDrops = tag.contains(KEY_WATER_DROPS) ? tag.getInt(KEY_WATER_DROPS) : GameTenDropsLogic.INITIAL_WATER_DROPS;
+        currentLevel = tag.contains(KEY_CURRENT_LEVEL) ? tag.getInt(KEY_CURRENT_LEVEL) : 1;
 
-        CompoundTag gridTag = tag.getCompoundOrEmpty(KEY_GRID_DATA);
-        if (!gridTag.isEmpty()) {
+        if (tag.contains(KEY_GRID_DATA)) {
+            CompoundTag gridTag = tag.getCompound(KEY_GRID_DATA);
             for (int i = 0; i < GRID_SIZE; i++) {
-                Optional<int[]> row = gridTag.getIntArray("Row" + i);
-                if (row.isPresent() && row.get().length == GRID_SIZE) grid[i] = row.get().clone();
+                if (gridTag.contains("Row" + i)) {
+                    int[] row = gridTag.getIntArray("Row" + i);
+                    if (row.length == GRID_SIZE) grid[i] = row.clone();
+                }
             }
         }
 

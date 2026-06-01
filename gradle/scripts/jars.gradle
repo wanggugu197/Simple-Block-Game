@@ -4,6 +4,19 @@ tasks.register('slimJar', Jar) {
     from sourceSets.main.output
 }
 
+// Add sources jar to components.java
+java {
+    withSourcesJar()
+}
+
+// Use delombok'd files for sources
+sourcesJar {
+    exclude {
+        sourceSets.main.allSource.contains it.file
+    }
+    from delombok
+}
+
 base {
     archivesName = "${mod_name}-${minecraft_version}"
 }
