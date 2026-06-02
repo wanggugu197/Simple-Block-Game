@@ -3,7 +3,7 @@ package com.simple_block_game.common.simple24Puzzle.data;
 import net.minecraft.util.StringRepresentable;
 
 import lombok.Getter;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 
 public enum GameToken24Puzzle implements StringRepresentable {
 

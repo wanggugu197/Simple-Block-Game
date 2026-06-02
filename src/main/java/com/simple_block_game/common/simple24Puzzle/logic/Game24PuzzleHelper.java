@@ -8,6 +8,7 @@ import com.simple_block_game.common.simple24Puzzle.block.Block24PuzzleCore;
 import com.simple_block_game.common.simple24Puzzle.block.Block24PuzzleCoreEntity;
 import com.simple_block_game.common.simple24Puzzle.block.Block24PuzzleDisplayEntity;
 import com.simple_block_game.common.simple24Puzzle.data.GameToken24Puzzle;
+import com.simple_block_game.common.simple24Puzzle.simple24PuzzleRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -61,9 +62,9 @@ public final class Game24PuzzleHelper {
     public static void generateLayout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
         Direction.Axis axis = getAxis(coreFacing);
         int dir = getDirection(coreFacing);
-        BlockState displayState = SimpleBlockGameRegistration.BLOCK_24PUZZLE_DISPLAY.get()
+        BlockState displayState = simple24PuzzleRegistration.BLOCK_24PUZZLE_DISPLAY.get()
                 .defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
-        BlockState refreshState = SimpleBlockGameRegistration.BLOCK_24PUZZLE_REFRESH.get()
+        BlockState refreshState = simple24PuzzleRegistration.BLOCK_24PUZZLE_REFRESH.get()
                 .defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
         BlockState frameState = SimpleBlockGameRegistration.BLOCK_ROTATED_FRAME.get()
                 .defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
@@ -113,7 +114,7 @@ public final class Game24PuzzleHelper {
         if (coreState.getBlock() instanceof Block24PuzzleCore) {
             Vec3 dropPos = Vec3.atCenterOf(corePos);
             level.addFreshEntity(new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z,
-                    new ItemStack(SimpleBlockGameRegistration.BLOCK_24PUZZLE_CORE.get())));
+                    new ItemStack(simple24PuzzleRegistration.BLOCK_24PUZZLE_CORE.get())));
             level.removeBlock(corePos, false);
         }
     }
@@ -231,8 +232,8 @@ public final class Game24PuzzleHelper {
     /** 判断是否为24点游戏相关方块 */
     private static boolean is24PuzzleBlock(Block block) {
         return block == SimpleBlockGameRegistration.BLOCK_ROTATED_FRAME.get() ||
-                block == SimpleBlockGameRegistration.BLOCK_24PUZZLE_DISPLAY.get() ||
-                block == SimpleBlockGameRegistration.BLOCK_24PUZZLE_REFRESH.get();
+                block == simple24PuzzleRegistration.BLOCK_24PUZZLE_DISPLAY.get() ||
+                block == simple24PuzzleRegistration.BLOCK_24PUZZLE_REFRESH.get();
     }
 
     /**

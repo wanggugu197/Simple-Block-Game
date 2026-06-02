@@ -1,9 +1,9 @@
 package com.simple_block_game.common.simpleMinesweeper.block;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simpleMinesweeper.data.PresetDifficulty;
 import com.simple_block_game.common.simpleMinesweeper.logic.GameMinesweeperLogic;
+import com.simple_block_game.common.simpleMinesweeper.simpleMinesweeperRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -46,7 +46,7 @@ public class BlockMinesweeperCoreEntity extends BaseGameBlockEntity {
     private boolean gameOver;
 
     public BlockMinesweeperCoreEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_MINESWEEPER_CORE_ENTITY.get(), pos, state);
+        super(simpleMinesweeperRegistration.BLOCK_MINESWEEPER_CORE_ENTITY.get(), pos, state);
     }
 
     public int getCurrentFlagCount() {

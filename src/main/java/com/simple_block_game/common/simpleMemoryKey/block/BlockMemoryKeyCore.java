@@ -5,6 +5,7 @@ import com.simple_block_game.common.base.block.BaseVerticalBlock;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyGameState;
 import com.simple_block_game.common.simpleMemoryKey.logic.GameMemoryKeyHelper;
+import com.simple_block_game.util.multiVersion.MultiVersionHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -102,7 +103,7 @@ public class BlockMemoryKeyCore extends BaseVerticalBlock implements IGameCoreBl
     @Override
     public boolean unfoldGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
         if (!checkLayoutAreaIsEmpty(level, pos, state)) {
-            player.sendOverlayMessage(Component.translatable("msg.common.obstructed"));
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.common.obstructed"), true);
             return false;
         }
         GameMemoryKeyHelper.generateLayout(level, pos);
@@ -112,7 +113,7 @@ public class BlockMemoryKeyCore extends BaseVerticalBlock implements IGameCoreBl
             core.initialize();
             syncBlockState(level, pos);
         }
-        player.sendOverlayMessage(Component.translatable("msg.memory_key.game_ready"));
+        MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.memory_key.game_ready"), true);
         return true;
     }
 
@@ -120,12 +121,12 @@ public class BlockMemoryKeyCore extends BaseVerticalBlock implements IGameCoreBl
     public void startGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
         BlockMemoryKeyCoreEntity core = getCore(level, pos);
         if (core == null) {
-            player.sendOverlayMessage(Component.translatable("msg.common.entity_error"));
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.common.entity_error"), true);
             return;
         }
 
         GameMemoryKeyHelper.startGame(level, pos, core);
-        player.sendOverlayMessage(Component.translatable("msg.memory_key.watch_sequence"));
+        MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.memory_key.watch_sequence"), true);
     }
 
     @Override

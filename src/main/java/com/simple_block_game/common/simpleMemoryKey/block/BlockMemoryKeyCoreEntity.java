@@ -1,11 +1,11 @@
 package com.simple_block_game.common.simpleMemoryKey.block;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyGameState;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyLevel;
 import com.simple_block_game.common.simpleMemoryKey.logic.GameMemoryKeyHelper;
 import com.simple_block_game.common.simpleMemoryKey.logic.GameMemoryKeyLogic;
+import com.simple_block_game.common.simpleMemoryKey.simpleMemoryKeyRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -79,7 +79,7 @@ public class BlockMemoryKeyCoreEntity extends BaseGameBlockEntity {
     private int errorTickCounter = 0;
 
     public BlockMemoryKeyCoreEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_MEMORY_KEY_CORE_ENTITY.get(), pos, state);
+        super(simpleMemoryKeyRegistration.BLOCK_MEMORY_KEY_CORE_ENTITY.get(), pos, state);
     }
 
     public void setGameState(MemoryKeyGameState gameState) {

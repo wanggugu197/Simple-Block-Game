@@ -1,6 +1,7 @@
 package com.simple_block_game.common.base.block;
 
 import com.simple_block_game.common.base.data.RotatedRefreshArea;
+import com.simple_block_game.util.multiVersion.MultiVersionHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -75,34 +76,34 @@ public class BaseRotatedRefreshBlock extends BaseRotatedBlock {
 
         BlockEntity be = serverLevel.getBlockEntity(pos);
         if (!(be instanceof BlockRefreshEntity refreshEntity)) {
-            player.sendOverlayMessage(Component.translatable("msg.common.refresh_entity_error"));
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.common.refresh_entity_error"), true);
             return InteractionResult.FAIL;
         }
 
         BlockPos corePos = refreshEntity.getCorePos();
         if (corePos == null) {
-            player.sendOverlayMessage(Component.translatable(coreNotFoundKey));
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable(coreNotFoundKey), true);
             return InteractionResult.FAIL;
         }
 
         BlockState coreState = serverLevel.getBlockState(corePos);
         if (!(coreState.getBlock() instanceof IGameCoreBlock coreBlock)) {
-            player.sendOverlayMessage(Component.translatable(coreInvalidKey));
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable(coreInvalidKey), true);
             return InteractionResult.FAIL;
         }
 
         switch (clickArea) {
             case LEFT_TOP -> {
                 coreBlock.minimizeGame(serverLevel, corePos, coreState);
-                player.sendOverlayMessage(Component.translatable(minimizedKey));
+                MultiVersionHelper.sendPlayerMessage(player, Component.translatable(minimizedKey), true);
             }
             case RIGHT_TOP -> {
                 coreBlock.closeGame(serverLevel, corePos, coreState);
-                player.sendOverlayMessage(Component.translatable(closedKey));
+                MultiVersionHelper.sendPlayerMessage(player, Component.translatable(closedKey), true);
             }
             case BOTTOM -> {
                 coreBlock.resetGame(serverLevel, corePos, coreState);
-                player.sendOverlayMessage(Component.translatable(resetKey));
+                MultiVersionHelper.sendPlayerMessage(player, Component.translatable(resetKey), true);
             }
         }
         return InteractionResult.SUCCESS;

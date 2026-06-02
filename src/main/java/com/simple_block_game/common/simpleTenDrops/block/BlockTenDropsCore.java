@@ -5,6 +5,7 @@ import com.simple_block_game.common.base.block.BaseVerticalBlock;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
 import com.simple_block_game.common.simpleTenDrops.data.TenDropsGameState;
 import com.simple_block_game.common.simpleTenDrops.logic.GameTenDropsHelper;
+import com.simple_block_game.util.multiVersion.MultiVersionHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -66,11 +67,11 @@ public class BlockTenDropsCore extends BaseVerticalBlock implements IGameCoreBlo
 
         if (!state.getValue(UNFOLDED)) {
             if (!checkLayoutAreaIsEmpty(serverLevel, pos, state)) {
-                player.sendOverlayMessage(Component.translatable("msg.common.obstructed"));
+                MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.common.obstructed"), true);
                 return InteractionResult.PASS;
             }
             unfoldGame(serverLevel, pos, state, player);
-            player.sendOverlayMessage(Component.translatable("msg.ten_drops.game_started"));
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.ten_drops.game_started"), true);
         }
 
         return InteractionResult.SUCCESS;
@@ -95,7 +96,7 @@ public class BlockTenDropsCore extends BaseVerticalBlock implements IGameCoreBlo
     public void startGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
         getCoreEntity(level, pos).ifPresent(entity -> {
             entity.setGameState(TenDropsGameState.PLAYING);
-            player.sendOverlayMessage(Component.translatable("msg.ten_drops.start"));
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.ten_drops.start"), true);
         });
     }
 

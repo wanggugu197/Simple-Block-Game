@@ -1,8 +1,8 @@
 package com.simple_block_game.common.simple24Puzzle.block;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simple24Puzzle.data.GameToken24Puzzle;
+import com.simple_block_game.common.simple24Puzzle.simple24PuzzleRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -30,7 +30,7 @@ public class Block24PuzzleDisplayEntity extends BaseGameBlockEntity {
     private BlockPos corePos;
 
     public Block24PuzzleDisplayEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_24PUZZLE_DISPLAY_ENTITY.get(), pos, state);
+        super(simple24PuzzleRegistration.BLOCK_24PUZZLE_DISPLAY_ENTITY.get(), pos, state);
     }
 
     public void setToken(GameToken24Puzzle newToken) {

@@ -1,8 +1,8 @@
 package com.simple_block_game.common.simple2048.block;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simple2048.data.Value2048;
+import com.simple_block_game.common.simple2048.simple2048Registration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -31,7 +31,7 @@ public class Block2048DisplayEntity extends BaseGameBlockEntity {
     private BlockPos corePos = null;
 
     public Block2048DisplayEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_2048_DISPLAY_ENTITY.get(), pos, state);
+        super(simple2048Registration.BLOCK_2048_DISPLAY_ENTITY.get(), pos, state);
     }
 
     public int getDisplayValue() {

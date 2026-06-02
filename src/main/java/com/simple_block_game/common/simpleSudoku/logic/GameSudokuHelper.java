@@ -7,6 +7,7 @@ import com.simple_block_game.common.simpleSudoku.block.BlockSudokuCore;
 import com.simple_block_game.common.simpleSudoku.block.BlockSudokuDisplay;
 import com.simple_block_game.common.simpleSudoku.data.SudokuDifficulty;
 import com.simple_block_game.common.simpleSudoku.logic.GameSudokuLogic.PuzzleResult;
+import com.simple_block_game.common.simpleSudoku.simpleSudokuRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -38,9 +39,9 @@ public final class GameSudokuHelper {
     }
 
     public static void generateLayout(ServerLevel level, BlockPos corePos, Direction coreFacing) {
-        BlockState displayState = SimpleBlockGameRegistration.BLOCK_SUDOKU_DISPLAY.get()
+        BlockState displayState = simpleSudokuRegistration.BLOCK_SUDOKU_DISPLAY.get()
                 .defaultBlockState().setValue(BaseVerticalBlock.FACING, coreFacing);
-        BlockState refreshState = SimpleBlockGameRegistration.BLOCK_SUDOKU_REFRESH.get()
+        BlockState refreshState = simpleSudokuRegistration.BLOCK_SUDOKU_REFRESH.get()
                 .defaultBlockState().setValue(BaseVerticalBlock.FACING, coreFacing);
         BlockState frameState = SimpleBlockGameRegistration.BLOCK_VERTICAL_FRAME.get()
                 .defaultBlockState().setValue(BaseVerticalBlock.FACING, coreFacing);
@@ -83,8 +84,8 @@ public final class GameSudokuHelper {
                 BlockPos pos = corePos.offset(x, 0, z);
                 Block block = level.getBlockState(pos).getBlock();
                 if (block == SimpleBlockGameRegistration.BLOCK_VERTICAL_FRAME.get() ||
-                        block == SimpleBlockGameRegistration.BLOCK_SUDOKU_DISPLAY.get() ||
-                        block == SimpleBlockGameRegistration.BLOCK_SUDOKU_REFRESH.get()) {
+                        block == simpleSudokuRegistration.BLOCK_SUDOKU_DISPLAY.get() ||
+                        block == simpleSudokuRegistration.BLOCK_SUDOKU_REFRESH.get()) {
                     level.removeBlock(pos, false);
                 }
             }
@@ -103,7 +104,7 @@ public final class GameSudokuHelper {
         if (coreState.getBlock() instanceof BlockSudokuCore) {
             Vec3 dropPos = Vec3.atCenterOf(corePos);
             level.addFreshEntity(new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z,
-                    new ItemStack(SimpleBlockGameRegistration.BLOCK_SUDOKU_CORE.get())));
+                    new ItemStack(simpleSudokuRegistration.BLOCK_SUDOKU_CORE.get())));
             level.removeBlock(corePos, false);
         }
     }
