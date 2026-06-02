@@ -4,10 +4,6 @@ tasks.register('slimJar', Jar) {
     from sourceSets.main.output
 }
 
-base {
-    archivesName = "${mod_name}-${minecraft_version}"
-}
-
 afterEvaluate {
     tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
         destinationDirectory = file('build/libs/')
