@@ -17,10 +17,6 @@ sourcesJar {
     from delombok
 }
 
-base {
-    archivesName = "${mod_name}-${minecraft_version}"
-}
-
 afterEvaluate {
     tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
         destinationDirectory = file('build/libs/')

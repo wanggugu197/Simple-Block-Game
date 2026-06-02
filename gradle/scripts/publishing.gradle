@@ -7,6 +7,14 @@ publishing {
     }
 
     repositories {
+        maven {
+            name = 'gtodysseyRepository'
+            url = 'https://maven.gtodyssey.com/releases'
+            credentials {
+                username = findProperty('gtodysseyRepositoryUsername')
+                password = findProperty('gtodysseyRepositoryPassword')
+            }
+        }
         // Add repositories to publish to here.
         maven {
             credentials {
@@ -15,4 +23,20 @@ publishing {
             }
         }
     }
+}
+
+gtoPublish {
+    publishMaven = true
+    publishGithub = true
+    publishCurseforge = true
+
+    mavenRepoUrl = 'releases'
+
+    minecraftVersion = '1.21.1'
+    modLoader = 'NeoForge'
+
+    githubRepo = 'wanggugu197/Simple-Block-Game'
+
+    curseforgeProjectId = '1555589'
+    curseforgeJavaVersion = 'Java 21'
 }
