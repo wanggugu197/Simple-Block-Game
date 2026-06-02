@@ -1,6 +1,6 @@
 package com.simple_block_game.common.simpleSudoku.logic;
 
-import com.simple_block_game.common.simpleSudoku.data.Difficulty;
+import com.simple_block_game.common.simpleSudoku.data.SudokuDifficulty;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +19,7 @@ public final class GameSudokuLogic {
 
     private static final ThreadLocal<Random> RANDOM = ThreadLocal.withInitial(Random::new);
 
-    public static PuzzleResult generatePuzzle(Difficulty difficulty, boolean diagonalMode) {
+    public static PuzzleResult generatePuzzle(SudokuDifficulty difficulty, boolean diagonalMode) {
         int[][] solution = new int[SIZE][SIZE];
         fillBoardRecursive(solution, diagonalMode, RANDOM.get());
         int[][] puzzle = new int[SIZE][SIZE];
@@ -118,7 +118,7 @@ public final class GameSudokuLogic {
         return true;
     }
 
-    private static void createPuzzle(int[][] board, Difficulty difficulty, boolean diagonalMode) {
+    private static void createPuzzle(int[][] board, SudokuDifficulty difficulty, boolean diagonalMode) {
         Random random = RANDOM.get();
         int targetEmpty = TOTAL_CELLS - difficulty.getTargetHints();
         List<Integer> positions = new ArrayList<>(TOTAL_CELLS);

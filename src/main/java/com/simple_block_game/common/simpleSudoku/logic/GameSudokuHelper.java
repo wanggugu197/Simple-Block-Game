@@ -5,7 +5,7 @@ import com.simple_block_game.common.base.block.BaseVerticalBlock;
 import com.simple_block_game.common.base.block.BlockRefreshEntity;
 import com.simple_block_game.common.simpleSudoku.block.BlockSudokuCore;
 import com.simple_block_game.common.simpleSudoku.block.BlockSudokuDisplay;
-import com.simple_block_game.common.simpleSudoku.data.Difficulty;
+import com.simple_block_game.common.simpleSudoku.data.SudokuDifficulty;
 import com.simple_block_game.common.simpleSudoku.logic.GameSudokuLogic.PuzzleResult;
 
 import net.minecraft.core.BlockPos;
@@ -108,7 +108,7 @@ public final class GameSudokuHelper {
         }
     }
 
-    public static void initGame(ServerLevel level, BlockPos corePos, Difficulty difficulty, boolean diagonalMode) {
+    public static void initGame(ServerLevel level, BlockPos corePos, SudokuDifficulty difficulty, boolean diagonalMode) {
         PuzzleResult result = GameSudokuLogic.generatePuzzle(difficulty, diagonalMode);
         writeDisplayGridWithInitial(level, corePos, result.puzzle());
         BlockState coreState = level.getBlockState(corePos);

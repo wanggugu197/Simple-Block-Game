@@ -2,39 +2,31 @@ package com.simple_block_game.common;
 
 import com.simple_block_game.SimpleBlockGame;
 import com.simple_block_game.common.base.block.*;
-import com.simple_block_game.common.base.renderer.BlockRefreshEntityRenderer;
 import com.simple_block_game.common.simple2048.block.Block2048Core;
 import com.simple_block_game.common.simple2048.block.Block2048CoreEntity;
 import com.simple_block_game.common.simple2048.block.Block2048Display;
 import com.simple_block_game.common.simple2048.block.Block2048DisplayEntity;
-import com.simple_block_game.common.simple2048.renderer.Block2048CoreEntityRenderer;
-import com.simple_block_game.common.simple2048.renderer.Block2048DisplayEntityRenderer;
+import com.simple_block_game.common.simple24Puzzle.block.Block24PuzzleCore;
+import com.simple_block_game.common.simple24Puzzle.block.Block24PuzzleCoreEntity;
+import com.simple_block_game.common.simple24Puzzle.block.Block24PuzzleDisplay;
+import com.simple_block_game.common.simple24Puzzle.block.Block24PuzzleDisplayEntity;
 import com.simple_block_game.common.simpleMemoryKey.block.BlockMemoryKeyButton;
 import com.simple_block_game.common.simpleMemoryKey.block.BlockMemoryKeyButtonEntity;
 import com.simple_block_game.common.simpleMemoryKey.block.BlockMemoryKeyCore;
 import com.simple_block_game.common.simpleMemoryKey.block.BlockMemoryKeyCoreEntity;
-import com.simple_block_game.common.simpleMemoryKey.renderer.BlockMemoryKeyButtonEntityRenderer;
-import com.simple_block_game.common.simpleMemoryKey.renderer.BlockMemoryKeyCoreEntityRenderer;
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperCore;
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperCoreEntity;
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperDisplay;
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperDisplayEntity;
-import com.simple_block_game.common.simpleMinesweeper.renderer.BlockMinesweeperCoreEntityRenderer;
-import com.simple_block_game.common.simpleMinesweeper.renderer.BlockMinesweeperDisplayEntityRenderer;
 import com.simple_block_game.common.simpleSudoku.block.BlockSudokuCore;
 import com.simple_block_game.common.simpleSudoku.block.BlockSudokuCoreEntity;
 import com.simple_block_game.common.simpleSudoku.block.BlockSudokuDisplay;
 import com.simple_block_game.common.simpleSudoku.block.BlockSudokuDisplayEntity;
-import com.simple_block_game.common.simpleSudoku.renderer.BlockSudokuCoreEntityRenderer;
-import com.simple_block_game.common.simpleSudoku.renderer.BlockSudokuDisplayEntityRenderer;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsCore;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsCoreEntity;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsDisplay;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsDisplayEntity;
-import com.simple_block_game.common.simpleTenDrops.renderer.BlockTenDropsCoreEntityRenderer;
-import com.simple_block_game.common.simpleTenDrops.renderer.BlockTenDropsDisplayEntityRenderer;
 
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
@@ -57,6 +49,7 @@ import static com.simple_block_game.util.generator.ModBlockModelGeneratorHelper.
 
 /**
  * 方块和实体注册类
+ * 渲染器注册已移至 ClientInit.java，使用延迟加载机制避免服务端加载客户端类
  */
 public class SimpleBlockGameRegistration {
 
@@ -129,14 +122,12 @@ public class SimpleBlockGameRegistration {
             .object("2048_core_entity")
             .blockEntity(REGISTRATE, "2048_core_entity", (b, p, s) -> new Block2048CoreEntity(p, s))
             .validBlock(BLOCK_2048_CORE)
-            .renderer(() -> context -> (BlockEntityRenderer) new Block2048CoreEntityRenderer(context))
             .register();
 
     public static final BlockEntityEntry<BlockEntity> BLOCK_2048_DISPLAY_ENTITY = REGISTRATE
             .object("2048_display_entity")
             .blockEntity(REGISTRATE, "2048_display_entity", (b, p, s) -> new Block2048DisplayEntity(p, s))
             .validBlock(BLOCK_2048_DISPLAY)
-            .renderer(() -> context -> (BlockEntityRenderer) new Block2048DisplayEntityRenderer(context))
             .register();
 
     // ==================== Minesweeper ====================
@@ -193,14 +184,12 @@ public class SimpleBlockGameRegistration {
             .object("minesweeper_core_entity")
             .blockEntity(REGISTRATE, "minesweeper_core_entity", (b, p, s) -> new BlockMinesweeperCoreEntity(p, s))
             .validBlock(BLOCK_MINESWEEPER_CORE)
-            .renderer(() -> context -> (BlockEntityRenderer) new BlockMinesweeperCoreEntityRenderer(context))
             .register();
 
     public static final BlockEntityEntry<BlockEntity> BLOCK_MINESWEEPER_DISPLAY_ENTITY = REGISTRATE
             .object("minesweeper_display_entity")
             .blockEntity(REGISTRATE, "minesweeper_display_entity", (b, p, s) -> new BlockMinesweeperDisplayEntity(p, s))
             .validBlock(BLOCK_MINESWEEPER_DISPLAY)
-            .renderer(() -> context -> (BlockEntityRenderer) new BlockMinesweeperDisplayEntityRenderer(context))
             .register();
 
     // ==================== Memory Key ====================
@@ -256,14 +245,12 @@ public class SimpleBlockGameRegistration {
             .object("memory_key_core_entity")
             .blockEntity(REGISTRATE, "memory_key_core_entity", (b, p, s) -> new BlockMemoryKeyCoreEntity(p, s))
             .validBlock(BLOCK_MEMORY_KEY_CORE)
-            .renderer(() -> context -> (BlockEntityRenderer) new BlockMemoryKeyCoreEntityRenderer(context))
             .register();
 
     public static final BlockEntityEntry<BlockEntity> BLOCK_MEMORY_KEY_BUTTON_ENTITY = REGISTRATE
             .object("memory_key_button_entity")
             .blockEntity(REGISTRATE, "memory_key_button_entity", (b, p, s) -> new BlockMemoryKeyButtonEntity(p, s))
             .validBlock(BLOCK_MEMORY_KEY_BUTTON)
-            .renderer(() -> context -> (BlockEntityRenderer) new BlockMemoryKeyButtonEntityRenderer(context))
             .register();
 
     // ==================== Ten Drops ====================
@@ -319,14 +306,12 @@ public class SimpleBlockGameRegistration {
             .object("ten_drops_core_entity")
             .blockEntity(REGISTRATE, "ten_drops_core_entity", (b, p, s) -> new BlockTenDropsCoreEntity(p, s))
             .validBlock(BLOCK_TEN_DROPS_CORE)
-            .renderer(() -> context -> (BlockEntityRenderer) new BlockTenDropsCoreEntityRenderer(context))
             .register();
 
     public static final BlockEntityEntry<BlockEntity> BLOCK_TEN_DROPS_DISPLAY_ENTITY = REGISTRATE
             .object("ten_drops_display_entity")
             .blockEntity(REGISTRATE, "ten_drops_display_entity", (b, p, s) -> new BlockTenDropsDisplayEntity(p, s))
             .validBlock(BLOCK_TEN_DROPS_DISPLAY)
-            .renderer(() -> context -> (BlockEntityRenderer) new BlockTenDropsDisplayEntityRenderer(context))
             .register();
 
     // ==================== Sudoku ====================
@@ -380,14 +365,73 @@ public class SimpleBlockGameRegistration {
             .object("sudoku_core_entity")
             .blockEntity(REGISTRATE, "sudoku_core_entity", (b, p, s) -> new BlockSudokuCoreEntity(p, s))
             .validBlock(BLOCK_SUDOKU_CORE)
-            .renderer(() -> context -> (BlockEntityRenderer) new BlockSudokuCoreEntityRenderer(context))
             .register();
 
     public static final BlockEntityEntry<BlockEntity> BLOCK_SUDOKU_DISPLAY_ENTITY = REGISTRATE
             .object("sudoku_display_entity")
             .blockEntity(REGISTRATE, "sudoku_display_entity", (b, p, s) -> new BlockSudokuDisplayEntity(p, s))
             .validBlock(BLOCK_SUDOKU_DISPLAY)
-            .renderer(() -> context -> (BlockEntityRenderer) new BlockSudokuDisplayEntityRenderer(context))
+            .register();
+
+    // ==================== 24 puzzle ====================
+    public static final BlockEntry<Block24PuzzleCore> BLOCK_24PUZZLE_CORE = REGISTRATE
+            .object("24puzzle_core")
+            .block(Block24PuzzleCore::new)
+            .blockstate((block, prov) -> registerHorizontalBlock(block.get(), prov, "block/base/rotated_side"))
+            .item((a, b) -> new BlockItem(a, b) {
+
+                @Override
+                public void appendHoverText(@NotNull ItemStack stack, Item.@NotNull TooltipContext context,
+                                            @NotNull List<Component> tooltipComponents, @NotNull TooltipFlag tooltipFlag) {
+                    tooltipComponents.add(Component.translatable("tooltip.24puzzle_core.1"));
+                    tooltipComponents.add(Component.translatable("tooltip.24puzzle_core.2"));
+                    tooltipComponents.add(Component.translatable("tooltip.24puzzle_core.3"));
+                    tooltipComponents.add(Component.translatable("tooltip.24puzzle_core.4"));
+                    tooltipComponents.add(Component.translatable("tooltip.24puzzle_core.5"));
+                    super.appendHoverText(stack, context, tooltipComponents, tooltipFlag);
+                }
+            })
+            .model((item, prov) -> prov.withExistingParent(item.getName(), SimpleBlockGame.getId("item/simple24puzzle/24puzzle_core")))
+            .tab(TAB_GANM.getKey())
+            .build()
+            .recipe((ctx, prov) -> ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ctx.get())
+                    .pattern("QQQ").pattern("QIQ").pattern("QQQ")
+                    .define('Q', Items.QUARTZ_PILLAR)
+                    .define('I', Items.CALCITE)
+                    .unlockedBy("unlocked", UNCONDITIONAL_CRITERION)
+                    .save(prov, prov.safeId(ctx.get())))
+            .register();
+
+    public static final BlockEntry<Block24PuzzleDisplay> BLOCK_24PUZZLE_DISPLAY = REGISTRATE
+            .object("24puzzle_display")
+            .block(Block24PuzzleDisplay::new)
+            .blockstate((block, prov) -> registerHorizontalBlock(block.get(), prov, "block/base/rotated_center"))
+            .item(BlockItem::new)
+            .model((item, prov) -> prov.withExistingParent(item.getName(), SimpleBlockGame.getId("item/simple24puzzle/24puzzle_display")))
+            .tab(TAB_GANM.getKey())
+            .build()
+            .register();
+
+    public static final BlockEntry<BaseRotatedRefreshBlock> BLOCK_24PUZZLE_REFRESH = REGISTRATE
+            .object("24puzzle_refresh")
+            .block(p -> BaseRotatedRefreshBlock.create(p, "simple24puzzle"))
+            .blockstate((block, prov) -> registerHorizontalBlock(block.get(), prov, "block/base/rotated_side"))
+            .item(BlockItem::new)
+            .model((item, prov) -> prov.withExistingParent(item.getName(), SimpleBlockGame.getId("block/base/rotated_refresh")))
+            .tab(TAB_GANM.getKey())
+            .build()
+            .register();
+
+    public static final BlockEntityEntry<BlockEntity> BLOCK_24PUZZLE_CORE_ENTITY = REGISTRATE
+            .object("24puzzle_core_entity")
+            .blockEntity(REGISTRATE, "24puzzle_core_entity", (b, p, s) -> new Block24PuzzleCoreEntity(p, s))
+            .validBlock(BLOCK_24PUZZLE_CORE)
+            .register();
+
+    public static final BlockEntityEntry<BlockEntity> BLOCK_24PUZZLE_DISPLAY_ENTITY = REGISTRATE
+            .object("24puzzle_display_entity")
+            .blockEntity(REGISTRATE, "24puzzle_display_entity", (b, p, s) -> new Block24PuzzleDisplayEntity(p, s))
+            .validBlock(BLOCK_24PUZZLE_DISPLAY)
             .register();
 
     // ==================== Refresh Entity (统一的刷新实体) ====================
@@ -399,7 +443,7 @@ public class SimpleBlockGameRegistration {
             .validBlock(BLOCK_MEMORY_KEY_REFRESH)
             .validBlock(BLOCK_TEN_DROPS_REFRESH)
             .validBlock(BLOCK_SUDOKU_REFRESH)
-            .renderer(() -> context -> (BlockEntityRenderer) new BlockRefreshEntityRenderer(context))
+            .validBlock(BLOCK_24PUZZLE_REFRESH)
             .register();
 
     // ==================== 框架方块 ====================

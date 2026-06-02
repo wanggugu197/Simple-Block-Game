@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
-public enum Difficulty implements StringRepresentable {
+public enum SudokuDifficulty implements StringRepresentable {
 
     EASY(52, "easy"),
     MEDIUM(40, "medium"),
@@ -17,7 +17,7 @@ public enum Difficulty implements StringRepresentable {
     private final int targetHints;
     private final String serializedName;
 
-    Difficulty(int targetHints, String serializedName) {
+    SudokuDifficulty(int targetHints, String serializedName) {
         this.targetHints = targetHints;
         this.serializedName = serializedName;
     }
@@ -27,8 +27,8 @@ public enum Difficulty implements StringRepresentable {
         return serializedName;
     }
 
-    public static @NotNull Difficulty fromSerializedName(@NotNull String serializedName) {
-        for (Difficulty diff : Difficulty.values()) {
+    public static @NotNull SudokuDifficulty fromSerializedName(@NotNull String serializedName) {
+        for (SudokuDifficulty diff : SudokuDifficulty.values()) {
             if (diff.getSerializedName().equals(serializedName)) {
                 return diff;
             }
@@ -36,7 +36,7 @@ public enum Difficulty implements StringRepresentable {
         return EASY;
     }
 
-    public Difficulty next() {
+    public SudokuDifficulty next() {
         return switch (this) {
             case EASY -> MEDIUM;
             case MEDIUM -> HARD;
@@ -45,7 +45,7 @@ public enum Difficulty implements StringRepresentable {
         };
     }
 
-    public Difficulty prev() {
+    public SudokuDifficulty prev() {
         return switch (this) {
             case EASY -> EXPERT;
             case MEDIUM -> EASY;
@@ -58,5 +58,5 @@ public enum Difficulty implements StringRepresentable {
         return "msg.sudoku.difficulty." + name().toLowerCase();
     }
 
-    public static final Codec<Difficulty> CODEC = StringRepresentable.fromEnum(Difficulty::values);
+    public static final Codec<SudokuDifficulty> CODEC = StringRepresentable.fromEnum(SudokuDifficulty::values);
 }

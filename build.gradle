@@ -2,7 +2,7 @@ plugins {
     id 'java-library'
     id 'eclipse'
     id 'maven-publish'
-    id 'com.gto.gtopublishgradleplugin' version '1.0.21'
+    id 'com.gto.gtopublishgradleplugin' version '1.0.22'
     id 'idea'
     alias libs.plugins.modDevGradle
     alias libs.plugins.spotless
@@ -19,10 +19,9 @@ if (secretFile.exists()){
     secretFile.withInputStream { stream ->
         secretProp.load(stream)
     }
-    // 把外部参数注入gradle全局属性，GTO插件自动读取gtoGithubToken
     secretProp.each { k,v ->
-        project.ext.set(k, v)
-        project.setProperty(k, v)
+        project.ext.set(k as String, v)
+        project.setProperty(k as String, v)
     }
 }
 

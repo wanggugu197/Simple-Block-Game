@@ -3,7 +3,7 @@ package com.simple_block_game.common.simpleSudoku.block;
 import com.simple_block_game.SimpleBlockGameConfig;
 import com.simple_block_game.common.base.block.BaseVerticalBlock;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
-import com.simple_block_game.common.simpleSudoku.data.Difficulty;
+import com.simple_block_game.common.simpleSudoku.data.SudokuDifficulty;
 import com.simple_block_game.common.simpleSudoku.data.SudokuGameState;
 import com.simple_block_game.common.simpleSudoku.logic.GameSudokuHelper;
 import com.simple_block_game.common.simpleSudoku.logic.GameSudokuReward;
@@ -127,7 +127,7 @@ public class BlockSudokuCore extends BaseVerticalBlock implements IGameCoreBlock
         BlockSudokuCoreEntity core = getCoreEntityOrError(level, pos, player);
         if (core == null) return;
 
-        Difficulty newDifficulty = forward ? core.getDifficulty().next() : core.getDifficulty().prev();
+        SudokuDifficulty newDifficulty = forward ? core.getDifficulty().next() : core.getDifficulty().prev();
         core.setDifficulty(newDifficulty);
         player.displayClientMessage(Component.translatable("msg.sudoku.difficulty_switched",
                 Component.translatable(newDifficulty.getDisplayName())), true);

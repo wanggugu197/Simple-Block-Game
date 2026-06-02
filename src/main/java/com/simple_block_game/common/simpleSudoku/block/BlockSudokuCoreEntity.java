@@ -2,7 +2,7 @@ package com.simple_block_game.common.simpleSudoku.block;
 
 import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
-import com.simple_block_game.common.simpleSudoku.data.Difficulty;
+import com.simple_block_game.common.simpleSudoku.data.SudokuDifficulty;
 import com.simple_block_game.common.simpleSudoku.data.SudokuGameState;
 
 import net.minecraft.core.BlockPos;
@@ -24,7 +24,7 @@ public class BlockSudokuCoreEntity extends BaseGameBlockEntity {
     @Getter
     private SudokuGameState gameState = SudokuGameState.IDLE;
     @Getter
-    private Difficulty difficulty = Difficulty.EASY;
+    private SudokuDifficulty difficulty = SudokuDifficulty.EASY;
     @Getter
     private boolean diagonalMode = false;
 
@@ -37,7 +37,7 @@ public class BlockSudokuCoreEntity extends BaseGameBlockEntity {
         syncToClient();
     }
 
-    public void setDifficulty(Difficulty difficulty) {
+    public void setDifficulty(SudokuDifficulty difficulty) {
         this.difficulty = difficulty;
         syncToClient();
     }
@@ -75,8 +75,8 @@ public class BlockSudokuCoreEntity extends BaseGameBlockEntity {
         CompoundTag tag = pTag.contains(DATA_KEY) ? pTag.getCompound(DATA_KEY) : new CompoundTag();
         String stateStr = tag.contains(KEY_STATE) ? tag.getString(KEY_STATE) : SudokuGameState.IDLE.getSerializedName();
         gameState = SudokuGameState.fromSerializedName(stateStr);
-        String diffStr = tag.contains(KEY_DIFFICULTY) ? tag.getString(KEY_DIFFICULTY) : Difficulty.EASY.getSerializedName();
-        difficulty = Difficulty.fromSerializedName(diffStr);
+        String diffStr = tag.contains(KEY_DIFFICULTY) ? tag.getString(KEY_DIFFICULTY) : SudokuDifficulty.EASY.getSerializedName();
+        difficulty = SudokuDifficulty.fromSerializedName(diffStr);
         diagonalMode = tag.getBoolean(KEY_DIAGONAL);
     }
 }

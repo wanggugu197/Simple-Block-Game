@@ -3,7 +3,7 @@ package com.simple_block_game.common.simpleSudoku.renderer;
 import com.simple_block_game.SimpleBlockGame;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
 import com.simple_block_game.common.simpleSudoku.block.BlockSudokuCoreEntity;
-import com.simple_block_game.common.simpleSudoku.data.Difficulty;
+import com.simple_block_game.common.simpleSudoku.data.SudokuDifficulty;
 import com.simple_block_game.util.renderer.BaseBlockEntityRenderer;
 
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -27,7 +26,7 @@ public class BlockSudokuCoreEntityRenderer extends BaseBlockEntityRenderer<Block
 
     @Override
     protected ResourceLocation getTexture(BlockSudokuCoreEntity blockEntity) {
-        Difficulty difficulty = blockEntity.getDifficulty();
+        SudokuDifficulty difficulty = blockEntity.getDifficulty();
         boolean diagonalMode = blockEntity.isDiagonalMode();
         return SimpleBlockGame.getId(String.format(TEXTURE, difficulty.getSerializedName(), diagonalMode ? "diagonal" : "normal"));
     }
@@ -55,13 +54,6 @@ public class BlockSudokuCoreEntityRenderer extends BaseBlockEntityRenderer<Block
     @Override
     public boolean shouldRenderOffScreen(BlockSudokuCoreEntity blockEntity) {
         return true;
-    }
-
-    @Override
-    public boolean shouldRender(BlockSudokuCoreEntity blockEntity, Vec3 cameraPosition) {
-        return Vec3.atCenterOf(blockEntity.getBlockPos())
-                .multiply(1.0, 0.0, 1.0)
-                .closerThan(cameraPosition.multiply(1.0, 0.0, 1.0), this.getViewDistance());
     }
 
     @Override

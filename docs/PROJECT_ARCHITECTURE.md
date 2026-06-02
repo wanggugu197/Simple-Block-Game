@@ -1,6 +1,6 @@
 # Simple Block Game 项目说明
 
-Simple Block Game 是一个 NeoForge 模组，把多个小游戏做成 Minecraft 方块玩法。当前包含 2048、扫雷、记忆键和十滴水。
+Simple Block Game 是一个 NeoForge 模组，把多个小游戏做成 Minecraft 方块玩法。当前包含 2048、扫雷、记忆键、十滴水和数独。
 
 ## 项目结构
 
@@ -14,6 +14,7 @@ src/main/java/com/simple_block_game/
 │   ├── simpleMinesweeper/            # 扫雷
 │   ├── simpleMemoryKey/              # 记忆键
 │   ├── simpleTenDrops/               # 十滴水
+│   ├── simpleSudoku/                 # 数独
 │   ├── CommonInit.java               # 公共初始化
 │   ├── SimpleBlockGameRegistration.java
 │   └── SimpleBlockGameRecipe.java
@@ -53,7 +54,7 @@ simpleXXX/
 | `IGameCoreBlock` | 定义展开、开始、重置、最小化、关闭等生命周期 |
 | `BaseGameBlockEntity` | 提供方块实体同步和方向读取 |
 | `BaseRotatedBlock` | 支持水平朝向，适合 2048 |
-| `BaseVerticalBlock` | 垂直布局基类，适合扫雷、记忆键、十滴水 |
+| `BaseVerticalBlock` | 垂直布局基类，适合扫雷、记忆键、十滴水、数独 |
 | `BaseRotatedRefreshBlock` | 旋转布局控制方块 |
 | `BaseVerticalRefreshBlock` | 垂直布局控制方块 |
 | `BlockRefreshEntity` | 保存刷新方块关联的核心方块位置 |
@@ -99,6 +100,7 @@ simpleXXX/
 - 扫雷奖励阈值
 - 记忆键关卡奖励
 - 十滴水关卡奖励
+- 数独难度和奖励
 
 ## 文档索引
 
@@ -106,4 +108,6 @@ simpleXXX/
 - `MINESWEEPER_GAME_DOC.md`：扫雷模块说明
 - `MEMORY_KEY_GAME_DOC.md`：记忆键模块说明
 - `TEN_DROPS_GAME_DOC.md`：十滴水模块说明
+- `SUDOKU_GAME_DOC.md`：数独模块说明
+- `TWENTY_FOUR_PUZZLE_GAME_DOC.md`：24点模块说明
 - `ADDING_GAME_DOC.md`：添加新游戏指南
