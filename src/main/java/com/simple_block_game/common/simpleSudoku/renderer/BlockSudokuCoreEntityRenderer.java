@@ -4,7 +4,7 @@ import com.simple_block_game.SimpleBlockGame;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
 import com.simple_block_game.common.base.renderer.GameBlockEntityRenderState;
 import com.simple_block_game.common.simpleSudoku.block.BlockSudokuCoreEntity;
-import com.simple_block_game.common.simpleSudoku.data.Difficulty;
+import com.simple_block_game.common.simpleSudoku.data.SudokuDifficulty;
 import com.simple_block_game.util.renderer.BaseBlockEntityRenderer;
 
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -24,7 +24,7 @@ public class BlockSudokuCoreEntityRenderer extends BaseBlockEntityRenderer<Block
     public static class BlockSudokuCoreEntityRenderState extends GameBlockEntityRenderState {
 
         public boolean unfolded = false;
-        public Difficulty difficulty = Difficulty.EASY;
+        public SudokuDifficulty difficulty = SudokuDifficulty.EASY;
         public boolean diagonalMode = false;
     }
 
@@ -72,13 +72,6 @@ public class BlockSudokuCoreEntityRenderer extends BaseBlockEntityRenderer<Block
     @Override
     public boolean shouldRenderOffScreen() {
         return true;
-    }
-
-    @Override
-    public boolean shouldRender(BlockSudokuCoreEntity blockEntity, Vec3 cameraPosition) {
-        return Vec3.atCenterOf(blockEntity.getBlockPos())
-                .multiply(1.0, 0.0, 1.0)
-                .closerThan(cameraPosition.multiply(1.0, 0.0, 1.0), this.getViewDistance());
     }
 
     @Override

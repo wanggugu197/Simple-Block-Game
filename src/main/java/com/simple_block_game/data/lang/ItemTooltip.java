@@ -40,5 +40,12 @@ public class ItemTooltip {
         addLang("tooltip.sudoku_core.3", "点击右上角可开启/关闭对角线模式", "Click the top-right corner to enable/disable diagonal mode.");
         addLang("tooltip.sudoku_core.4", "点击数字格子可填写或清除数字", "Click number cells to fill or clear digits.");
         addLang("tooltip.sudoku_core.5", "完成数独即可获胜", "Complete the sudoku to win.");
+
+        // 24 Puzzle
+        addLang("tooltip.24puzzle_core.1", "点击核心方块正面中心区域展开游戏", "Click the center of the core block front face to unfold the game.");
+        addLang("tooltip.24puzzle_core.2", "使用显示的4个数字和运算符组合计算出24", "Use the 4 displayed numbers with operators to calculate 24.");
+        addLang("tooltip.24puzzle_core.3", "点击显示方块选择数字或运算符输入表达式", "Click display blocks to select numbers or operators for your expression.");
+        addLang("tooltip.24puzzle_core.4", "点击左上角清除输入，点击右上角撤销最后输入", "Click top-left to clear input, top-right to undo last entry.");
+        addLang("tooltip.24puzzle_core.5", "点击核心方块验证答案，连续答对可获得奖励", "Click the core block to verify your answer. Consecutive correct answers earn rewards.");
     }
 }

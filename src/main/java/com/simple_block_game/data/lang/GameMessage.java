@@ -91,5 +91,16 @@ public class GameMessage {
         addLang("msg.sudoku.minimized", "数独布局已最小化！", "Sudoku layout minimized!");
         addLang("msg.sudoku.closed", "数独布局已关闭！", "Sudoku layout closed!");
         addLang("msg.sudoku.reset", "数独游戏已重置！", "Sudoku game reset!");
+
+        // ========== Game 24 Puzzle ==========
+        addLang("msg.simple24puzzle.game_started", "24点游戏已开始！", "24 Puzzle Game Started!");
+        addLang("msg.simple24puzzle.success", "恭喜！完成%s题共消耗时间：%s！", "Congratulations! Completed %s questions, time consumed %s!");
+        addLang("msg.simple24puzzle.failed", "答案不正确，请重试！", "Incorrect answer! Please try again!");
+
+        addLang("msg.simple24puzzle.core_not_found", "未找到24点核心方块！", "24 Puzzle Core block not found!");
+        addLang("msg.simple24puzzle.core_invalid", "无效的24点核心方块！", "Invalid 24 Puzzle Core block!");
+        addLang("msg.simple24puzzle.minimized", "24点布局已最小化！", "24 Puzzle layout minimized!");
+        addLang("msg.simple24puzzle.closed", "24点布局已关闭！", "24 Puzzle layout closed!");
+        addLang("msg.simple24puzzle.reset", "24点游戏已重置！", "24 Puzzle game reset!");
     }
 }

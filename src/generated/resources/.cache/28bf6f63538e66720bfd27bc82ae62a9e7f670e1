@@ -1,7 +1,10 @@
-// 26.1.2	2026-06-01T20:58:48.9628968	RegistryCore Provider for simple_block_game [, Loot Tables, Advancements, Datapack Registries, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Model Definitions - simple_block_game, Lang (Languages: en_us for mod: simple_block_game), simple_block_game, Lang (Languages: zh_cn for mod: simple_block_game)]
+// 26.1.2	2026-06-03T23:37:04.3430007	RegistryCore Provider for simple_block_game [, Loot Tables, Advancements, Datapack Registries, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Model Definitions - simple_block_game, Lang (Languages: en_us for mod: simple_block_game), simple_block_game, Lang (Languages: zh_cn for mod: simple_block_game)]
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/2048_core.json
 5a0aeac02ff4cdab29a67767b1f4ed5106ba8881 assets/simple_block_game/blockstates/2048_display.json
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/2048_refresh.json
+f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/24puzzle_core.json
+5a0aeac02ff4cdab29a67767b1f4ed5106ba8881 assets/simple_block_game/blockstates/24puzzle_display.json
+f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/24puzzle_refresh.json
 5580f3bee681c26beb6ed64190dda44dcc974306 assets/simple_block_game/blockstates/memory_key_button.json
 5580f3bee681c26beb6ed64190dda44dcc974306 assets/simple_block_game/blockstates/memory_key_core.json
 8eab1717f24a3cb0eddfdc1f80f1c6e1b7b550e6 assets/simple_block_game/blockstates/memory_key_refresh.json
@@ -19,6 +22,9 @@ f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/ro
 7ee7a6010a970174a7d2170c2bbf9b55c8a4e9f0 assets/simple_block_game/items/2048_core.json
 74ee8e0fe3efd356d4e447bf70afe6e423a9d933 assets/simple_block_game/items/2048_display.json
 f2b4088fca00d68639fd08b4c17fc7c211cd4913 assets/simple_block_game/items/2048_refresh.json
+e88701015544a4c54e618e4ffa3907eaf70918fb assets/simple_block_game/items/24puzzle_core.json
+6c7b24b9b0c5cffd00ae85092dd8fc90a48b6bf9 assets/simple_block_game/items/24puzzle_display.json
+f2b4088fca00d68639fd08b4c17fc7c211cd4913 assets/simple_block_game/items/24puzzle_refresh.json
 3528aaacb23a6f493c7d79aad79fdc75c0658e79 assets/simple_block_game/items/memory_key_button.json
 381f30b0ca7a67b9e362feb38507abee11d5dce8 assets/simple_block_game/items/memory_key_core.json
 dc2651e8ff26015145e3c0ff5f8b8d910b96cc55 assets/simple_block_game/items/memory_key_refresh.json
@@ -34,15 +40,17 @@ dc2651e8ff26015145e3c0ff5f8b8d910b96cc55 assets/simple_block_game/items/sudoku_r
 c1e650fe99697840b3cd328efaa759dee09e5126 assets/simple_block_game/items/ten_drops_display.json
 dc2651e8ff26015145e3c0ff5f8b8d910b96cc55 assets/simple_block_game/items/ten_drops_refresh.json
 df8b8b5f0b5271d223927b71b249673811b29ed0 assets/simple_block_game/items/vertical_frame.json
-2a2782cdd933bc18b0b48e4528b4e927e78dd918 assets/simple_block_game/lang/en_us.json
-e7747e9f97a886570459811259682793fc8e828e assets/simple_block_game/lang/zh_cn.json
+667dc3f94ffc12c8c52394f99a3c59d6861bab9a assets/simple_block_game/lang/en_us.json
+4b197b06972db4dcd60751ee05df21749be979b4 assets/simple_block_game/lang/zh_cn.json
 f1c81d02493fd811a19bb67e09d0e59e500f4a36 assets/simple_block_game/models/item/simple_block_game.json
 e8281b5edad1d8e31c24c70d057f8e9e59edb570 data/minecraft/advancement/recipes/combat/make_2048_core.json
+ec53a65313441dff9efa740c53c780ffaab8a4ac data/minecraft/advancement/recipes/combat/make_24puzzle_core.json
 0c67c0e6906e6e6ede15400868627f5e60770643 data/minecraft/advancement/recipes/combat/make_memory_key_core.json
 5563905c19be6ae0758c270f78b8103257fafd7f data/minecraft/advancement/recipes/combat/make_minesweeper_core.json
 92995f98e0ce492a92f2e61664861819ff78d19d data/minecraft/advancement/recipes/combat/make_sudoku_core.json
 b049cf60d1545bddb443d4c770625c10e20da090 data/minecraft/advancement/recipes/combat/make_ten_drops_core.json
 54f85d09590b2d47ded97ddaa772d4fd485fc21b data/minecraft/recipe/make_2048_core.json
+cf8a7b78ead5b3188965c0fe9a490562a3b71b8d data/minecraft/recipe/make_24puzzle_core.json
 a6eb24b07211d0c3f45481ad66d6bab194ea895e data/minecraft/recipe/make_memory_key_core.json
 df15bfb974c68e7313099e49d4a399a3707e12ff data/minecraft/recipe/make_minesweeper_core.json
 7a27441f492bae5c3303623f6615569cd19fb68b data/minecraft/recipe/make_sudoku_core.json

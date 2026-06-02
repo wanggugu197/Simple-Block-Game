@@ -12,6 +12,7 @@ public class SimpleBlockGameConfig {
     public static final MemoryKeyRewardConfig MEMORY_KEY_CONFIG;
     public static final TenDropRewardConfig TEN_DROP_CONFIG;
     public static final SudokuRewardConfig SUDOKU_CONFIG;
+    public static final Game24PuzzleRewardConfig GAME_24PUZZLE_CONFIG;
 
     static {
         GAME_2048_CONFIG = new Game2048RewardConfig();
@@ -19,6 +20,7 @@ public class SimpleBlockGameConfig {
         MEMORY_KEY_CONFIG = new MemoryKeyRewardConfig();
         TEN_DROP_CONFIG = new TenDropRewardConfig();
         SUDOKU_CONFIG = new SudokuRewardConfig();
+        GAME_24PUZZLE_CONFIG = new Game24PuzzleRewardConfig();
         initConfig();
         SPEC = BUILDER.build();
     }
@@ -28,6 +30,7 @@ public class SimpleBlockGameConfig {
     public static ModConfigSpec.BooleanValue enableMemoryKeyGame;
     public static ModConfigSpec.BooleanValue enableTenDropGame;
     public static ModConfigSpec.BooleanValue enableSudokuGame;
+    public static ModConfigSpec.BooleanValue enable24PuzzleGame;
 
     private static void initConfig() {
         BUILDER.push("Simple Block Game Settings");
@@ -42,6 +45,8 @@ public class SimpleBlockGameConfig {
                 .define("enable_ten_drop_game", true);
         enableSudokuGame = BUILDER.comment("Enable Sudoku game")
                 .define("enable_sudoku_game", true);
+        enable24PuzzleGame = BUILDER.comment("Enable 24 Puzzle game")
+                .define("enable_24_puzzle_game", true);
 
         BUILDER.pop();
 
@@ -50,6 +55,7 @@ public class SimpleBlockGameConfig {
         MEMORY_KEY_CONFIG.init(BUILDER);
         TEN_DROP_CONFIG.init(BUILDER);
         SUDOKU_CONFIG.init(BUILDER);
+        GAME_24PUZZLE_CONFIG.init(BUILDER);
     }
 
     public static class Game2048RewardConfig {
@@ -354,6 +360,52 @@ public class SimpleBlockGameConfig {
                     .define("sudoku_hard_reward", "minecraft:chests/pillager_outpost");
             expertReward = builder.comment("Loot table for completing expert difficulty sudoku")
                     .define("sudoku_expert_reward", "minecraft:chests/bastion_treasure");
+
+            builder.pop();
+        }
+    }
+
+    public static class Game24PuzzleRewardConfig {
+
+        public ModConfigSpec.IntValue comboThreshold;
+        public ModConfigSpec.IntValue timeTier1Seconds;
+        public ModConfigSpec.ConfigValue<String> rewardTier1;
+        public ModConfigSpec.IntValue timeTier2Seconds;
+        public ModConfigSpec.ConfigValue<String> rewardTier2;
+        public ModConfigSpec.IntValue timeTier3Seconds;
+        public ModConfigSpec.ConfigValue<String> rewardTier3;
+        public ModConfigSpec.IntValue timeTier4Seconds;
+        public ModConfigSpec.ConfigValue<String> rewardTier4;
+        public ModConfigSpec.ConfigValue<String> defaultReward;
+
+        public void init(ModConfigSpec.Builder builder) {
+            builder.push("24 Puzzle Game");
+
+            comboThreshold = builder.comment("Number of consecutive successes needed for time-based reward")
+                    .defineInRange("24_puzzle_combo_threshold", 5, 1, 20);
+
+            timeTier1Seconds = builder.comment("Time threshold (seconds) for tier 1 reward (fastest)")
+                    .defineInRange("24_puzzle_time_tier_1", 15, 1, 600);
+            rewardTier1 = builder.comment("Loot table for tier 1 reward")
+                    .define("24_puzzle_reward_tier_1", "minecraft:chests/end_city_treasure");
+
+            timeTier2Seconds = builder.comment("Time threshold (seconds) for tier 2 reward")
+                    .defineInRange("24_puzzle_time_tier_2", 30, 1, 600);
+            rewardTier2 = builder.comment("Loot table for tier 2 reward")
+                    .define("24_puzzle_reward_tier_2", "minecraft:chests/bastion_treasure");
+
+            timeTier3Seconds = builder.comment("Time threshold (seconds) for tier 3 reward")
+                    .defineInRange("24_puzzle_time_tier_3", 60, 1, 600);
+            rewardTier3 = builder.comment("Loot table for tier 3 reward")
+                    .define("24_puzzle_reward_tier_3", "minecraft:chests/woodland_mansion");
+
+            timeTier4Seconds = builder.comment("Time threshold (seconds) for tier 4 reward")
+                    .defineInRange("24_puzzle_time_tier_4", 90, 1, 600);
+            rewardTier4 = builder.comment("Loot table for tier 4 reward")
+                    .define("24_puzzle_reward_tier_4", "minecraft:chests/pillager_outpost");
+
+            defaultReward = builder.comment("Default loot table for rewards below tier 4")
+                    .define("24_puzzle_default_reward", "minecraft:chests/simple_dungeon");
 
             builder.pop();
         }
