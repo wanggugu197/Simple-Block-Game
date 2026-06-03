@@ -1,9 +1,9 @@
 package com.simple_block_game.common.simpleSudoku.block;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simpleSudoku.data.SudokuDifficulty;
 import com.simple_block_game.common.simpleSudoku.data.SudokuGameState;
+import com.simple_block_game.common.simpleSudoku.simpleSudokuRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -29,7 +29,7 @@ public class BlockSudokuCoreEntity extends BaseGameBlockEntity {
     private boolean diagonalMode = false;
 
     public BlockSudokuCoreEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_SUDOKU_CORE_ENTITY.get(), pos, state);
+        super(simpleSudokuRegistration.BLOCK_SUDOKU_CORE_ENTITY.get(), pos, state);
     }
 
     public void setGameState(SudokuGameState gameState) {

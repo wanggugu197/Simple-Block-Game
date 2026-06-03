@@ -6,6 +6,7 @@ import com.simple_block_game.common.base.block.BlockRefreshEntity;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
 import com.simple_block_game.common.simple2048.block.Block2048Core;
 import com.simple_block_game.common.simple2048.block.Block2048Display;
+import com.simple_block_game.common.simple2048.simple2048Registration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -42,9 +43,9 @@ public final class Game2048Helper {
         Direction.Axis axis = getAxis(coreFacing);
         int dir = getDirection(coreFacing);
 
-        BlockState displayState = SimpleBlockGameRegistration.BLOCK_2048_DISPLAY.get()
+        BlockState displayState = simple2048Registration.BLOCK_2048_DISPLAY.get()
                 .defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
-        BlockState refreshState = SimpleBlockGameRegistration.BLOCK_2048_REFRESH.get()
+        BlockState refreshState = simple2048Registration.BLOCK_2048_REFRESH.get()
                 .defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
         BlockState frameState = SimpleBlockGameRegistration.BLOCK_ROTATED_FRAME.get()
                 .defaultBlockState().setValue(BaseRotatedBlock.FACING, coreFacing);
@@ -104,7 +105,7 @@ public final class Game2048Helper {
         if (coreState.getBlock() instanceof Block2048Core) {
             Vec3 dropPos = Vec3.atCenterOf(corePos);
             level.addFreshEntity(new ItemEntity(level, dropPos.x, dropPos.y, dropPos.z,
-                    new ItemStack(SimpleBlockGameRegistration.BLOCK_2048_CORE.get())));
+                    new ItemStack(simple2048Registration.BLOCK_2048_CORE.get())));
             level.removeBlock(corePos, false);
         }
     }
@@ -179,7 +180,7 @@ public final class Game2048Helper {
 
     private static boolean is2048Block(Block block) {
         return block == SimpleBlockGameRegistration.BLOCK_ROTATED_FRAME.get() ||
-                block == SimpleBlockGameRegistration.BLOCK_2048_DISPLAY.get() ||
-                block == SimpleBlockGameRegistration.BLOCK_2048_REFRESH.get();
+                block == simple2048Registration.BLOCK_2048_DISPLAY.get() ||
+                block == simple2048Registration.BLOCK_2048_REFRESH.get();
     }
 }

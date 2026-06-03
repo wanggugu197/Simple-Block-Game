@@ -6,6 +6,8 @@ import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsCore;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsCoreEntity;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsDisplayEntity;
 import com.simple_block_game.common.simpleTenDrops.data.DropletLevel;
+import com.simple_block_game.common.simpleTenDrops.simpleTenDropsRegistration;
+import com.simple_block_game.util.multiVersion.MultiVersionHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,9 +26,9 @@ import static com.simple_block_game.common.simpleTenDrops.logic.GameTenDropsLogi
 public final class GameTenDropsHelper {
 
     private static final Block FRAME = SimpleBlockGameRegistration.BLOCK_VERTICAL_FRAME.get();
-    private static final Block DISPLAY = SimpleBlockGameRegistration.BLOCK_TEN_DROPS_DISPLAY.get();
-    private static final Block REFRESH = SimpleBlockGameRegistration.BLOCK_TEN_DROPS_REFRESH.get();
-    private static final Block CORE = SimpleBlockGameRegistration.BLOCK_TEN_DROPS_CORE.get();
+    private static final Block DISPLAY = simpleTenDropsRegistration.BLOCK_TEN_DROPS_DISPLAY.get();
+    private static final Block REFRESH = simpleTenDropsRegistration.BLOCK_TEN_DROPS_REFRESH.get();
+    private static final Block CORE = simpleTenDropsRegistration.BLOCK_TEN_DROPS_CORE.get();
 
     private static final Direction[] HORIZONTAL_DIRS = { Direction.NORTH, Direction.SOUTH, Direction.EAST, Direction.WEST };
 
@@ -126,12 +128,12 @@ public final class GameTenDropsHelper {
         if (!(coreEntity instanceof BlockTenDropsCoreEntity core)) return false;
 
         if (!core.getGameState().isInteractive()) {
-            player.displayClientMessage(Component.translatable("msg.ten_drops.invalid_click"), true);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.ten_drops.invalid_click"), true);
             return false;
         }
 
         if (displayEntity.getDropletLevel() == DropletLevel.BURST) {
-            player.displayClientMessage(Component.translatable("msg.ten_drops.invalid_click"), true);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.ten_drops.invalid_click"), true);
             return false;
         }
 

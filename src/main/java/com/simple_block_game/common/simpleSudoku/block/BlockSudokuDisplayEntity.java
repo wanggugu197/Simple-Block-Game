@@ -1,7 +1,7 @@
 package com.simple_block_game.common.simpleSudoku.block;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
+import com.simple_block_game.common.simpleSudoku.simpleSudokuRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -24,7 +24,7 @@ public class BlockSudokuDisplayEntity extends BaseGameBlockEntity {
     private boolean isInitial = false;
 
     public BlockSudokuDisplayEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_SUDOKU_DISPLAY_ENTITY.get(), pos, state);
+        super(simpleSudokuRegistration.BLOCK_SUDOKU_DISPLAY_ENTITY.get(), pos, state);
     }
 
     public void setValue(int value) {

@@ -1,6 +1,7 @@
 package com.simple_block_game.common.base.block;
 
 import com.simple_block_game.common.base.data.VerticalRefreshArea;
+import com.simple_block_game.util.multiVersion.MultiVersionHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -76,19 +77,19 @@ public class BaseVerticalRefreshBlock extends BaseVerticalBlock {
 
         BlockEntity be = serverLevel.getBlockEntity(pos);
         if (!(be instanceof BlockRefreshEntity refreshEntity)) {
-            player.displayClientMessage(Component.translatable("msg.common.refresh_entity_error"), true);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.common.refresh_entity_error"), true);
             return InteractionResult.FAIL;
         }
 
         BlockPos corePos = refreshEntity.getCorePos();
         if (corePos == null) {
-            player.displayClientMessage(Component.translatable(coreNotFoundKey), true);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable(coreNotFoundKey), true);
             return InteractionResult.FAIL;
         }
 
         BlockState coreState = serverLevel.getBlockState(corePos);
         if (!(coreState.getBlock() instanceof IGameCoreBlock coreBlock)) {
-            player.displayClientMessage(Component.translatable(coreInvalidKey), true);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable(coreInvalidKey), true);
             return InteractionResult.FAIL;
         }
 
@@ -98,15 +99,15 @@ public class BaseVerticalRefreshBlock extends BaseVerticalBlock {
         switch (area) {
             case NORTH_EAST -> {
                 coreBlock.minimizeGame(serverLevel, corePos, coreState);
-                player.displayClientMessage(Component.translatable(minimizedKey), true);
+                MultiVersionHelper.sendPlayerMessage(player, Component.translatable(minimizedKey), true);
             }
             case SOUTH_EAST -> {
                 coreBlock.closeGame(serverLevel, corePos, coreState);
-                player.displayClientMessage(Component.translatable(closedKey), true);
+                MultiVersionHelper.sendPlayerMessage(player, Component.translatable(closedKey), true);
             }
             case WEST -> {
                 coreBlock.resetGame(serverLevel, corePos, coreState);
-                player.displayClientMessage(Component.translatable(resetKey), true);
+                MultiVersionHelper.sendPlayerMessage(player, Component.translatable(resetKey), true);
             }
         }
         return InteractionResult.SUCCESS;

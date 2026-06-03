@@ -1,8 +1,8 @@
 package com.simple_block_game.common.simpleMemoryKey.block;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyPosition;
+import com.simple_block_game.common.simpleMemoryKey.simpleMemoryKeyRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -39,7 +39,7 @@ public class BlockMemoryKeyButtonEntity extends BaseGameBlockEntity {
     private int flashTimer = 0;
 
     public BlockMemoryKeyButtonEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_MEMORY_KEY_BUTTON_ENTITY.get(), pos, state);
+        super(simpleMemoryKeyRegistration.BLOCK_MEMORY_KEY_BUTTON_ENTITY.get(), pos, state);
     }
 
     public void setPosition(MemoryKeyPosition position) {

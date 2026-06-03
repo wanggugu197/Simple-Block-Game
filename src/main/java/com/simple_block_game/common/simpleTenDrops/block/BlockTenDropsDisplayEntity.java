@@ -1,8 +1,8 @@
 package com.simple_block_game.common.simpleTenDrops.block;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simpleTenDrops.data.DropletLevel;
+import com.simple_block_game.common.simpleTenDrops.simpleTenDropsRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -37,7 +37,7 @@ public class BlockTenDropsDisplayEntity extends BaseGameBlockEntity {
     public static final int CELL_DISTANCE = 4;
 
     public BlockTenDropsDisplayEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_TEN_DROPS_DISPLAY_ENTITY.get(), pos, state);
+        super(simpleTenDropsRegistration.BLOCK_TEN_DROPS_DISPLAY_ENTITY.get(), pos, state);
     }
 
     public int getLevelValue() {

@@ -9,6 +9,7 @@ import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperCore
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperDisplay;
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperDisplayEntity;
 import com.simple_block_game.common.simpleMinesweeper.data.MinesweeperState;
+import com.simple_block_game.common.simpleMinesweeper.simpleMinesweeperRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -24,9 +25,9 @@ import net.minecraft.world.phys.Vec3;
 public final class GameMinesweeperHelper {
 
     private static final Block FRAME = SimpleBlockGameRegistration.BLOCK_VERTICAL_FRAME.get();
-    private static final Block DISPLAY = SimpleBlockGameRegistration.BLOCK_MINESWEEPER_DISPLAY.get();
-    private static final Block REFRESH = SimpleBlockGameRegistration.BLOCK_MINESWEEPER_REFRESH.get();
-    private static final Block CORE = SimpleBlockGameRegistration.BLOCK_MINESWEEPER_CORE.get();
+    private static final Block DISPLAY = simpleMinesweeperRegistration.BLOCK_MINESWEEPER_DISPLAY.get();
+    private static final Block REFRESH = simpleMinesweeperRegistration.BLOCK_MINESWEEPER_REFRESH.get();
+    private static final Block CORE = simpleMinesweeperRegistration.BLOCK_MINESWEEPER_CORE.get();
 
     private GameMinesweeperHelper() {}
 

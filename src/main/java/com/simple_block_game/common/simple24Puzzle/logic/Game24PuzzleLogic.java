@@ -2,12 +2,7 @@ package com.simple_block_game.common.simple24Puzzle.logic;
 
 import com.simple_block_game.common.simple24Puzzle.data.GameToken24Puzzle;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EmptyStackException;
-import java.util.List;
-import java.util.Random;
-import java.util.Stack;
+import java.util.*;
 
 public final class Game24PuzzleLogic {
 

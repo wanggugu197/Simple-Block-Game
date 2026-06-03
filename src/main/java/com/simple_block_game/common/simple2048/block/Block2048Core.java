@@ -7,6 +7,7 @@ import com.simple_block_game.common.simple2048.data.Quadrant;
 import com.simple_block_game.common.simple2048.logic.Game2048Helper;
 import com.simple_block_game.common.simple2048.logic.Game2048Logic;
 import com.simple_block_game.common.simple2048.logic.Game2048Reward;
+import com.simple_block_game.util.multiVersion.MultiVersionHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -129,7 +130,7 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
             coreEntity.addScore(result.score());
             syncEntity(coreEntity);
             Game2048Reward.handleScoreReward(serverLevel, player, oldScore, coreEntity.getScore());
-            player.displayClientMessage(Component.translatable("msg.simple2048.move_score",
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.simple2048.move_score",
                     result.score(), coreEntity.getScore()), true);
         }
 
@@ -141,7 +142,7 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
         }
 
         if (result.gameOver()) {
-            player.displayClientMessage(Component.translatable("msg.simple2048.unmoveable",
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.simple2048.unmoveable",
                     coreEntity.getMaxNumber(), coreEntity.getScore()), true);
         }
     }
@@ -170,7 +171,7 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
     @Override
     public boolean unfoldGame(ServerLevel serverLevel, BlockPos pos, BlockState state, Player player) {
         if (!checkLayoutAreaIsEmpty(serverLevel, pos, state)) {
-            player.displayClientMessage(Component.translatable("msg.common.obstructed"), true);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.common.obstructed"), true);
             return false;
         }
 
@@ -180,7 +181,7 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
         Game2048Helper.writeDisplayGrid(serverLevel, pos, facing, Game2048Logic.initGrid());
         reset(serverLevel, pos);
 
-        player.displayClientMessage(Component.translatable("msg.simple2048.game_started"), true);
+        MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.simple2048.game_started"), true);
         return true;
     }
 
@@ -188,7 +189,7 @@ public class Block2048Core extends BaseRotatedBlock implements IGameCoreBlock {
     public void startGame(ServerLevel serverLevel, BlockPos pos, BlockState state, Player player) {
         Game2048Helper.writeDisplayGrid(serverLevel, pos, state.getValue(FACING), Game2048Logic.initGrid());
         reset(serverLevel, pos);
-        player.displayClientMessage(Component.translatable("msg.simple2048.game_started"), true);
+        MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.simple2048.game_started"), true);
     }
 
     @Override

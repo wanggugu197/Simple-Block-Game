@@ -5,6 +5,7 @@ import com.simple_block_game.common.base.block.BaseRotatedBlock;
 import com.simple_block_game.common.base.block.IGameCoreBlock;
 import com.simple_block_game.common.simple24Puzzle.logic.Game24PuzzleHelper;
 import com.simple_block_game.common.simple24Puzzle.logic.Game24PuzzleReward;
+import com.simple_block_game.util.multiVersion.MultiVersionHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -101,11 +102,11 @@ public class Block24PuzzleCore extends BaseRotatedBlock implements IGameCoreBloc
             long elapsedTicks = coreEntity.getLastSuccessTime() - coreEntity.getStartTime();
             int completedCount = coreEntity.getCompletedCount();
             Game24PuzzleReward.handleReward(serverLevel, player, coreEntity);
-            player.displayClientMessage(Component.translatable("msg.simple24puzzle.success",
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.simple24puzzle.success",
                     completedCount, Game24PuzzleHelper.getFormattedTime(elapsedTicks)), true);
             startGame(serverLevel, pos, state, player);
         } else {
-            player.displayClientMessage(Component.translatable("msg.simple24puzzle.failed"), true);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.simple24puzzle.failed"), true);
         }
     }
 
@@ -142,7 +143,7 @@ public class Block24PuzzleCore extends BaseRotatedBlock implements IGameCoreBloc
     @Override
     public boolean unfoldGame(ServerLevel serverLevel, BlockPos pos, BlockState state, Player player) {
         if (!checkLayoutAreaIsEmpty(serverLevel, pos, state)) {
-            player.displayClientMessage(Component.translatable("msg.common.obstructed"), true);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.common.obstructed"), true);
             return false;
         }
 

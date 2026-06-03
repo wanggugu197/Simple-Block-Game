@@ -7,6 +7,7 @@ import com.simple_block_game.common.simpleSudoku.data.SudokuDifficulty;
 import com.simple_block_game.common.simpleSudoku.data.SudokuGameState;
 import com.simple_block_game.common.simpleSudoku.logic.GameSudokuHelper;
 import com.simple_block_game.common.simpleSudoku.logic.GameSudokuReward;
+import com.simple_block_game.util.multiVersion.MultiVersionHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -73,7 +74,7 @@ public class BlockSudokuCore extends BaseVerticalBlock implements IGameCoreBlock
 
         BlockSudokuCoreEntity core = getCoreEntity(level, pos);
         if (core == null) {
-            player.displayClientMessage(Component.translatable("msg.common.entity_error"), true);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.common.entity_error"), true);
             return InteractionResult.PASS;
         }
         if (core.getGameState() == SudokuGameState.PLAYING) {
@@ -129,7 +130,7 @@ public class BlockSudokuCore extends BaseVerticalBlock implements IGameCoreBlock
 
         SudokuDifficulty newDifficulty = forward ? core.getDifficulty().next() : core.getDifficulty().prev();
         core.setDifficulty(newDifficulty);
-        player.displayClientMessage(Component.translatable("msg.sudoku.difficulty_switched",
+        MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.sudoku.difficulty_switched",
                 Component.translatable(newDifficulty.getDisplayName())), true);
     }
 
@@ -139,13 +140,13 @@ public class BlockSudokuCore extends BaseVerticalBlock implements IGameCoreBlock
 
         boolean newDiagonalMode = !core.isDiagonalMode();
         core.setDiagonalMode(newDiagonalMode);
-        player.displayClientMessage(Component.translatable(newDiagonalMode ? "msg.sudoku.diagonal_enabled" : "msg.sudoku.diagonal_disabled"), true);
+        MultiVersionHelper.sendPlayerMessage(player, Component.translatable(newDiagonalMode ? "msg.sudoku.diagonal_enabled" : "msg.sudoku.diagonal_disabled"), true);
     }
 
     private BlockSudokuCoreEntity getCoreEntityOrError(ServerLevel level, BlockPos pos, Player player) {
         BlockSudokuCoreEntity core = getCoreEntity(level, pos);
         if (core == null) {
-            player.displayClientMessage(Component.translatable("msg.common.entity_error"), true);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.common.entity_error"), true);
         }
         return core;
     }
@@ -181,7 +182,7 @@ public class BlockSudokuCore extends BaseVerticalBlock implements IGameCoreBlock
 
         coreEntity.setGameState(SudokuGameState.COMPLETE);
         GameSudokuReward.handleCompleteReward(level, player, coreEntity.getDifficulty());
-        player.displayClientMessage(Component.translatable("msg.sudoku.complete"), true);
+        MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.sudoku.complete"), true);
     }
 
     @Override
@@ -204,7 +205,7 @@ public class BlockSudokuCore extends BaseVerticalBlock implements IGameCoreBlock
             coreEntity.setGameState(SudokuGameState.PLAYING);
         }
 
-        player.displayClientMessage(Component.translatable("msg.sudoku.game_started"), true);
+        MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.sudoku.game_started"), true);
         return true;
     }
 
@@ -214,7 +215,7 @@ public class BlockSudokuCore extends BaseVerticalBlock implements IGameCoreBlock
         if (coreEntity != null) {
             GameSudokuHelper.initGame(serverLevel, pos, coreEntity.getDifficulty(), coreEntity.isDiagonalMode());
             coreEntity.setGameState(SudokuGameState.PLAYING);
-            player.displayClientMessage(Component.translatable("msg.sudoku.game_started"), true);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.sudoku.game_started"), true);
         }
     }
 

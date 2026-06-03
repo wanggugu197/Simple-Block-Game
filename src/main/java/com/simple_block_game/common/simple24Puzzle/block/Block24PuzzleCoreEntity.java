@@ -1,9 +1,9 @@
 package com.simple_block_game.common.simple24Puzzle.block;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simple24Puzzle.data.GameToken24Puzzle;
 import com.simple_block_game.common.simple24Puzzle.logic.Game24PuzzleHelper;
+import com.simple_block_game.common.simple24Puzzle.simple24PuzzleRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -45,7 +45,7 @@ public class Block24PuzzleCoreEntity extends BaseGameBlockEntity {
     private List<GameToken24Puzzle> inputTokens = new ArrayList<>();
 
     public Block24PuzzleCoreEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_24PUZZLE_CORE_ENTITY.get(), pos, state);
+        super(simple24PuzzleRegistration.BLOCK_24PUZZLE_CORE_ENTITY.get(), pos, state);
     }
 
     public void setStartTime(long startTime) {

@@ -8,6 +8,8 @@ import com.simple_block_game.common.simpleMemoryKey.block.BlockMemoryKeyCore;
 import com.simple_block_game.common.simpleMemoryKey.block.BlockMemoryKeyCoreEntity;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyGameState;
 import com.simple_block_game.common.simpleMemoryKey.data.MemoryKeyPosition;
+import com.simple_block_game.common.simpleMemoryKey.simpleMemoryKeyRegistration;
+import com.simple_block_game.util.multiVersion.MultiVersionHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -21,9 +23,9 @@ import net.minecraft.world.phys.Vec3;
 public final class GameMemoryKeyHelper {
 
     private static final Block FRAME = SimpleBlockGameRegistration.BLOCK_VERTICAL_FRAME.get();
-    private static final Block BUTTON = SimpleBlockGameRegistration.BLOCK_MEMORY_KEY_BUTTON.get();
-    private static final Block REFRESH = SimpleBlockGameRegistration.BLOCK_MEMORY_KEY_REFRESH.get();
-    private static final Block CORE = SimpleBlockGameRegistration.BLOCK_MEMORY_KEY_CORE.get();
+    private static final Block BUTTON = simpleMemoryKeyRegistration.BLOCK_MEMORY_KEY_BUTTON.get();
+    private static final Block REFRESH = simpleMemoryKeyRegistration.BLOCK_MEMORY_KEY_REFRESH.get();
+    private static final Block CORE = simpleMemoryKeyRegistration.BLOCK_MEMORY_KEY_CORE.get();
 
     public static final int BUTTON_INTERVAL_TICKS = 20;
     public static final int SEQUENCE_INTERVAL_TICKS = BUTTON_INTERVAL_TICKS + BlockMemoryKeyButtonEntity.FLASH_DURATION_TICKS;
@@ -50,7 +52,7 @@ public final class GameMemoryKeyHelper {
 
     public static void generateLayout(ServerLevel level, BlockPos corePos) {
         BlockState frameState = SimpleBlockGameRegistration.BLOCK_VERTICAL_FRAME.get().defaultBlockState();
-        BlockState refreshState = SimpleBlockGameRegistration.BLOCK_MEMORY_KEY_REFRESH.get().defaultBlockState();
+        BlockState refreshState = simpleMemoryKeyRegistration.BLOCK_MEMORY_KEY_REFRESH.get().defaultBlockState();
 
         for (MemoryKeyPosition pos : MemoryKeyPosition.values()) {
             placeButtonBlock(level, pos.getRelativePos(corePos), corePos, pos);
@@ -165,11 +167,11 @@ public final class GameMemoryKeyHelper {
         if (newIndex >= sequenceLength) {
             if (GameMemoryKeyLogic.isAllLevelsComplete(coreEntity.getCurrentLevel())) {
                 coreEntity.setGameState(MemoryKeyGameState.ALL_SUCCESS);
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.all_levels_complete"), true);
+                MultiVersionHelper.sendPlayerMessage(player, net.minecraft.network.chat.Component.translatable("msg.memory_key.all_levels_complete"), true);
                 GameMemoryKeyReward.handleReward(level, player, coreEntity.getCurrentLevel(), true);
             } else {
                 coreEntity.setGameState(MemoryKeyGameState.LEVEL_SUCCESS);
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.level_complete", coreEntity.getCurrentLevel().getLevelNumber()), true);
+                MultiVersionHelper.sendPlayerMessage(player, net.minecraft.network.chat.Component.translatable("msg.memory_key.level_complete", coreEntity.getCurrentLevel().getLevelNumber()), true);
             }
         }
     }
@@ -179,11 +181,11 @@ public final class GameMemoryKeyHelper {
 
         if (coreEntity.getRemainingLives() <= 0) {
             coreEntity.setGameState(MemoryKeyGameState.GAME_OVER);
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.game_over", coreEntity.getCurrentLevel().getLevelNumber()), true);
+            MultiVersionHelper.sendPlayerMessage(player, net.minecraft.network.chat.Component.translatable("msg.memory_key.game_over", coreEntity.getCurrentLevel().getLevelNumber()), true);
             GameMemoryKeyReward.handleReward(level, player, coreEntity.getCurrentLevel(), false);
         } else {
             coreEntity.setGameState(MemoryKeyGameState.ERROR);
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("msg.memory_key.wrong_input", coreEntity.getRemainingLives()), true);
+            MultiVersionHelper.sendPlayerMessage(player, net.minecraft.network.chat.Component.translatable("msg.memory_key.wrong_input", coreEntity.getRemainingLives()), true);
         }
     }
 

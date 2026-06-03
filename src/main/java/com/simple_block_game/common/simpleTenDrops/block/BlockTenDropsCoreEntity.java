@@ -1,11 +1,12 @@
 package com.simple_block_game.common.simpleTenDrops.block;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simpleTenDrops.data.TenDropsGameState;
 import com.simple_block_game.common.simpleTenDrops.logic.GameTenDropsHelper;
 import com.simple_block_game.common.simpleTenDrops.logic.GameTenDropsLogic;
 import com.simple_block_game.common.simpleTenDrops.logic.GameTenDropsReward;
+import com.simple_block_game.common.simpleTenDrops.simpleTenDropsRegistration;
+import com.simple_block_game.util.multiVersion.MultiVersionHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -43,7 +44,7 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
     private Player currentPlayer;
 
     public BlockTenDropsCoreEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_TEN_DROPS_CORE_ENTITY.get(), pos, state);
+        super(simpleTenDropsRegistration.BLOCK_TEN_DROPS_CORE_ENTITY.get(), pos, state);
     }
 
     public void setGameState(TenDropsGameState gameState) {
@@ -84,7 +85,7 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
             setGameState(TenDropsGameState.GAME_OVER);
             GameTenDropsHelper.updateDisplay(serverLevel, worldPosition, grid);
             if (currentPlayer != null) {
-                currentPlayer.displayClientMessage(Component.translatable("msg.ten_drops.game_over"), true);
+                MultiVersionHelper.sendPlayerMessage(currentPlayer, Component.translatable("msg.ten_drops.game_over"), true);
             }
         }
     }
@@ -93,13 +94,13 @@ public class BlockTenDropsCoreEntity extends BaseGameBlockEntity {
         GameTenDropsReward.handleLevelReward(serverLevel, currentPlayer, currentLevel);
         if (currentLevel >= 10) {
             if (currentPlayer != null) {
-                currentPlayer.displayClientMessage(Component.translatable("msg.ten_drops.total_complete"), true);
+                MultiVersionHelper.sendPlayerMessage(currentPlayer, Component.translatable("msg.ten_drops.total_complete"), true);
             }
             setGameState(TenDropsGameState.VICTORY);
         } else {
             currentLevel++;
             if (currentPlayer != null) {
-                currentPlayer.displayClientMessage(Component.translatable("msg.ten_drops.level_up", currentLevel), true);
+                MultiVersionHelper.sendPlayerMessage(currentPlayer, Component.translatable("msg.ten_drops.level_up", currentLevel), true);
             }
             nextLevel();
         }

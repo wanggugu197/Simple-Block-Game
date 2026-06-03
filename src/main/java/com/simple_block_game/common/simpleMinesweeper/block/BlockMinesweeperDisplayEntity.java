@@ -1,8 +1,8 @@
 package com.simple_block_game.common.simpleMinesweeper.block;
 
-import com.simple_block_game.common.SimpleBlockGameRegistration;
 import com.simple_block_game.common.base.block.BaseGameBlockEntity;
 import com.simple_block_game.common.simpleMinesweeper.data.MinesweeperState;
+import com.simple_block_game.common.simpleMinesweeper.simpleMinesweeperRegistration;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -30,7 +30,7 @@ public class BlockMinesweeperDisplayEntity extends BaseGameBlockEntity {
     private static final String KEY_CORE_Z = "CorePosZ";
 
     public BlockMinesweeperDisplayEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_MINESWEEPER_DISPLAY_ENTITY.get(), pos, state);
+        super(simpleMinesweeperRegistration.BLOCK_MINESWEEPER_DISPLAY_ENTITY.get(), pos, state);
     }
 
     public void setDisplayState(MinesweeperState newState) {
