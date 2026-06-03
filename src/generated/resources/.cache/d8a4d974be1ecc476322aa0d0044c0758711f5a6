@@ -1,10 +1,13 @@
-// 1.21.1	2026-06-04T00:48:49.6038266	Registrate Provider for simple_block_game [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider, Lang (zh_cn), Lang (zh_tw)]
+// 1.21.1	2026-06-04T20:19:00.1430922	Registrate Provider for simple_block_game [Registries, Data Maps, Recipes, Advancements, Loot Tables, Tags (blocks), Tags (enchantments), Tags (items), Tags (fluids), Tags (entity_types), generic_server_provider, Blockstates, Item models, Lang (en_us/en_ud), generic_client_provider, Lang (zh_cn), Lang (zh_tw)]
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/2048_core.json
 5a0aeac02ff4cdab29a67767b1f4ed5106ba8881 assets/simple_block_game/blockstates/2048_display.json
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/2048_refresh.json
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/24puzzle_core.json
 5a0aeac02ff4cdab29a67767b1f4ed5106ba8881 assets/simple_block_game/blockstates/24puzzle_display.json
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/24puzzle_refresh.json
+f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/just_get_10_core.json
+5a0aeac02ff4cdab29a67767b1f4ed5106ba8881 assets/simple_block_game/blockstates/just_get_10_display.json
+f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/just_get_10_refresh.json
 5580f3bee681c26beb6ed64190dda44dcc974306 assets/simple_block_game/blockstates/memory_key_button.json
 5580f3bee681c26beb6ed64190dda44dcc974306 assets/simple_block_game/blockstates/memory_key_core.json
 8eab1717f24a3cb0eddfdc1f80f1c6e1b7b550e6 assets/simple_block_game/blockstates/memory_key_refresh.json
@@ -19,16 +22,19 @@ f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/ro
 5580f3bee681c26beb6ed64190dda44dcc974306 assets/simple_block_game/blockstates/ten_drops_display.json
 8eab1717f24a3cb0eddfdc1f80f1c6e1b7b550e6 assets/simple_block_game/blockstates/ten_drops_refresh.json
 8eab1717f24a3cb0eddfdc1f80f1c6e1b7b550e6 assets/simple_block_game/blockstates/vertical_frame.json
-10aca137d388a1c7249bb6ea03723f13d5b8f940 assets/simple_block_game/lang/en_ud.json
-f45dab4b3fdfa0f07cd0913a01022cfcbefefb7b assets/simple_block_game/lang/en_us.json
-4b197b06972db4dcd60751ee05df21749be979b4 assets/simple_block_game/lang/zh_cn.json
-5957e819718a115622886b25f65140c6e5f741bd assets/simple_block_game/lang/zh_tw.json
+c4359f4f0591f7dbf85b0addf85d5ffa047b789d assets/simple_block_game/lang/en_ud.json
+1514225e594ebf4616c214040df38b85b8dd1f55 assets/simple_block_game/lang/en_us.json
+b31f985797be6a1dabd4300beaae11076f7fc7ef assets/simple_block_game/lang/zh_cn.json
+5cf4acd15f13ee8e4d292bf283a182ec121bbf4b assets/simple_block_game/lang/zh_tw.json
 ac17c58c96d8faaf68b85dca2fa88335b5c0086e assets/simple_block_game/models/item/2048_core.json
 07fe824efbf80229c8e2e07fb01f426a8b41d1ab assets/simple_block_game/models/item/2048_display.json
 8b2ea65895692fdad1727b6975a7cfe6bf16f08f assets/simple_block_game/models/item/2048_refresh.json
 b3504750691d99fdbd5f86dd88037c2e367c6428 assets/simple_block_game/models/item/24puzzle_core.json
 cf42767c0a08edf2d95992592cf27304f032d20c assets/simple_block_game/models/item/24puzzle_display.json
 8b2ea65895692fdad1727b6975a7cfe6bf16f08f assets/simple_block_game/models/item/24puzzle_refresh.json
+13e0574407daee7117aabd73d90449bf2144b654 assets/simple_block_game/models/item/just_get_10_core.json
+2527dffa0a86d5f529b29141c18293c53f1959b4 assets/simple_block_game/models/item/just_get_10_display.json
+8b2ea65895692fdad1727b6975a7cfe6bf16f08f assets/simple_block_game/models/item/just_get_10_refresh.json
 4b08b860e4fd3d51ea1d07699363ed7e202831c9 assets/simple_block_game/models/item/memory_key_button.json
 bd58a46cccbe90b3f21874a72c1cffbd2a1e51df assets/simple_block_game/models/item/memory_key_core.json
 f3cdb6c61be393cb0c1541f428d6fb9978289f97 assets/simple_block_game/models/item/memory_key_refresh.json
@@ -46,12 +52,14 @@ f3cdb6c61be393cb0c1541f428d6fb9978289f97 assets/simple_block_game/models/item/te
 fc0efd5c582a438059750a93ffe1c14541603180 assets/simple_block_game/models/item/vertical_frame.json
 a9ae90ebf1940d44caa6db66db1421b4f0bff14f data/simple_block_game/advancement/recipes/combat/2048_core.json
 d46b8a3f17f473a8f56356dc507b4aaa7c00bb59 data/simple_block_game/advancement/recipes/combat/24puzzle_core.json
+652ddc63a18b2affa01f771bada19cc1f937c784 data/simple_block_game/advancement/recipes/combat/just_get_10_core.json
 52b33ddcfb1d437401d0015176e7f68ca89a2a5d data/simple_block_game/advancement/recipes/combat/memory_key_core.json
 30214129b97fe77d604621a79a044f5258a05f29 data/simple_block_game/advancement/recipes/combat/minesweeper_core.json
 92461db4034e654e1431cc37f51743598422c971 data/simple_block_game/advancement/recipes/combat/sudoku_core.json
 c4b18e658f47b5d269507e7336037de7bc2bcb91 data/simple_block_game/advancement/recipes/combat/ten_drops_core.json
 0e0a2f092d50a242315a1d6e61061e3c79a2dced data/simple_block_game/recipe/2048_core.json
 587deda8389f5cfb6973fc9ad69aae893c6a4947 data/simple_block_game/recipe/24puzzle_core.json
+9bcca6b3d0046b10f712370d1c6beb31f09afab8 data/simple_block_game/recipe/just_get_10_core.json
 4f61b118e9528e612feb4925541162f1c1d70679 data/simple_block_game/recipe/memory_key_core.json
 9d56902c9f686400161e770713cf4b0b0081b9bb data/simple_block_game/recipe/minesweeper_core.json
 a1529482ab11baaa8dcf7a065e2615e778d53707 data/simple_block_game/recipe/sudoku_core.json

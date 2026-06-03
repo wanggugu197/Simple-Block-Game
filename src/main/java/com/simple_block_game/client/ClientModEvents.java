@@ -14,6 +14,11 @@ import com.simple_block_game.common.simple24Puzzle.block.Block24PuzzleDisplayEnt
 import com.simple_block_game.common.simple24Puzzle.renderer.Block24PuzzleCoreEntityRenderer;
 import com.simple_block_game.common.simple24Puzzle.renderer.Block24PuzzleDisplayEntityRenderer;
 import com.simple_block_game.common.simple24Puzzle.simple24PuzzleRegistration;
+import com.simple_block_game.common.simpleJustGet10.block.BlockJustGet10CoreEntity;
+import com.simple_block_game.common.simpleJustGet10.block.BlockJustGet10DisplayEntity;
+import com.simple_block_game.common.simpleJustGet10.renderer.BlockJustGet10CoreEntityRenderer;
+import com.simple_block_game.common.simpleJustGet10.renderer.BlockJustGet10DisplayEntityRenderer;
+import com.simple_block_game.common.simpleJustGet10.simpleJustGet10Registration;
 import com.simple_block_game.common.simpleMemoryKey.block.BlockMemoryKeyButtonEntity;
 import com.simple_block_game.common.simpleMemoryKey.block.BlockMemoryKeyCoreEntity;
 import com.simple_block_game.common.simpleMemoryKey.renderer.BlockMemoryKeyButtonEntityRenderer;
@@ -82,6 +87,12 @@ public class ClientModEvents {
         event.registerBlockEntityRenderer(
                 (BlockEntityType<Block24PuzzleDisplayEntity>) (BlockEntityType<?>) simple24PuzzleRegistration.BLOCK_24PUZZLE_DISPLAY_ENTITY.get(),
                 Block24PuzzleDisplayEntityRenderer::new);
+        event.registerBlockEntityRenderer(
+                (BlockEntityType<BlockJustGet10CoreEntity>) (BlockEntityType<?>) simpleJustGet10Registration.BLOCK_JUST_GET_10_CORE_ENTITY.get(),
+                BlockJustGet10CoreEntityRenderer::new);
+        event.registerBlockEntityRenderer(
+                (BlockEntityType<BlockJustGet10DisplayEntity>) (BlockEntityType<?>) simpleJustGet10Registration.BLOCK_JUST_GET_10_DISPLAY_ENTITY.get(),
+                BlockJustGet10DisplayEntityRenderer::new);
         event.registerBlockEntityRenderer(
                 (BlockEntityType<BlockRefreshEntity>) (BlockEntityType<?>) SimpleBlockGameRegistration.BLOCK_REFRESH_ENTITY.get(),
                 BlockRefreshEntityRenderer::new);

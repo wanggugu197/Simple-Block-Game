@@ -64,6 +64,10 @@ public class LangHandler {
         addLANG("block.simple_block_game.24puzzle_core", "24点核心方块", null);
         addLANG("block.simple_block_game.24puzzle_display", "24点显示方块", null);
         addLANG("block.simple_block_game.24puzzle_refresh", "24点控制方块", null);
+        // ==================== Just Get 10 ====================
+        addLANG("block.simple_block_game.just_get_10_core", "合成10核心方块", null);
+        addLANG("block.simple_block_game.just_get_10_display", "合成10显示方块", null);
+        addLANG("block.simple_block_game.just_get_10_refresh", "合成10控制方块", null);
         // ==================== Frame ====================
         addLANG("block.simple_block_game.rotated_frame", "框架方块", null);
         addLANG("block.simple_block_game.vertical_frame", "框架方块", null);

@@ -102,5 +102,16 @@ public class GameMessage {
         addLang("msg.simple24puzzle.minimized", "24点布局已最小化！", "24 Puzzle layout minimized!");
         addLang("msg.simple24puzzle.closed", "24点布局已关闭！", "24 Puzzle layout closed!");
         addLang("msg.simple24puzzle.reset", "24点游戏已重置！", "24 Puzzle game reset!");
+
+        // ========== Game Just Get 10 ==========
+        addLang("msg.just_get_10.game_started", "合成10游戏已开始！", "Just Get 10 Game Started!");
+        addLang("msg.just_get_10.score", "得分+%d | 总分：%d", "Score +%d | Total: %d");
+        addLang("msg.just_get_10.game_over", "游戏结束！最大数字：%d | 总分: %d", "Game Over! Max Value: %d | Total: %d");
+
+        addLang("msg.just_get_10.core_not_found", "未找到合成10核心方块！", "Just Get 10 Core block not found!");
+        addLang("msg.just_get_10.core_invalid", "无效的合成10核心方块！", "Invalid Just Get 10 Core block!");
+        addLang("msg.just_get_10.minimized", "合成10布局已最小化！", "Just Get 10 layout minimized!");
+        addLang("msg.just_get_10.closed", "合成10布局已关闭！", "Just Get 10 layout closed!");
+        addLang("msg.just_get_10.reset", "合成10游戏已重置！", "Just Get 10 game reset!");
     }
 }

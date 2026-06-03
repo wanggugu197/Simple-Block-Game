@@ -6,6 +6,7 @@ import com.simple_block_game.common.base.block.RotatedFrame;
 import com.simple_block_game.common.base.block.VerticalFrame;
 import com.simple_block_game.common.simple2048.simple2048Registration;
 import com.simple_block_game.common.simple24Puzzle.simple24PuzzleRegistration;
+import com.simple_block_game.common.simpleJustGet10.simpleJustGet10Registration;
 import com.simple_block_game.common.simpleMemoryKey.simpleMemoryKeyRegistration;
 import com.simple_block_game.common.simpleMinesweeper.simpleMinesweeperRegistration;
 import com.simple_block_game.common.simpleSudoku.simpleSudokuRegistration;
@@ -40,6 +41,7 @@ public class SimpleBlockGameRegistration {
         simpleTenDropsRegistration.init();
         simpleSudokuRegistration.init();
         simple24PuzzleRegistration.init();
+        simpleJustGet10Registration.init();
     }
 
     public static ItemEntry<Item> SIMPLE_BLOCK_GAME = REGISTRATE
@@ -67,6 +69,7 @@ public class SimpleBlockGameRegistration {
             .validBlock(simpleTenDropsRegistration.BLOCK_TEN_DROPS_REFRESH)
             .validBlock(simpleSudokuRegistration.BLOCK_SUDOKU_REFRESH)
             .validBlock(simple24PuzzleRegistration.BLOCK_24PUZZLE_REFRESH)
+            .validBlock(simpleJustGet10Registration.BLOCK_JUST_GET_10_REFRESH)
             .register();
 
     // ==================== 框架方块 ====================
