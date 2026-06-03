@@ -13,6 +13,7 @@ public class SimpleBlockGameConfig {
     public static final TenDropRewardConfig TEN_DROP_CONFIG;
     public static final SudokuRewardConfig SUDOKU_CONFIG;
     public static final Game24PuzzleRewardConfig GAME_24PUZZLE_CONFIG;
+    public static final JustGet10RewardConfig justGet10RewardConfig;
 
     static {
         GAME_2048_CONFIG = new Game2048RewardConfig();
@@ -21,6 +22,7 @@ public class SimpleBlockGameConfig {
         TEN_DROP_CONFIG = new TenDropRewardConfig();
         SUDOKU_CONFIG = new SudokuRewardConfig();
         GAME_24PUZZLE_CONFIG = new Game24PuzzleRewardConfig();
+        justGet10RewardConfig = new JustGet10RewardConfig();
         initConfig();
         SPEC = BUILDER.build();
     }
@@ -31,6 +33,7 @@ public class SimpleBlockGameConfig {
     public static ModConfigSpec.BooleanValue enableTenDropGame;
     public static ModConfigSpec.BooleanValue enableSudokuGame;
     public static ModConfigSpec.BooleanValue enable24PuzzleGame;
+    public static ModConfigSpec.BooleanValue enableJustGet10Game;
 
     private static void initConfig() {
         BUILDER.push("Simple Block Game Settings");
@@ -47,6 +50,8 @@ public class SimpleBlockGameConfig {
                 .define("enable_sudoku_game", true);
         enable24PuzzleGame = BUILDER.comment("Enable 24 Puzzle game")
                 .define("enable_24_puzzle_game", true);
+        enableJustGet10Game = BUILDER.comment("Enable Just Get 10 game")
+                .define("enable_just_get_10_game", true);
 
         BUILDER.pop();
 
@@ -56,6 +61,7 @@ public class SimpleBlockGameConfig {
         TEN_DROP_CONFIG.init(BUILDER);
         SUDOKU_CONFIG.init(BUILDER);
         GAME_24PUZZLE_CONFIG.init(BUILDER);
+        justGet10RewardConfig.init(BUILDER);
     }
 
     public static class Game2048RewardConfig {
@@ -406,6 +412,82 @@ public class SimpleBlockGameConfig {
 
             defaultReward = builder.comment("Default loot table for rewards below tier 4")
                     .define("24_puzzle_default_reward", "minecraft:chests/simple_dungeon");
+
+            builder.pop();
+        }
+    }
+
+    public static class JustGet10RewardConfig {
+
+        // 分数奖励配置（5个阈值）
+        public ModConfigSpec.IntValue scoreThreshold1;
+        public ModConfigSpec.ConfigValue<String> scoreReward1;
+        public ModConfigSpec.IntValue scoreThreshold2;
+        public ModConfigSpec.ConfigValue<String> scoreReward2;
+        public ModConfigSpec.IntValue scoreThreshold3;
+        public ModConfigSpec.ConfigValue<String> scoreReward3;
+        public ModConfigSpec.IntValue scoreThreshold4;
+        public ModConfigSpec.ConfigValue<String> scoreReward4;
+        public ModConfigSpec.IntValue scoreThreshold5;
+        public ModConfigSpec.ConfigValue<String> scoreReward5;
+
+        // 最大数字奖励配置（数字9-13）
+        public ModConfigSpec.ConfigValue<String> maxReward9;
+        public ModConfigSpec.ConfigValue<String> maxReward10;
+        public ModConfigSpec.ConfigValue<String> maxReward11;
+        public ModConfigSpec.ConfigValue<String> maxReward12;
+        public ModConfigSpec.ConfigValue<String> maxReward13;
+
+        // 难度配置
+        public ModConfigSpec.IntValue difficultyStart;
+        public ModConfigSpec.IntValue difficultyMax;
+
+        public void init(ModConfigSpec.Builder builder) {
+            builder.push("Just Get 10 Game");
+
+            // 难度配置
+            difficultyStart = builder.comment("Score at which difficulty scaling begins")
+                    .defineInRange("just_get_10_difficulty_start", 500, 0, Integer.MAX_VALUE);
+            difficultyMax = builder.comment("Score at which difficulty reaches maximum")
+                    .defineInRange("just_get_10_difficulty_max", 4000, 0, Integer.MAX_VALUE);
+
+            // 分数奖励配置
+            scoreThreshold1 = builder.comment("Score threshold 1")
+                    .defineInRange("just_get_10_score_threshold_1", 1000, 0, Integer.MAX_VALUE);
+            scoreReward1 = builder.comment("Loot table for score threshold 1")
+                    .define("just_get_10_score_reward_1", "minecraft:chests/simple_dungeon");
+
+            scoreThreshold2 = builder.comment("Score threshold 2")
+                    .defineInRange("just_get_10_score_threshold_2", 2000, 0, Integer.MAX_VALUE);
+            scoreReward2 = builder.comment("Loot table for score threshold 2")
+                    .define("just_get_10_score_reward_2", "minecraft:chests/simple_dungeon");
+
+            scoreThreshold3 = builder.comment("Score threshold 3")
+                    .defineInRange("just_get_10_score_threshold_3", 4000, 0, Integer.MAX_VALUE);
+            scoreReward3 = builder.comment("Loot table for score threshold 3")
+                    .define("just_get_10_score_reward_3", "minecraft:chests/simple_dungeon");
+
+            scoreThreshold4 = builder.comment("Score threshold 4")
+                    .defineInRange("just_get_10_score_threshold_4", 7000, 0, Integer.MAX_VALUE);
+            scoreReward4 = builder.comment("Loot table for score threshold 4")
+                    .define("just_get_10_score_reward_4", "minecraft:chests/simple_dungeon");
+
+            scoreThreshold5 = builder.comment("Score threshold 5")
+                    .defineInRange("just_get_10_score_threshold_5", 12000, 0, Integer.MAX_VALUE);
+            scoreReward5 = builder.comment("Loot table for score threshold 5")
+                    .define("just_get_10_score_reward_5", "minecraft:chests/simple_dungeon");
+
+            // 最大数字奖励配置
+            maxReward9 = builder.comment("Loot table for max value 9")
+                    .define("just_get_10_max_reward_9", "minecraft:chests/simple_dungeon");
+            maxReward10 = builder.comment("Loot table for max value 10")
+                    .define("just_get_10_max_reward_10", "minecraft:chests/simple_dungeon");
+            maxReward11 = builder.comment("Loot table for max value 11")
+                    .define("just_get_10_max_reward_11", "minecraft:chests/simple_dungeon");
+            maxReward12 = builder.comment("Loot table for max value 12")
+                    .define("just_get_10_max_reward_12", "minecraft:chests/simple_dungeon");
+            maxReward13 = builder.comment("Loot table for max value 13")
+                    .define("just_get_10_max_reward_13", "minecraft:chests/simple_dungeon");
 
             builder.pop();
         }

@@ -19,9 +19,10 @@ common/simpleMemoryKey/
 │   ├── GameMemoryKeyLogic.java
 │   ├── GameMemoryKeyHelper.java
 │   └── GameMemoryKeyReward.java
-└── renderer/
-    ├── BlockMemoryKeyCoreEntityRenderer.java
-    └── BlockMemoryKeyButtonEntityRenderer.java
+├── renderer/
+│   ├── BlockMemoryKeyCoreEntityRenderer.java
+│   └── BlockMemoryKeyButtonEntityRenderer.java
+└── simpleMemoryKeyRegistration.java
 ```
 
 ## 关键类

@@ -47,5 +47,12 @@ public class ItemTooltip {
         addLang("tooltip.24puzzle_core.3", "点击显示方块选择数字或运算符输入表达式", "Click display blocks to select numbers or operators for your expression.");
         addLang("tooltip.24puzzle_core.4", "点击左上角清除输入，点击右上角撤销最后输入", "Click top-left to clear input, top-right to undo last entry.");
         addLang("tooltip.24puzzle_core.5", "点击核心方块验证答案，连续答对可获得奖励", "Click the core block to verify your answer. Consecutive correct answers earn rewards.");
+
+        // Just Get 10
+        addLang("tooltip.just_get_10_core.1", "点击核心方块正面中心展开游戏", "Click the center of the core block front face to start.");
+        addLang("tooltip.just_get_10_core.2", "点击数字方块高亮相邻的相同数字", "Click a tile to highlight adjacent matching numbers.");
+        addLang("tooltip.just_get_10_core.3", "点击高亮方块合并，数字+1并获得分数", "Click highlighted tiles to merge. Number +1, score awarded.");
+        addLang("tooltip.just_get_10_core.4", "方块合并后上方补充新数字", "New tiles fill from top after merging.");
+        addLang("tooltip.just_get_10_core.5", "无可合并方块时游戏结束", "Game ends when no merges are possible.");
     }
 }

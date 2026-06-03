@@ -18,9 +18,10 @@ common/simple2048/
 │   ├── Game2048Logic.java
 │   ├── Game2048Helper.java
 │   └── Game2048Reward.java
-└── renderer/
-    ├── Block2048CoreEntityRenderer.java
-    └── Block2048DisplayEntityRenderer.java
+├── renderer/
+│   ├── Block2048CoreEntityRenderer.java
+│   └── Block2048DisplayEntityRenderer.java
+└── simple2048Registration.java
 ```
 
 ## 关键类

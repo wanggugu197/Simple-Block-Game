@@ -12,15 +12,16 @@ common/simpleSudoku/
 │   ├── BlockSudokuDisplay.java
 │   └── BlockSudokuDisplayEntity.java
 ├── data/
-│   ├── Difficulty.java
+│   ├── SudokuDifficulty.java
 │   └── SudokuGameState.java
 ├── logic/
 │   ├── GameSudokuLogic.java
 │   ├── GameSudokuHelper.java
 │   └── GameSudokuReward.java
-└── renderer/
-    ├── BlockSudokuCoreEntityRenderer.java
-    └── BlockSudokuDisplayEntityRenderer.java
+├── renderer/
+│   ├── BlockSudokuCoreEntityRenderer.java
+│   └── BlockSudokuDisplayEntityRenderer.java
+└── simpleSudokuRegistration.java
 ```
 
 ## 关键类
@@ -31,7 +32,7 @@ common/simpleSudoku/
 | `BlockSudokuCoreEntity` | 保存棋盘数据、游戏状态、完成数 |
 | `BlockSudokuDisplay` | 玩家点击的数独格子 |
 | `BlockSudokuDisplayEntity` | 保存单格数字和状态 |
-| `Difficulty` | 难度等级（简单、中等、困难） |
+| `SudokuDifficulty` | 难度等级（简单、中等、困难） |
 | `SudokuGameState` | 游戏状态（空闲、进行中、完成） |
 | `GameSudokuLogic` | 生成数独棋盘、验证填入、判断完成 |
 | `GameSudokuHelper` | 布局生成、显示同步、输入处理 |
@@ -66,6 +67,6 @@ common/simpleSudoku/
 
 ## 扩展注意
 
-- 新难度需要同步修改 `Difficulty` 枚举和谜题生成参数。
+- 新难度需要同步修改 `SudokuDifficulty` 枚举和谜题生成参数。
 - 格子状态需要更新显示实体和渲染器贴图。
 - 数独生成算法复杂度较高，需关注性能优化。

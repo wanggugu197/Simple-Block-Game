@@ -34,9 +34,10 @@ simpleXXX/
 │   ├── GameXXXLogic.java           # 纯游戏逻辑（必须）
 │   ├── GameXXXHelper.java          # 世界操作辅助（必须）
 │   └── GameXXXReward.java          # 奖励系统（可选）
-└── renderer/
-    ├── BlockXXXCoreEntityRenderer.java      # 核心渲染器（必须）
-    └── BlockXXXDisplayEntityRenderer.java   # 显示渲染器（可选）
+├── renderer/
+│   ├── BlockXXXCoreEntityRenderer.java      # 核心渲染器（必须）
+│   └── BlockXXXDisplayEntityRenderer.java   # 显示渲染器（可选）
+└── simpleXXXRegistration.java      # 模块内注册入口（必须）
 ```
 
 ## 3. 先写纯逻辑（推荐）
@@ -81,7 +82,7 @@ public final class GameXXXLogic {
 
 ### 4.1 游戏状态枚举
 
-流程复杂的游戏建议定义状态枚举：
+流程复杂的游戏建议定义状态枚举，需要实现 `StringRepresentable` 接口并提供 `fromSerializedName` 方法用于 NBT 反序列化：
 
 ```java
 public enum XXXGameState implements StringRepresentable {
@@ -99,6 +100,26 @@ public enum XXXGameState implements StringRepresentable {
     @Override
     public String getSerializedName() {
         return serializedName;
+    }
+
+    /** 从序列化名称获取枚举值（用于 NBT 读取） */
+    public static XXXGameState fromSerializedName(String name) {
+        for (XXXGameState state : values()) {
+            if (state.serializedName.equals(name)) {
+                return state;
+            }
+        }
+        return IDLE;  // 默认返回 IDLE
+    }
+
+    /** 判断游戏是否已结束 */
+    public boolean isGameEnded() {
+        return this == GAME_OVER || this == SUCCESS;
+    }
+
+    /** 判断游戏是否可交互 */
+    public boolean isInteractive() {
+        return this == PLAYING;
     }
 }
 ```
@@ -123,47 +144,61 @@ public enum GameToken24Puzzle implements StringRepresentable {
 
 ## 5. 实现核心方块实体
 
-`BlockXXXCoreEntity` 负责保存游戏数据和状态同步。
+`BlockXXXCoreEntity` 负责保存游戏数据和状态同步。使用 `lombok` 的 `@Getter` 和 `@Setter` 简化代码。
 
 **模板：**
 ```java
 public class BlockXXXCoreEntity extends BaseGameBlockEntity {
-    private static final String DATA_KEY = "XXXData";
+    // NBT 键常量
+    private static final String KEY_DATA = "XXXGameData";
+    private static final String KEY_GAME_STATE = "GameState";
+    private static final String KEY_SCORE = "Score";
+    private static final String KEY_LEVEL = "Level";
     
-    // 游戏状态
+    @Getter
     private XXXGameState gameState = XXXGameState.IDLE;
-    private int score;
-    private int level;
+    @Getter
+    private int score = 0;
+    @Getter
+    private int level = 1;
+    @Getter
+    @Setter
+    private Player currentPlayer;
 
     public BlockXXXCoreEntity(BlockPos pos, BlockState state) {
-        super(SimpleBlockGameRegistration.BLOCK_XXX_CORE_ENTITY.get(), pos, state);
+        // 使用模块内注册类引用实体类型
+        super(simpleXXXRegistration.BLOCK_XXX_CORE_ENTITY.get(), pos, state);
     }
 
-    // ===== 状态修改方法 =====
+    /** 设置游戏状态 */
+    public void setGameState(XXXGameState gameState) {
+        this.gameState = gameState;
+        syncToClient();
+    }
+
+    /** 添加分数 */
+    public void addScore(int points) {
+        score += points;
+        syncToClient();
+    }
+
+    /** 开始游戏 */
     public void startGame() {
         gameState = XXXGameState.PLAYING;
         score = 0;
         syncToClient();
     }
 
-    public void addScore(int points) {
-        score += points;
-        syncToClient();
-    }
-
-    public void setGameState(XXXGameState state) {
-        gameState = state;
-        syncToClient();
-    }
-
-    public void reset() {
+    /** 重置游戏 */
+    public void completeReset() {
         gameState = XXXGameState.IDLE;
         score = 0;
         level = 1;
+        // 重置游戏数据...
         syncToClient();
     }
 
-    // ===== 状态同步（关键）=====
+    /** 状态同步（关键） */
     private void syncToClient() {
         setChanged();
         if (level != null && !level.isClientSide()) {
@@ -171,24 +206,30 @@ public class BlockXXXCoreEntity extends BaseGameBlockEntity {
         }
     }
 
-    // ===== NBT 保存/读取 =====
+    /** NBT 保存 */
     @Override
-    protected void saveAdditional(ValueOutput output) {
+    protected void saveAdditional(@NonNull ValueOutput output) {
         super.saveAdditional(output);
         CompoundTag tag = new CompoundTag();
-        tag.putString("State", gameState.getSerializedName());
-        tag.putInt("Score", score);
-        tag.putInt("Level", level);
-        output.store(DATA_KEY, CompoundTag.CODEC, tag);
+        
+        tag.putString(KEY_GAME_STATE, gameState.getSerializedName());
+        tag.putInt(KEY_SCORE, score);
+        tag.putInt(KEY_LEVEL, level);
+        // 保存其他游戏数据...
+        
+        output.store(KEY_DATA, CompoundTag.CODEC, tag);
     }
 
+    /** NBT 读取 */
     @Override
-    protected void loadAdditional(ValueInput input) {
+    protected void loadAdditional(@NonNull ValueInput input) {
         super.loadAdditional(input);
-        CompoundTag tag = input.read(DATA_KEY, CompoundTag.CODEC).orElse(new CompoundTag());
-        gameState = XXXGameState.valueOf(tag.getString("State"));
-        score = tag.getIntOr("Score", 0);
-        level = tag.getIntOr("Level", 1);
+        CompoundTag tag = input.read(KEY_DATA, CompoundTag.CODEC).orElse(new CompoundTag());
+        
+        gameState = XXXGameState.fromSerializedName(tag.getStringOr(KEY_GAME_STATE, "idle"));
+        score = tag.getIntOr(KEY_SCORE, 0);
+        level = tag.getIntOr(KEY_LEVEL, 1);
+        // 读取其他游戏数据...
     }
 }
 ```
@@ -208,71 +249,127 @@ public class BlockXXXCoreEntity extends BaseGameBlockEntity {
 | 布局类型 | 基类 | 适用场景 |
 | --- | --- | --- |
 | 旋转布局 | `BaseRotatedBlock` | 面向玩家朝向，如2048、24点 |
-| 垂直布局 | `BaseVerticalBlock` | 固定朝上，如扫雷、数独 |
+| 垂直布局 | `BaseVerticalBlock` | 固定朝上，如扫雷、记忆键、十滴水、数独 |
 
 **核心方块必须实现 `IGameCoreBlock`**：
 
 ```java
 public class BlockXXXCore extends BaseVerticalBlock implements IGameCoreBlock {
     
+    /** CODEC 定义（用于数据生成） */
+    private static final MapCodec<BlockXXXCore> CODEC = simpleCodec(BlockXXXCore::new);
+
     public BlockXXXCore(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(UNFOLDED, false));
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+    protected @NonNull MapCodec<? extends BaseVerticalBlock> codec() {
+        return CODEC;
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.@NonNull Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(UNFOLDED);
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(@NonNull BlockPos pos, @NonNull BlockState state) {
         return new BlockXXXCoreEntity(pos, state);
+    }
+
+    /** 提供服务端 ticker（用于游戏逻辑更新） */
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NonNull BlockState state, 
+                                                                  @NonNull BlockEntityType<T> type) {
+        if (level.isClientSide()) return null;
+        return (_, _, _, entity) -> {
+            if (entity instanceof BlockXXXCoreEntity coreEntity) {
+                coreEntity.tick();
+            }
+        };
+    }
+
+    /** 玩家交互入口 */
+    @Override
+    public @NonNull InteractionResult useWithoutItem(@NonNull BlockState state, @NonNull Level level,
+                                                     @NonNull BlockPos pos, @NonNull Player player,
+                                                     @NonNull BlockHitResult hit) {
+        // 检查游戏启用开关
+        if (!SimpleBlockGameConfig.enableXXXGame.get()) return InteractionResult.PASS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (!(level instanceof ServerLevel serverLevel)) return InteractionResult.FAIL;
+
+        if (!state.getValue(UNFOLDED)) {
+            if (!checkLayoutAreaIsEmpty(serverLevel, pos, state)) {
+                MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.common.obstructed"), true);
+                return InteractionResult.PASS;
+            }
+            unfoldGame(serverLevel, pos, state, player);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.xxx.game_started"), true);
+        }
+
+        return InteractionResult.SUCCESS;
     }
 
     // ===== 生命周期方法 =====
     @Override
+    public boolean checkLayoutAreaIsEmpty(ServerLevel level, BlockPos pos, BlockState state) {
+        return GameXXXHelper.checkLayoutAreaIsEmpty(level, pos);
+    }
+
+    @Override
     public boolean unfoldGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
-        if (!checkLayoutAreaIsEmpty(level, pos, state)) {
-            player.sendOverlayMessage(Component.translatable("msg.common.obstructed"));
-            return false;
-        }
-        GameXXXHelper.generateLayout(level, pos, state.getValue(FACING));
-        level.setBlock(pos, state.setValue(UNFOLDED, true), Block.UPDATE_ALL);
+        GameXXXHelper.generateLayout(level, pos);
+        level.setBlock(pos, state.setValue(UNFOLDED, true), 3);
+        
+        getCoreEntity(level, pos).ifPresent(BlockXXXCoreEntity::initialize);
         startGame(level, pos, state, player);
         return true;
     }
 
     @Override
     public void startGame(ServerLevel level, BlockPos pos, BlockState state, Player player) {
-        GameXXXHelper.startGame(level, pos, state.getValue(FACING));
+        getCoreEntity(level, pos).ifPresent(entity -> {
+            entity.setGameState(XXXGameState.PLAYING);
+            MultiVersionHelper.sendPlayerMessage(player, Component.translatable("msg.xxx.start"), true);
+        });
     }
 
     @Override
     public void resetGame(ServerLevel level, BlockPos pos, BlockState state) {
-        GameXXXHelper.resetGame(level, pos, state.getValue(FACING));
+        getCoreEntity(level, pos).ifPresent(BlockXXXCoreEntity::completeReset);
     }
 
     @Override
     public void minimizeGame(ServerLevel level, BlockPos pos, BlockState state) {
-        GameXXXHelper.minimizeLayout(level, pos, state.getValue(FACING));
+        GameXXXHelper.minimizeLayout(level, pos);
+        level.setBlock(pos, state.setValue(UNFOLDED, false), 3);
     }
 
     @Override
     public void closeGame(ServerLevel level, BlockPos pos, BlockState state) {
-        GameXXXHelper.closeLayout(level, pos, state.getValue(FACING));
-    }
-
-    @Override
-    public boolean checkLayoutAreaIsEmpty(ServerLevel level, BlockPos pos, BlockState state) {
-        return GameXXXHelper.checkLayoutAreaIsEmpty(level, pos, state.getValue(FACING));
+        GameXXXHelper.destroyLayout(level, pos);
     }
 
     @Override
     public BlockEntity getGameCoreEntity(ServerLevel level, BlockPos pos) {
         return level.getBlockEntity(pos);
     }
+
+    /** 获取核心实体（使用 Optional 避免空指针） */
+    private Optional<BlockXXXCoreEntity> getCoreEntity(ServerLevel level, BlockPos pos) {
+        BlockEntity be = level.getBlockEntity(pos);
+        return be instanceof BlockXXXCoreEntity entity ? Optional.of(entity) : Optional.empty();
+    }
 }
 ```
 
 ## 7. 实现 Helper
 
-`GameXXXHelper` 负责所有世界操作，是方块层和逻辑层的桥梁。
+`GameXXXHelper` 负责所有世界操作，是方块层和逻辑层的桥梁。Helper 类应为 `final`，构造器为 `private`，所有方法为 `static`。
 
 **建议方法：**
 
@@ -284,29 +381,117 @@ public class BlockXXXCore extends BaseVerticalBlock implements IGameCoreBlock {
 | `resetGame` | 重置游戏数据和显示 |
 | `minimizeLayout` | 移除布局，保留核心方块 |
 | `closeLayout` | 移除布局和核心方块 |
+| `updateDisplay` | 根据游戏数据更新显示方块 |
 
-**示例 - generateLayout：**
+**示例 - GameXXXHelper：**
 ```java
-public static void generateLayout(ServerLevel level, BlockPos corePos, Direction facing) {
-    // 获取方块状态
-    BlockState displayState = SimpleBlockGameRegistration.BLOCK_XXX_DISPLAY.get()
-            .defaultBlockState().setValue(BaseVerticalBlock.FACING, facing);
+public final class GameXXXHelper {
+    // 使用模块内注册类引用方块
+    private static final Block FRAME = SimpleBlockGameRegistration.BLOCK_VERTICAL_FRAME.get();
+    private static final Block DISPLAY = simpleXXXRegistration.BLOCK_XXX_DISPLAY.get();
+    private static final Block REFRESH = simpleXXXRegistration.BLOCK_XXX_REFRESH.get();
+    private static final Block CORE = simpleXXXRegistration.BLOCK_XXX_CORE.get();
     
-    // 生成布局
-    for (int i = 0; i < WIDTH; i++) {
-        for (int j = 0; j < HEIGHT; j++) {
-            BlockPos pos = calculatePosition(corePos, facing, i, j);
-            if (shouldPlaceDisplay(i, j)) {
-                level.setBlock(pos, displayState, Block.UPDATE_ALL);
-                // 设置显示实体数据
+    private static final int GRID_SIZE = 6;  // 网格大小常量
+    
+    private GameXXXHelper() {}  // 私有构造器
+    
+    /** 检查布局区域是否为空 */
+    public static boolean checkLayoutAreaIsEmpty(ServerLevel level, BlockPos corePos) {
+        if (corePos == null || !level.isLoaded(corePos)) return false;
+        
+        for (int x = 0; x <= GRID_SIZE + 1; x++) {
+            for (int z = 0; z <= GRID_SIZE + 1; z++) {
+                BlockPos pos = corePos.offset(x, 0, z);
+                if (!pos.equals(corePos) && !level.isEmptyBlock(pos)) return false;
+            }
+        }
+        return level.isEmptyBlock(corePos.offset(GRID_SIZE + 1, 0, GRID_SIZE + 1));
+    }
+    
+    /** 生成游戏布局 */
+    public static void generateLayout(ServerLevel level, BlockPos corePos) {
+        BlockState displayState = DISPLAY.defaultBlockState();
+        BlockState frameState = FRAME.defaultBlockState();
+        
+        for (int x = 0; x <= GRID_SIZE + 1; x++) {
+            for (int z = 0; z <= GRID_SIZE + 1; z++) {
+                BlockPos pos = corePos.offset(x, 0, z);
+                if (pos.equals(corePos)) continue;
+                
+                boolean isDisplay = x > 0 && x <= GRID_SIZE && z > 0 && z <= GRID_SIZE;
+                level.setBlock(pos, isDisplay ? displayState : frameState, Block.UPDATE_ALL);
+                
+                if (isDisplay) initDisplayEntity(level, pos, corePos);
+            }
+        }
+        
+        // 放置刷新方块
+        BlockPos refreshPos = corePos.offset(GRID_SIZE + 1, 0, GRID_SIZE + 1);
+        level.setBlock(refreshPos, REFRESH.defaultBlockState(), Block.UPDATE_ALL);
+        initRefreshEntity(level, refreshPos, corePos);
+    }
+    
+    /** 最小化布局（移除显示和边框） */
+    public static void minimizeLayout(ServerLevel level, BlockPos corePos) {
+        if (corePos == null || !level.isLoaded(corePos)) return;
+        
+        for (int x = 0; x <= GRID_SIZE + 1; x++) {
+            for (int z = 0; z <= GRID_SIZE + 1; z++) {
+                Block block = level.getBlockState(corePos.offset(x, 0, z)).getBlock();
+                if (block == FRAME || block == DISPLAY) {
+                    level.removeBlock(corePos.offset(x, 0, z), false);
+                }
+            }
+        }
+        
+        if (level.getBlockState(corePos.offset(GRID_SIZE + 1, 0, GRID_SIZE + 1)).getBlock() == REFRESH) {
+            level.removeBlock(corePos.offset(GRID_SIZE + 1, 0, GRID_SIZE + 1), false);
+        }
+    }
+    
+    /** 销毁布局（包括核心方块） */
+    public static void destroyLayout(ServerLevel level, BlockPos corePos) {
+        minimizeLayout(level, corePos);
+        if (corePos == null || !level.isLoaded(corePos)) return;
+        
+        if (level.getBlockState(corePos).getBlock() instanceof BlockXXXCore) {
+            Vec3 center = Vec3.atCenterOf(corePos);
+            ItemEntity item = new ItemEntity(level, center.x, center.y, center.z, new ItemStack(CORE));
+            item.setDefaultPickUpDelay();
+            level.addFreshEntity(item);
+            level.removeBlock(corePos, false);
+        }
+    }
+    
+    /** 更新显示方块 */
+    public static void updateDisplay(ServerLevel level, BlockPos corePos, int[][] grid) {
+        for (int z = 0; z < GRID_SIZE; z++) {
+            for (int x = 0; x < GRID_SIZE; x++) {
+                BlockPos displayPos = corePos.offset(x + 1, 0, z + 1);
+                if (level.getBlockEntity(displayPos) instanceof BlockXXXDisplayEntity entity) {
+                    entity.setValue(grid[z][x]);
+                }
             }
         }
     }
     
-    // 设置刷新方块关联
-    BlockPos refreshPos = getRefreshPosition(corePos, facing);
-    if (level.getBlockEntity(refreshPos) instanceof BlockRefreshEntity refreshEntity) {
-        refreshEntity.setCorePos(corePos);
+    /** 初始化显示实体 */
+    private static void initDisplayEntity(ServerLevel level, BlockPos pos, BlockPos corePos) {
+        if (!level.isLoaded(pos)) return;
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof BlockXXXDisplayEntity entity) {
+            entity.setCorePos(corePos);
+        }
+    }
+    
+    /** 初始化刷新实体 */
+    private static void initRefreshEntity(ServerLevel level, BlockPos pos, BlockPos corePos) {
+        if (!level.isLoaded(pos)) return;
+        BlockEntity be = level.getBlockEntity(pos);
+        if (be instanceof BlockRefreshEntity entity) {
+            entity.setCorePos(corePos);
+        }
     }
 }
 ```
@@ -386,43 +571,54 @@ public final class GameXXXReward extends BaseGameReward {
 }
 ```
 
-## 11. 注册方块和实体
+## 11. 创建模块内注册文件
 
-在 `SimpleBlockGameRegistration.java` 添加：
+创建 `simpleXXXRegistration.java` 作为模块内注册入口：
 
 ```java
-// 核心方块
-public static final BlockEntry<BlockXXXCore> BLOCK_XXX_CORE = REGISTRYLIB
-        .block(REGISTRYLIB, "xxx_core", BlockXXXCore::new)
-        .langCn("XXX核心方块")
-        .lang("XXX Core")
-        .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))
-        .item(builder -> builder.addTab(TAB_GANM.getKey())
-                .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_xxx/xxx_core"))))
-        .register();
+public class simpleXXXRegistration {
+    // 核心方块
+    public static final BlockEntry<BlockXXXCore> BLOCK_XXX_CORE = REGISTRYLIB
+            .block(REGISTRYLIB, "xxx_core", BlockXXXCore::new)
+            .langCn("XXX核心方块")
+            .lang("XXX Core")
+            .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))
+            .item(builder -> builder.addTab(TAB_GANM.getKey())
+                    .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_xxx/xxx_core"))))
+            .register();
 
-// 显示方块（可选）
-public static final BlockEntry<BlockXXXDisplay> BLOCK_XXX_DISPLAY = REGISTRYLIB
-        .block(REGISTRYLIB, "xxx_display", BlockXXXDisplay::new)
-        .langCn("XXX显示方块")
-        .lang("XXX Display")
-        .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_center"))
-        .item(builder -> builder.addTab(TAB_GANM.getKey()))
-        .register();
+    // 显示方块（可选）
+    public static final BlockEntry<BlockXXXDisplay> BLOCK_XXX_DISPLAY = REGISTRYLIB
+            .block(REGISTRYLIB, "xxx_display", BlockXXXDisplay::new)
+            .langCn("XXX显示方块")
+            .lang("XXX Display")
+            .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_center"))
+            .item(builder -> builder.addTab(TAB_GANM.getKey()))
+            .register();
 
-// 核心实体
-public static final BlockEntityTypeEntry<BlockXXXCoreEntity> BLOCK_XXX_CORE_ENTITY = REGISTRYLIB
-        .blockEntity(REGISTRYLIB, "xxx_core_entity", (_, p, s) -> new BlockXXXCoreEntity(p, s))
-        .validBlock(BLOCK_XXX_CORE)
-        .renderer(() -> () -> BlockXXXCoreEntityRenderer::new)
-        .register();
+    // 核心实体
+    public static final BlockEntityTypeEntry<BlockXXXCoreEntity> BLOCK_XXX_CORE_ENTITY = REGISTRYLIB
+            .blockEntity(REGISTRYLIB, "xxx_core_entity", (_, p, s) -> new BlockXXXCoreEntity(p, s))
+            .validBlock(BLOCK_XXX_CORE)
+            .renderer(() -> () -> BlockXXXCoreEntityRenderer::new)
+            .register();
 
-// 刷新方块（追加到共享刷新实体）
-public static final BlockEntityTypeEntry<BlockRefreshEntity> BLOCK_REFRESH_ENTITY = REGISTRYLIB
-        .blockEntity(REGISTRYLIB, "refresh_entity", BlockRefreshEntity::new)
-        .validBlock(BLOCK_2048_REFRESH)
-        .validBlock(BLOCK_XXX_REFRESH)  // 追加新的刷新方块
-        .register();
+    // 刷新方块
+    public static final BlockEntry<BaseVerticalRefreshBlock> BLOCK_XXX_REFRESH = REGISTRYLIB
+            .block(REGISTRYLIB, "xxx_refresh", p -> BaseVerticalRefreshBlock.create(p, "xxx"))
+            .register();
+}
+```
+
+### 11.1 在主注册文件中集成
+
+在 `SimpleBlockGameRegistration.java` 中需要：
+1. 确保刷新方块实体包含新游戏的刷新方块
+2. 确保配方和其他全局注册正确引用模块内注册项
+
+```java
+// 在 BLOCK_REFRESH_ENTITY 中追加新的刷新方块
+.validBlock(simpleXXXRegistration.BLOCK_XXX_REFRESH)
 ```
 
 ## 12. 添加配置
@@ -577,13 +773,15 @@ src/main/resources/assets/simple_block_game/
        ↓
 4. 写 BlockXXXCore（生命周期方法）
        ↓
-5. 注册核心方块和实体
+5. 创建 simpleXXXRegistration（模块内注册）
        ↓
-6. 添加显示方块和渲染器
+6. 在主注册文件集成（追加刷新方块）
        ↓
-7. 添加奖励、配方、资源
+7. 添加显示方块和渲染器
        ↓
-8. 运行数据生成和测试
+8. 添加奖励、配方、资源
+       ↓
+9. 运行数据生成和测试
 ```
 
 ## 18. 常见问题

@@ -17,9 +17,10 @@ common/simple24Puzzle/
 │   ├── Game24PuzzleLogic.java
 │   ├── Game24PuzzleHelper.java
 │   └── Game24PuzzleReward.java
-└── renderer/
-    ├── Block24PuzzleCoreEntityRenderer.java
-    └── Block24PuzzleDisplayEntityRenderer.java
+├── renderer/
+│   ├── Block24PuzzleCoreEntityRenderer.java
+│   └── Block24PuzzleDisplayEntityRenderer.java
+└── simple24PuzzleRegistration.java
 ```
 
 ## 关键类

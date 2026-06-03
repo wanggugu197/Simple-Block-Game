@@ -19,9 +19,10 @@ common/simpleTenDrops/
 │   ├── GameTenDropsLogic.java
 │   ├── GameTenDropsHelper.java
 │   └── GameTenDropsReward.java
-└── renderer/
-    ├── BlockTenDropsCoreEntityRenderer.java
-    └── BlockTenDropsDisplayEntityRenderer.java
+├── renderer/
+│   ├── BlockTenDropsCoreEntityRenderer.java
+│   └── BlockTenDropsDisplayEntityRenderer.java
+└── simpleTenDropsRegistration.java
 ```
 
 ## 关键类

@@ -18,9 +18,10 @@ common/simpleMinesweeper/
 │   ├── GameMinesweeperLogic.java
 │   ├── GameMinesweeperHelper.java
 │   └── GameMinesweeperReward.java
-└── renderer/
-    ├── BlockMinesweeperCoreEntityRenderer.java
-    └── BlockMinesweeperDisplayEntityRenderer.java
+├── renderer/
+│   ├── BlockMinesweeperCoreEntityRenderer.java
+│   └── BlockMinesweeperDisplayEntityRenderer.java
+└── simpleMinesweeperRegistration.java
 ```
 
 ## 关键类

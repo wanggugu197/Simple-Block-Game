@@ -1,6 +1,6 @@
 # Simple Block Game 项目说明
 
-Simple Block Game 是一个 NeoForge 模组，把多个小游戏做成 Minecraft 方块玩法。当前包含 2048、扫雷、记忆键、十滴水和数独。
+Simple Block Game 是一个 NeoForge 模组，把多个小游戏做成 Minecraft 方块玩法。当前包含 2048、扫雷、记忆键、十滴水、数独和24点。
 
 ## 项目结构
 
@@ -10,11 +10,46 @@ src/main/java/com/simple_block_game/
 ├── SimpleBlockGameConfig.java        # 配置项
 ├── common/
 │   ├── base/                         # 通用方块、实体、渲染、奖励基类
+│   │   ├── block/                    # 基类方块和实体
+│   │   ├── data/                     # 刷新区域数据
+│   │   ├── renderer/                 # 基类渲染器
+│   │   └── reward/                   # 奖励基类
 │   ├── simple2048/                   # 2048
+│   │   ├── block/                    # 方块和方块实体
+│   │   ├── data/                     # 数据枚举
+│   │   ├── logic/                    # 游戏逻辑和辅助
+│   │   ├── renderer/                 # 渲染器
+│   │   └── simple2048Registration.java
 │   ├── simpleMinesweeper/            # 扫雷
+│   │   ├── block/
+│   │   ├── data/
+│   │   ├── logic/
+│   │   ├── renderer/
+│   │   └── simpleMinesweeperRegistration.java
 │   ├── simpleMemoryKey/              # 记忆键
+│   │   ├── block/
+│   │   ├── data/
+│   │   ├── logic/
+│   │   ├── renderer/
+│   │   └── simpleMemoryKeyRegistration.java
 │   ├── simpleTenDrops/               # 十滴水
+│   │   ├── block/
+│   │   ├── data/
+│   │   ├── logic/
+│   │   ├── renderer/
+│   │   └── simpleTenDropsRegistration.java
 │   ├── simpleSudoku/                 # 数独
+│   │   ├── block/
+│   │   ├── data/
+│   │   ├── logic/
+│   │   ├── renderer/
+│   │   └── simpleSudokuRegistration.java
+│   ├── simple24Puzzle/               # 24点
+│   │   ├── block/
+│   │   ├── data/
+│   │   ├── logic/
+│   │   ├── renderer/
+│   │   └── simple24PuzzleRegistration.java
 │   ├── CommonInit.java               # 公共初始化
 │   ├── SimpleBlockGameRegistration.java
 │   └── SimpleBlockGameRecipe.java
@@ -30,10 +65,11 @@ src/main/java/com/simple_block_game/
 
 ```text
 simpleXXX/
-├── block/       # Minecraft 方块、方块实体、玩家交互
-├── data/        # 状态、难度、方向、位置等枚举
-├── logic/       # 游戏规则和世界布局辅助
-└── renderer/    # 方块实体渲染
+├── block/              # Minecraft 方块、方块实体、玩家交互
+├── data/               # 状态、难度、方向、位置等枚举
+├── logic/              # 游戏规则和世界布局辅助
+├── renderer/           # 方块实体渲染
+└── simpleXXXRegistration.java  # 模块内注册入口
 ```
 
 职责划分：
@@ -46,6 +82,7 @@ simpleXXX/
 | `logic/GameXXXHelper` | 布局生成、显示方块读写、世界清理 |
 | `logic/GameXXXReward` | 根据分数、关卡或结果掉落奖励 |
 | `renderer` | 按实体状态选择贴图 |
+| `simpleXXXRegistration` | 模块内方块、实体、渲染器的注册定义 |
 
 ## 通用基础类
 
@@ -53,7 +90,7 @@ simpleXXX/
 | --- | --- |
 | `IGameCoreBlock` | 定义展开、开始、重置、最小化、关闭等生命周期 |
 | `BaseGameBlockEntity` | 提供方块实体同步和方向读取 |
-| `BaseRotatedBlock` | 支持水平朝向，适合 2048 |
+| `BaseRotatedBlock` | 支持水平朝向，适合 2048、24点 |
 | `BaseVerticalBlock` | 垂直布局基类，适合扫雷、记忆键、十滴水、数独 |
 | `BaseRotatedRefreshBlock` | 旋转布局控制方块 |
 | `BaseVerticalRefreshBlock` | 垂直布局控制方块 |
@@ -101,6 +138,7 @@ simpleXXX/
 - 记忆键关卡奖励
 - 十滴水关卡奖励
 - 数独难度和奖励
+- 24点连击和时间奖励
 
 ## 文档索引
 
