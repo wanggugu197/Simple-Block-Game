@@ -9,7 +9,6 @@ plugins {
 }
 
 version = "${mod_version}"
-group = 'com.maple197'
 base.archivesName = "${mod_name}"
 
 def secretFile = file("secret.properties")
