@@ -1,16 +1,16 @@
 package com.simple_block_game.data.lang;
 
-import static com.simple_block_game.SimpleBlockGame.REGISTRYLIB;
+import static com.simple_block_game.SimpleBlockGame.REGISTRY;
 
 public class LangHandler {
 
     public static void addLang(String key, String cn, String en) {
-        REGISTRYLIB.lang(key, en);
-        REGISTRYLIB.lang("zh_cn", key, cn);
+        REGISTRY.lang(key, en);
+        REGISTRY.lang("zh_cn", key, cn);
     }
 
     public static void init() {
-        if (!REGISTRYLIB.doDatagen()) return;
+        if (!REGISTRY.doDatagen()) return;
         ItemTooltip.init();
         GameMessage.init();
     }

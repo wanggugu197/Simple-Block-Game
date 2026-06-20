@@ -20,7 +20,7 @@ public class SimpleBlockGame {
 
     public static final String MODID = "simple_block_game";
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static final GameRegistryCore REGISTRYLIB = GameRegistryCore.create(MODID);
+    public static final GameRegistryCore REGISTRY = GameRegistryCore.create(MODID);
 
     public SimpleBlockGame(IEventBus modEventBus, ModContainer modContainer) {
         LOGGER.info("Simple Block Game Registration Init");

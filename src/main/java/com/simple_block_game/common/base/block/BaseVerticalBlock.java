@@ -7,46 +7,24 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 
 import lombok.NonNull;
 
-public abstract class BaseVerticalBlock extends BaseEntityBlock {
-
-    public static final EnumProperty<@NonNull Direction> FACING = BlockStateProperties.VERTICAL_DIRECTION;
+public abstract class BaseVerticalBlock extends com.mapleutillib.api.baseBlock.BaseVerticalBlock {
 
     protected BaseVerticalBlock(Properties properties) {
         super(properties.mapColor(MapColor.TERRACOTTA_WHITE)
                 .strength(100000.0F, 7200000.0F)
                 .sound(SoundType.METAL)
                 .pushReaction(PushReaction.BLOCK)
+                .isValidSpawn((_, _, _, _) -> false)
                 .noLootTable());
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.UP));
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, @NonNull BlockState> builder) {
-        builder.add(FACING);
-    }
-
-    @Override
-    public @NonNull BlockState getStateForPlacement(@NonNull BlockPlaceContext context) {
-        return defaultBlockState().setValue(FACING, Direction.UP);
-    }
-
-    @Override
-    public BlockEntity newBlockEntity(@NonNull BlockPos blockPos, @NonNull BlockState blockState) {
-        return null;
     }
 
     @Override

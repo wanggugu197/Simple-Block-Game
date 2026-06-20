@@ -1,9 +1,5 @@
 package com.simple_block_game.common.base.renderer;
 
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.core.Direction;
+import com.mapleutillib.api.blockEntityRenderer.CubeBlockEntityRenderState;
 
-public class GameBlockEntityRenderState extends BlockEntityRenderState {
-
-    public Direction facing = Direction.UP;
-}
+public class GameBlockEntityRenderState extends CubeBlockEntityRenderState {}

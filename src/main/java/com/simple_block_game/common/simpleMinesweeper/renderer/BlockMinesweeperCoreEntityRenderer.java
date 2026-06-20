@@ -5,16 +5,19 @@ import com.simple_block_game.common.base.block.IGameCoreBlock;
 import com.simple_block_game.common.base.renderer.GameBlockEntityRenderState;
 import com.simple_block_game.common.simpleMinesweeper.block.BlockMinesweeperCoreEntity;
 import com.simple_block_game.common.simpleMinesweeper.data.PresetDifficulty;
-import com.simple_block_game.util.renderer.BaseBlockEntityCubeRenderer;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
-import lombok.NonNull;
+import com.mapleutillib.api.blockEntityRenderer.CubeTextures;
+import com.mapleutillib.api.blockEntityRenderer.SingleLayerCubeRenderer;
+import org.jspecify.annotations.NonNull;
 
-public class BlockMinesweeperCoreEntityRenderer extends BaseBlockEntityCubeRenderer<BlockMinesweeperCoreEntity, BlockMinesweeperCoreEntityRenderer.BlockMinesweeperCoreEntityRenderState> {
+import static com.mapleutillib.api.blockEntityRenderer.ModRenderTypes.RenderStyle.PAINTING_LIKE;
+
+public class BlockMinesweeperCoreEntityRenderer extends SingleLayerCubeRenderer<BlockMinesweeperCoreEntity, BlockMinesweeperCoreEntityRenderer.BlockMinesweeperCoreEntityRenderState> {
 
     public static class BlockMinesweeperCoreEntityRenderState extends GameBlockEntityRenderState {
 
@@ -26,23 +29,23 @@ public class BlockMinesweeperCoreEntityRenderer extends BaseBlockEntityCubeRende
     private static final String TEXTURE_FORMAT_CUSTOM = "textures/block/simple_minesweeper/minesweeper_core_%s_%s.png";
 
     public BlockMinesweeperCoreEntityRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+        super(context, true, PAINTING_LIKE);
     }
 
     @Override
-    public BlockMinesweeperCoreEntityRenderState createRenderState() {
+    public @NonNull BlockMinesweeperCoreEntityRenderState createRenderState() {
         return new BlockMinesweeperCoreEntityRenderState();
     }
 
     @Override
-    public void extractRenderState(BlockMinesweeperCoreEntity blockEntity, BlockMinesweeperCoreEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+    public void extractRenderState(@NonNull BlockMinesweeperCoreEntity blockEntity, @NonNull BlockMinesweeperCoreEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.unfolded = blockEntity.getBlockState().getValue(IGameCoreBlock.UNFOLDED);
         state.difficulty = blockEntity.getPresetDifficulty();
     }
 
     @Override
-    protected CubeTextures getTexturesForState(BlockMinesweeperCoreEntityRenderState state) {
+    protected CubeTextures getTexture(BlockMinesweeperCoreEntityRenderState state) {
         String stateName = state.unfolded ? "active" : "idle";
 
         if (state.difficulty == PresetDifficulty.CUSTOM && !state.unfolded) {

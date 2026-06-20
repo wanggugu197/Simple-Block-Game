@@ -1,5 +1,7 @@
 {
   "parent": "minecraft:block/cube",
+  "render_type": "minecraft:cutout",
+  "gui_light": "front",
   "textures": {
     "front": "simple_block_game:block/base_front",
     "back": "simple_block_game:block/base_back",
@@ -8,8 +10,6 @@
     "overlay": "simple_block_game:block/void",
     "particle": "#front"
   },
-  "gui_light": "front",
-  "render_type": "minecraft:cutout",
   "elements": [
     {
       "from": [0, 0, 0],

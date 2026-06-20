@@ -4,16 +4,18 @@ import com.simple_block_game.SimpleBlockGame;
 import com.simple_block_game.common.base.renderer.GameBlockEntityRenderState;
 import com.simple_block_game.common.simpleTenDrops.block.BlockTenDropsDisplayEntity;
 import com.simple_block_game.common.simpleTenDrops.data.DropletLevel;
-import com.simple_block_game.util.renderer.BaseBlockEntityRenderer;
 
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
-import lombok.NonNull;
+import com.mapleutillib.api.blockEntityRenderer.SingleFaceBlockEntityRenderer;
+import org.jspecify.annotations.NonNull;
 
-public class BlockTenDropsDisplayEntityRenderer extends BaseBlockEntityRenderer<BlockTenDropsDisplayEntity, BlockTenDropsDisplayEntityRenderer.BlockTenDropDisplayEntityRenderState> {
+import static com.mapleutillib.api.blockEntityRenderer.ModRenderTypes.RenderStyle.PAINTING_LIKE;
+
+public class BlockTenDropsDisplayEntityRenderer extends SingleFaceBlockEntityRenderer<BlockTenDropsDisplayEntity, BlockTenDropsDisplayEntityRenderer.BlockTenDropDisplayEntityRenderState> {
 
     public static class BlockTenDropDisplayEntityRenderState extends GameBlockEntityRenderState {
 
@@ -27,16 +29,16 @@ public class BlockTenDropsDisplayEntityRenderer extends BaseBlockEntityRenderer<
     private static final Identifier TEXTURE_BURST = SimpleBlockGame.getId("textures/block/simple_ten_drops/droplet_burst.png");
 
     public BlockTenDropsDisplayEntityRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+        super(context, true, PAINTING_LIKE);
     }
 
     @Override
-    public BlockTenDropDisplayEntityRenderState createRenderState() {
+    public @NonNull BlockTenDropDisplayEntityRenderState createRenderState() {
         return new BlockTenDropDisplayEntityRenderState();
     }
 
     @Override
-    public void extractRenderState(BlockTenDropsDisplayEntity blockEntity, BlockTenDropDisplayEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+    public void extractRenderState(@NonNull BlockTenDropsDisplayEntity blockEntity, @NonNull BlockTenDropDisplayEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.dropletLevel = blockEntity.getDropletLevel();
     }

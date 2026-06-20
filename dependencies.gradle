@@ -1,3 +1,4 @@
 dependencies {
     implementation("com.gto:registrylib-neoforge-26.1.2:8.0.14")
+    implementation( "com.maple197:MapleUtilLib-neoforge-26.1.2:0.0.7")
 }

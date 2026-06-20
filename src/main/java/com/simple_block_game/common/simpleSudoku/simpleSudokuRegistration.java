@@ -16,7 +16,7 @@ import com.gto.registrylib.tooltip.SubNode;
 import com.gto.registrylib.util.entry.BlockEntityTypeEntry;
 import com.gto.registrylib.util.entry.BlockEntry;
 
-import static com.simple_block_game.SimpleBlockGame.REGISTRYLIB;
+import static com.simple_block_game.SimpleBlockGame.REGISTRY;
 import static com.simple_block_game.common.SimpleBlockGameRecipe.UNCONDITIONAL_CRITERION;
 import static com.simple_block_game.common.SimpleBlockGameRegistration.TAB_GANM;
 import static com.simple_block_game.util.generator.ModBlockModelGeneratorHelper.createVerticalBlock;
@@ -24,7 +24,7 @@ import static com.simple_block_game.util.generator.ModBlockModelGeneratorHelper.
 public class simpleSudokuRegistration {
 
     public static void init() {
-        REGISTRYLIB.addRecipeData(prov -> prov.shaped(RecipeCategory.COMBAT, BLOCK_SUDOKU_CORE)
+        REGISTRY.addRecipeData(prov -> prov.shaped(RecipeCategory.COMBAT, BLOCK_SUDOKU_CORE)
                 .pattern("QQQ")
                 .pattern("QIQ")
                 .pattern("QQQ")
@@ -35,8 +35,8 @@ public class simpleSudokuRegistration {
     }
 
     // sudoku
-    public static final BlockEntry<BlockSudokuCore> BLOCK_SUDOKU_CORE = REGISTRYLIB
-            .block(REGISTRYLIB, "sudoku_core", BlockSudokuCore::new)
+    public static final BlockEntry<BlockSudokuCore> BLOCK_SUDOKU_CORE = REGISTRY
+            .block(REGISTRY, "sudoku_core", BlockSudokuCore::new)
             .langCn("数独核心方块")
             .lang("Sudoku Core")
             .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))
@@ -49,8 +49,8 @@ public class simpleSudokuRegistration {
                     }))
             .register();
 
-    public static final BlockEntry<BlockSudokuDisplay> BLOCK_SUDOKU_DISPLAY = REGISTRYLIB
-            .block(REGISTRYLIB, "sudoku_display", BlockSudokuDisplay::new)
+    public static final BlockEntry<BlockSudokuDisplay> BLOCK_SUDOKU_DISPLAY = REGISTRY
+            .block(REGISTRY, "sudoku_display", BlockSudokuDisplay::new)
             .langCn("数独显示方块")
             .lang("Sudoku Display")
             .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_center"))
@@ -58,8 +58,8 @@ public class simpleSudokuRegistration {
                     .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("item/simple_sudoku/sudoku_display"))))
             .register();
 
-    public static final BlockEntry<BaseVerticalRefreshBlock> BLOCK_SUDOKU_REFRESH = REGISTRYLIB
-            .block(REGISTRYLIB, "sudoku_refresh", p -> BaseVerticalRefreshBlock.create(p, "sudoku"))
+    public static final BlockEntry<BaseVerticalRefreshBlock> BLOCK_SUDOKU_REFRESH = REGISTRY
+            .block(REGISTRY, "sudoku_refresh", p -> BaseVerticalRefreshBlock.create(p, "sudoku"))
             .langCn("数独控制方块")
             .lang("Sudoku Refresh")
             .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))
@@ -67,14 +67,14 @@ public class simpleSudokuRegistration {
                     .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("block/base/vertical_refresh"))))
             .register();
 
-    public static final BlockEntityTypeEntry<BlockSudokuCoreEntity> BLOCK_SUDOKU_CORE_ENTITY = REGISTRYLIB
-            .blockEntity(REGISTRYLIB, "sudoku_core_entity", (_, p, s) -> new BlockSudokuCoreEntity(p, s))
+    public static final BlockEntityTypeEntry<BlockSudokuCoreEntity> BLOCK_SUDOKU_CORE_ENTITY = REGISTRY
+            .blockEntity(REGISTRY, "sudoku_core_entity", (_, p, s) -> new BlockSudokuCoreEntity(p, s))
             .validBlock(BLOCK_SUDOKU_CORE)
             .renderer(() -> () -> BlockSudokuCoreEntityRenderer::new)
             .register();
 
-    public static final BlockEntityTypeEntry<BlockSudokuDisplayEntity> BLOCK_SUDOKU_DISPLAY_ENTITY = REGISTRYLIB
-            .blockEntity(REGISTRYLIB, "sudoku_display_entity", (_, p, s) -> new BlockSudokuDisplayEntity(p, s))
+    public static final BlockEntityTypeEntry<BlockSudokuDisplayEntity> BLOCK_SUDOKU_DISPLAY_ENTITY = REGISTRY
+            .blockEntity(REGISTRY, "sudoku_display_entity", (_, p, s) -> new BlockSudokuDisplayEntity(p, s))
             .validBlock(BLOCK_SUDOKU_DISPLAY)
             .renderer(() -> () -> BlockSudokuDisplayEntityRenderer::new)
             .register();

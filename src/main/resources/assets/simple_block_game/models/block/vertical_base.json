@@ -1,6 +1,7 @@
 {
   "parent": "minecraft:block/cube",
   "render_type": "minecraft:cutout",
+  "gui_light": "front",
   "textures": {
     "top": "simple_block_game:block/base_front",
     "bottom": "simple_block_game:block/base_back",

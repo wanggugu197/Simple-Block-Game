@@ -22,7 +22,7 @@ import com.gto.registrylib.util.entry.RegistryEntry;
 
 import java.util.Map;
 
-import static com.simple_block_game.SimpleBlockGame.REGISTRYLIB;
+import static com.simple_block_game.SimpleBlockGame.REGISTRY;
 import static com.simple_block_game.util.generator.ModBlockModelGeneratorHelper.createHorizontalBlock;
 import static com.simple_block_game.util.generator.ModBlockModelGeneratorHelper.createVerticalBlock;
 
@@ -41,7 +41,7 @@ public class SimpleBlockGameRegistration {
         simpleJustGet10Registration.init();
     }
 
-    public static final ItemEntry<Item> COPPER_COIN = REGISTRYLIB
+    public static final ItemEntry<Item> COPPER_COIN = REGISTRY
             .item("simple_block_game", Item::new)
             .langCn("简单方块游戏")
             .lang("Simple Block Game")
@@ -49,15 +49,15 @@ public class SimpleBlockGameRegistration {
             .register();
 
     // 创造模式标签注册
-    public static final RegistryEntry<CreativeModeTab, CreativeModeTab> TAB_GANM = REGISTRYLIB
+    public static final RegistryEntry<CreativeModeTab, CreativeModeTab> TAB_GANM = REGISTRY
             .creativeTab("simple_block_game_tab", "Simple Block Game", Map.of("zh_cn", "简单方块游戏"), builder -> {
                 builder.icon(COPPER_COIN::asStack);
                 builder.displayItems((_, output) -> output.accept(COPPER_COIN.asStack()));
             });
 
     // 统一的刷新实体，绑定所有刷新方块
-    public static final BlockEntityTypeEntry<BlockRefreshEntity> BLOCK_REFRESH_ENTITY = REGISTRYLIB
-            .blockEntity(REGISTRYLIB, "refresh_entity", BlockRefreshEntity::new)
+    public static final BlockEntityTypeEntry<BlockRefreshEntity> BLOCK_REFRESH_ENTITY = REGISTRY
+            .blockEntity(REGISTRY, "refresh_entity", BlockRefreshEntity::new)
             .validBlock(simple2048Registration.BLOCK_2048_REFRESH)
             .validBlock(simpleMinesweeperRegistration.BLOCK_MINESWEEPER_REFRESH)
             .validBlock(simpleMemoryKeyRegistration.BLOCK_MEMORY_KEY_REFRESH)
@@ -69,8 +69,8 @@ public class SimpleBlockGameRegistration {
             .register();
 
     // 框架方块
-    public static final BlockEntry<RotatedFrame> BLOCK_ROTATED_FRAME = REGISTRYLIB
-            .block(REGISTRYLIB, "rotated_frame", RotatedFrame::new)
+    public static final BlockEntry<RotatedFrame> BLOCK_ROTATED_FRAME = REGISTRY
+            .block(REGISTRY, "rotated_frame", RotatedFrame::new)
             .langCn("框架方块")
             .lang("Frame")
             .blockstate(() -> (block, prov) -> createHorizontalBlock(block, prov, "block/base/rotated_side"))
@@ -78,8 +78,8 @@ public class SimpleBlockGameRegistration {
                     .model(() -> (item, prov) -> prov.createWithExistingModel(item, prov.modLoc("block/base/rotated_side"))))
             .register();
 
-    public static final BlockEntry<VerticalFrame> BLOCK_VERTICAL_FRAME = REGISTRYLIB
-            .block(REGISTRYLIB, "vertical_frame", VerticalFrame::new)
+    public static final BlockEntry<VerticalFrame> BLOCK_VERTICAL_FRAME = REGISTRY
+            .block(REGISTRY, "vertical_frame", VerticalFrame::new)
             .langCn("框架方块")
             .lang("Frame")
             .blockstate(() -> (block, prov) -> createVerticalBlock(block, prov, "block/base/vertical_side"))

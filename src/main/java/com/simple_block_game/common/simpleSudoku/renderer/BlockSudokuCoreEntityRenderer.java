@@ -5,7 +5,6 @@ import com.simple_block_game.common.base.block.IGameCoreBlock;
 import com.simple_block_game.common.base.renderer.GameBlockEntityRenderState;
 import com.simple_block_game.common.simpleSudoku.block.BlockSudokuCoreEntity;
 import com.simple_block_game.common.simpleSudoku.data.SudokuDifficulty;
-import com.simple_block_game.util.renderer.BaseBlockEntityRenderer;
 
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -16,10 +15,13 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import com.mapleutillib.api.blockEntityRenderer.SingleFaceBlockEntityRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
-import lombok.NonNull;
+import org.jspecify.annotations.NonNull;
 
-public class BlockSudokuCoreEntityRenderer extends BaseBlockEntityRenderer<BlockSudokuCoreEntity, BlockSudokuCoreEntityRenderer.BlockSudokuCoreEntityRenderState> {
+import static com.mapleutillib.api.blockEntityRenderer.ModRenderTypes.RenderStyle.PAINTING_LIKE;
+
+public class BlockSudokuCoreEntityRenderer extends SingleFaceBlockEntityRenderer<BlockSudokuCoreEntity, BlockSudokuCoreEntityRenderer.BlockSudokuCoreEntityRenderState> {
 
     public static class BlockSudokuCoreEntityRenderState extends GameBlockEntityRenderState {
 
@@ -32,16 +34,16 @@ public class BlockSudokuCoreEntityRenderer extends BaseBlockEntityRenderer<Block
     private static final Identifier GRID_TEXTURE = SimpleBlockGame.getId("textures/block/simple_sudoku/sudoku_grid.png");
 
     public BlockSudokuCoreEntityRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
+        super(context, true, PAINTING_LIKE);
     }
 
     @Override
-    public BlockSudokuCoreEntityRenderState createRenderState() {
+    public @NonNull BlockSudokuCoreEntityRenderState createRenderState() {
         return new BlockSudokuCoreEntityRenderState();
     }
 
     @Override
-    public void extractRenderState(BlockSudokuCoreEntity blockEntity, BlockSudokuCoreEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
+    public void extractRenderState(@NonNull BlockSudokuCoreEntity blockEntity, @NonNull BlockSudokuCoreEntityRenderState state, float partialTicks, @NonNull Vec3 cameraPosition, ModelFeatureRenderer.CrumblingOverlay breakProgress) {
         super.extractRenderState(blockEntity, state, partialTicks, cameraPosition, breakProgress);
         state.unfolded = blockEntity.getBlockState().getValue(IGameCoreBlock.UNFOLDED);
         state.difficulty = blockEntity.getDifficulty();
@@ -54,7 +56,7 @@ public class BlockSudokuCoreEntityRenderer extends BaseBlockEntityRenderer<Block
     }
 
     @Override
-    public void submit(BlockSudokuCoreEntityRenderState state, @NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, @NonNull CameraRenderState camera) {
+    public void submit(@NonNull BlockSudokuCoreEntityRenderState state, @NonNull PoseStack poseStack, @NonNull SubmitNodeCollector collector, @NonNull CameraRenderState camera) {
         super.submit(state, poseStack, collector, camera);
 
         poseStack.pushPose();
