@@ -1,4 +1,4 @@
-// 26.1.2	2026-06-04T16:48:55.8298648	RegistryCore Provider for simple_block_game [, Loot Tables, Advancements, Datapack Registries, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Model Definitions - simple_block_game, Lang (Languages: en_us for mod: simple_block_game), simple_block_game, Lang (Languages: zh_cn for mod: simple_block_game)]
+// 26.1.2	2026-07-24T14:44:24.187438	RegistryCore Provider for simple_block_game [, Loot Tables, Advancements, Datapack Registries, Tags (enchantments), Tags (blocks), Tags (items), Tags (fluids), Tags (entity_types), Model Definitions - simple_block_game, Lang (Languages: en_us for mod: simple_block_game), simple_block_game, Lang (Languages: zh_cn for mod: simple_block_game), Lang (Languages: en_ud for mod: simple_block_game), Lang (Languages: zh_tw for mod: simple_block_game), Lang (Languages: ja_jp for mod: simple_block_game), Lang (Languages: ru_ru for mod: simple_block_game), Lang (Languages: fr_fr for mod: simple_block_game), Lang (Languages: de_de for mod: simple_block_game), Lang (Languages: es_es for mod: simple_block_game), Lang (Languages: pt_pt for mod: simple_block_game), Lang (Languages: it_it for mod: simple_block_game), Lang (Languages: ko_kr for mod: simple_block_game)]
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/2048_core.json
 5a0aeac02ff4cdab29a67767b1f4ed5106ba8881 assets/simple_block_game/blockstates/2048_display.json
 f40c1baf585ea8090bd4c74cdb870fb94f27e0e2 assets/simple_block_game/blockstates/2048_refresh.json
@@ -47,7 +47,6 @@ c1e650fe99697840b3cd328efaa759dee09e5126 assets/simple_block_game/items/ten_drop
 dc2651e8ff26015145e3c0ff5f8b8d910b96cc55 assets/simple_block_game/items/ten_drops_refresh.json
 df8b8b5f0b5271d223927b71b249673811b29ed0 assets/simple_block_game/items/vertical_frame.json
 809d6d639c59b409e8715e1e7e4d2049dade880e assets/simple_block_game/lang/en_us.json
-b31f985797be6a1dabd4300beaae11076f7fc7ef assets/simple_block_game/lang/zh_cn.json
 f1c81d02493fd811a19bb67e09d0e59e500f4a36 assets/simple_block_game/models/item/simple_block_game.json
 e8281b5edad1d8e31c24c70d057f8e9e59edb570 data/minecraft/advancement/recipes/combat/make_2048_core.json
 ec53a65313441dff9efa740c53c780ffaab8a4ac data/minecraft/advancement/recipes/combat/make_24puzzle_core.json
